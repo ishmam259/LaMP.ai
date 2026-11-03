@@ -51,7 +51,7 @@ export default function LenderPage() {
       ) : apps.length === 0 ? (
         <Carton tone="ink" title="No applications">
           <p className="text-ink">
-            Nothing yet. A pharmacy appears here after it switches on sharing in its Credit record and approves a loan application in Actions.
+            Nothing yet. A pharmacy appears here after it switches on sharing in its Credit record and approves a loan application in Approvals.
           </p>
         </Carton>
       ) : (
@@ -71,7 +71,7 @@ export default function LenderPage() {
                     <dd className="text-xl font-bold text-ink">{bdt(a.amount)}</dd>
                   </dl>
                   <p className="text-ink">
-                    The pharmacy withdrew its consent, so its credit record and invoices are hidden
+                    The pharmacy stopped sharing, so its credit record and invoices are hidden
                     {a.status === "pending" ? " and this application can't be decided." : "."}
                   </p>
                 </div>
@@ -94,7 +94,7 @@ export default function LenderPage() {
                         <dd className="text-xl font-bold text-ink">{num(a.passport.default_probability * 100, 1)}%</dd>
                       </div>
                       <div>
-                        <dt className="text-sm text-ink-2">Pays of each order</dt>
+                        <dt className="text-sm text-ink-2">Share of each order paid</dt>
                         <dd className="text-xl font-bold text-ink">{num(a.passport.advance_rate_pct, 1)}%</dd>
                       </div>
                     </dl>

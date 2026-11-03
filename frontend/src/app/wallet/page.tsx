@@ -14,7 +14,7 @@ const STATUS: Record<MatchStatus, { label: string; tone?: "alert" | "warn" | "st
 
 const ORDER: MatchStatus[] = ["duplicate", "unmatched", "missing_from_statement", "matched"];
 
-const TXN_KIND: Record<string, string> = { loan_payout: "Loan payout" };
+const TXN_KIND: Record<string, string> = { loan_payout: "Loan paid in" };
 
 export default function WalletPage() {
   const { data: account, error } = useAccount();
@@ -37,7 +37,7 @@ function Wallet({ a }: { a: AccountOut }) {
         <Carton tone="cash" title="Balance">
           <p className="num text-[2rem] leading-tight font-bold text-ink">{bdt(a.balance)}</p>
           <p className="text-sm text-ink-2">
-            Opening balance <span className="num">{bdt(a.opening_balance)}</span>
+            Starting balance <span className="num">{bdt(a.opening_balance)}</span>
           </p>
           {a.transactions.length === 0 ? (
             <p className="mt-3 text-sm text-ink-2">No money in or out yet. An approved loan arrives here.</p>

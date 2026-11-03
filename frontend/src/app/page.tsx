@@ -7,7 +7,7 @@ import { Carton, LoadError, Skel, Stamp } from "@/components/carton";
 import { CashLine } from "@/components/cash-line";
 import { dayAmount, dayLabel, isNamedMove } from "@/lib/forecast";
 import { useAccount, useAccounts, useActions, useAlerts, useDues, useExpiry, useForecast, usePharmacy } from "@/lib/api";
-import { bdt, dayDate, daysBetween, inDays, num, shortDate, signed, stampDate, weekday } from "@/lib/format";
+import { ACTION_LABEL, bdt, dayDate, daysBetween, inDays, num, shortDate, signed, stampDate, weekday } from "@/lib/format";
 import { waitingOn } from "@/lib/waiting";
 
 export default function TodayPage() {
@@ -44,7 +44,7 @@ export default function TodayPage() {
       {/* Cash: the first thing the owner reads, on the station board */}
       <div className="space-y-4 lg:col-span-7">
         {!forecast && !fErr && <Skel className="h-72" />}
-        {fErr && <LoadError what="your cash forecast" />}
+        {fErr && <LoadError what="your cash" />}
         {forecast && (
           <>
             <section aria-labelledby="board-head" className="station-board">
@@ -52,7 +52,7 @@ export default function TodayPage() {
                 <>
                   {waiting.covered && (
                     <p className="sb-sub mb-1.5 flex items-center gap-1.5 text-sm font-semibold">
-                      <Check className="size-4" aria-hidden /> First shortfall covered. Next one:
+                      <Check className="size-4" aria-hidden /> You covered the first shortage. Next one:
                     </p>
                   )}
                   <h2 id="board-head" className="sb-head">
@@ -76,7 +76,7 @@ export default function TodayPage() {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               {short && (
                 <Link href="/funding" className={buttonVariants({ size: "lg", className: "w-full sm:w-auto" })}>
-                  See the fix <ArrowRight className="size-5" aria-hidden />
+                  See the plan <ArrowRight className="size-5" aria-hidden />
                 </Link>
               )}
               {waiting.loan && (
@@ -90,7 +90,7 @@ export default function TodayPage() {
             </div>
             <Carton
               tone="ink"
-              title="Upcoming money"
+              title="Coming up"
               aside={shown.length > 0 ? `${shortDate(shown[0].date)} – ${shortDate(shown[shown.length - 1].date)}` : undefined}
             >
               <CashLine forecast={forecast} />
@@ -124,7 +124,7 @@ export default function TodayPage() {
               {moreCount > 0 && last && (
                 <Link href="/cash" className="mt-1 flex items-center justify-between gap-2 border-t border-rule pt-3 font-semibold text-cash hover:underline">
                   <span>
-                    {moreCount} more to {shortDate(last)}
+                    {moreCount} more before {shortDate(last)}
                   </span>
                   <ArrowRight className="size-4" aria-hidden />
                 </Link>
@@ -141,7 +141,7 @@ export default function TodayPage() {
             <ul className="space-y-2">
               {pending.slice(0, 3).map((a) => (
                 <li key={a.id} className="text-ink">
-                  <span className="font-semibold">{String(a.payload.summary ?? (a.payload as Record<string, unknown>).reason ?? a.kind.replaceAll("_", " "))}</span>
+                  <span className="font-semibold">{String(a.payload.summary ?? (a.payload as Record<string, unknown>).reason ?? ACTION_LABEL[a.kind])}</span>
                   <span className="text-sm text-ink-2"> · {a.proposed_by === "owner" ? "suggested by you" : a.proposed_by === "lamp-scheduler" ? "LaMP follow-up" : "suggested by LaMP"}</span>
                 </li>
               ))}
@@ -166,7 +166,7 @@ export default function TodayPage() {
                 <Stamp>All expire by {stampDate(expiry.batches.reduce((m, b) => (b.expiry_date > m ? b.expiry_date : m), expiry.batches[0].expiry_date))}</Stamp>
               </div>
               <Link href="/stock" className={buttonVariants({ variant: "outline", className: "mt-3 w-full" })}>
-                Recover {bdt(expiry.return_eligible_value)}
+                Get back {bdt(expiry.return_eligible_value)}
               </Link>
             </>
           )}
@@ -185,7 +185,7 @@ export default function TodayPage() {
                 <dd className="num text-xl font-bold text-ink">{num(accounts.sales)}</dd>
               </div>
               <div>
-                <dt className="text-sm text-ink-2">Costs and stock</dt>
+                <dt className="text-sm text-ink-2">Costs</dt>
                 <dd className="num text-xl font-bold text-ink">{num(accounts.sales - accounts.net_profit)}</dd>
               </div>
               <div>
@@ -208,7 +208,7 @@ export default function TodayPage() {
           { href: "/wallet", label: "Wallet", icon: CreditCard },
           { href: "/rules", label: "Rules", icon: ShieldCheck },
           { href: "/lender", label: "Lender view", icon: Landmark },
-          { href: "/log", label: "Activity log", icon: ScrollText },
+          { href: "/log", label: "History", icon: ScrollText },
           ].map(({ href, label, icon: Icon }) => (
             <li key={href}>
               <Link href={href} className="flex min-h-12 items-center gap-3 px-4 py-2 text-ink hover:bg-muted">

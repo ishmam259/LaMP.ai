@@ -7,7 +7,7 @@ export default function LogPage() {
   return (
     <div>
       <PageTitle
-        title="Activity log"
+        title="History"
       />
       <div className="h-[calc(100dvh-14rem)] overflow-hidden rounded-[8px] border border-rule bg-board lg:h-[calc(100dvh-12rem)]">
         <LiveLog />

@@ -104,7 +104,7 @@ export default function PassportPage() {
                     <li key={l.id} className="flex items-start gap-3 py-3">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-ink">{l.name}</p>
-                        <p className="text-sm text-ink-2">{l.products.map((p) => p.label).join(", ")}</p>
+                        <p className="text-sm text-ink-2">{l.products.map((p) => p.label).join(" · ")}</p>
                         {on && <Stamp tone="stock" className="mt-1.5">Sharing</Stamp>}
                       </div>
                       <Switch
@@ -164,7 +164,7 @@ export default function PassportPage() {
                   </li>
                 ))}
                 <li className="flex gap-2 text-ink-2">
-                  <X className="mt-0.5 size-4 shrink-0" aria-hidden /> Never your patients, or what anyone bought
+                  <X className="mt-0.5 size-4 shrink-0" aria-hidden /> Never your customers, or what anyone bought
                 </li>
               </ul>
               {preview && (

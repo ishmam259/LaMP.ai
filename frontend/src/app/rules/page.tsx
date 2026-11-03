@@ -9,7 +9,7 @@ import { bdt, num } from "@/lib/format";
 import type { ActionKind } from "@/lib/types";
 
 const KIND: Record<ActionKind, string> = {
-  return_claim: "Return claims",
+  return_claim: "Sending stock back",
   extension_request: "Asking a supplier for more days",
   loan_application: "Loan applications",
   set_aside: "Putting money aside each day",
@@ -87,11 +87,11 @@ export default function RulesPage() {
             <details className="mt-2 text-sm text-ink-2">
               <summary className="cursor-pointer font-semibold text-cash">Where the {num(p.dbr_cap_pct)}% comes from</summary>
               <p className="mt-2">
-                {p.source.issuer}, {p.source.title} ({p.source.edition}), page {p.source.page}: {p.source.clause}.
+                {p.source.issuer}&apos;s rules for personal loans: {p.source.clause}. {p.source.principle}. LaMP uses the same limit for what
+                the pharmacy keeps each month.
               </p>
-              <p className="mt-1">{p.source.principle}.</p>
               <a href={p.source.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 font-semibold text-cash hover:underline">
-                Read the regulation <ExternalLink className="size-3.5" aria-hidden />
+                Read the rules ({p.source.issuer}, {p.source.edition.slice(-4)}, page {p.source.page}) <ExternalLink className="size-3.5" aria-hidden />
               </a>
             </details>
           </Carton>

@@ -7,16 +7,8 @@ import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PinPrompt } from "@/components/pin-gate";
 import { ApiError, decideAction, errorDetail, useActions, usePause, useValue } from "@/lib/api";
-import { bdt, stampDate } from "@/lib/format";
+import { ACTION_LABEL, bdt, stampDate } from "@/lib/format";
 import type { ActionOut } from "@/lib/types";
-
-const KIND_LABEL: Record<ActionOut["kind"], string> = {
-  return_claim: "Return claim",
-  extension_request: "Ask supplier for more days",
-  loan_application: "Loan application",
-  set_aside: "Daily set-aside",
-  trim_order: "Smaller order",
-};
 
 const PROPOSER: Record<ActionOut["proposed_by"], string> = {
   owner: "suggested by you",
@@ -24,10 +16,10 @@ const PROPOSER: Record<ActionOut["proposed_by"], string> = {
   "lamp-scheduler": "LaMP follow-up",
 };
 
-/** The action's own description: owner proposals carry `summary`, the copilot's carry `reason`. */
+/** The step's own description: the owner's carry `summary`, LaMP's carry `reason`. */
 function title(a: ActionOut): string {
   const p = a.payload as Record<string, unknown>;
-  return String(p.summary ?? p.reason ?? KIND_LABEL[a.kind]);
+  return String(p.summary ?? p.reason ?? ACTION_LABEL[a.kind]);
 }
 
 export default function ActionsPage() {
@@ -59,7 +51,7 @@ export default function ActionsPage() {
       if (pin && e instanceof ApiError && e.status === 401) return false;
       if (pin && e instanceof ApiError && e.status === 429) return errorDetail(e, "Too many wrong PINs. Try again later.");
       setPinFor(null);
-      toast.error(e instanceof ApiError && e.status === 409 ? errorDetail(e, "LaMP refused this action.") : "Couldn't reach LaMP. Try again.");
+      toast.error(e instanceof ApiError && e.status === 409 ? errorDetail(e, "LaMP refused this step.") : "Couldn't reach LaMP. Try again.");
       return true;
     } finally {
       setBusy(null);
@@ -68,8 +60,8 @@ export default function ActionsPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PageTitle title="Actions" />
-      {error && <LoadError what="your actions" />}
+      <PageTitle title="Approvals" />
+      {error && <LoadError what="your approvals" />}
       {!actions && !error && <Skel className="h-64" />}
       {actions && (
         <div className="space-y-4">
@@ -81,7 +73,7 @@ export default function ActionsPage() {
                 {waiting.map((a) => (
                   <li key={a.id} className="py-3 first:pt-0 last:pb-0">
                     <p className="text-sm font-semibold text-ink-2">
-                      {KIND_LABEL[a.kind]} · {PROPOSER[a.proposed_by]}
+                      {ACTION_LABEL[a.kind]} · {PROPOSER[a.proposed_by]}
                       {a.requires_pin && " · needs your PIN"}
                     </p>
                     <p className="mt-0.5 text-lg font-semibold text-ink">{title(a)}</p>

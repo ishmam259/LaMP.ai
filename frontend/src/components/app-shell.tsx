@@ -35,14 +35,14 @@ import { CustomerShell, isCustomerPath } from "@/components/customer-shell";
 const OWNER_NAV = [
   { href: "/", label: "Today", icon: Sun },
   { href: "/cash", label: "Cash", icon: Wallet },
-  { href: "/capture", label: "Capture", icon: Camera },
+  { href: "/capture", label: "Scan", icon: Camera },
   { href: "/stock", label: "Stock", icon: PackageOpen },
-  { href: "/funding", label: "Funding", icon: HandCoins },
+  { href: "/funding", label: "Plan", icon: HandCoins },
 ];
 
 const MORE_NAV = [
   { href: "/customers", label: "Customers", icon: Users },
-  { href: "/actions", label: "Actions", icon: Inbox },
+  { href: "/actions", label: "Approvals", icon: Inbox },
   { href: "/passport", label: "Credit record", icon: BadgeCheck },
   { href: "/wallet", label: "Wallet", icon: CreditCard },
   { href: "/rules", label: "Rules", icon: ShieldCheck },
@@ -50,7 +50,7 @@ const MORE_NAV = [
 
 const OTHER_NAV = [
   { href: "/lender", label: "Lender view", icon: Landmark },
-  { href: "/log", label: "Activity log", icon: ScrollText },
+  { href: "/log", label: "History", icon: ScrollText },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -136,7 +136,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             </Link>
             <Link
               href="/actions"
-              aria-label={`Actions, ${pending} waiting for you`}
+              aria-label={`Approvals, ${pending} waiting for you`}
               className="relative inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-rail-ink hover:bg-white/10"
             >
               <Inbox className="size-5" aria-hidden />
@@ -212,7 +212,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
 
-      {/* Desktop live log column (the Activity log page shows it full width instead) */}
+      {/* Desktop history column (the History page shows it full width instead) */}
       {!onLog && (
         <aside className="sticky top-0 hidden h-dvh flex-col border-l border-rule bg-board xl:flex">
           <LiveLog />

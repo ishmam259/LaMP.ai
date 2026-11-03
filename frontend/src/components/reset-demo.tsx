@@ -9,13 +9,13 @@ import { resetDemo } from "@/lib/api";
 export function ResetDemoButton({ className = "" }: { className?: string }) {
   const [busy, setBusy] = useState(false);
   async function onClick() {
-    if (!window.confirm("Reset the demo? Every approval, capture and log entry goes back to the start of the story.")) return;
+    if (!window.confirm("Reset the demo? Every approval, scan and history entry goes back to the start of the story.")) return;
     setBusy(true);
     try {
       await resetDemo();
       toast.success("Demo reset to the start.");
     } catch {
-      toast.error("Couldn't reset. Demo controls may be off on this server.");
+      toast.error("Couldn't reset the demo. Try again in a minute.");
     } finally {
       setBusy(false);
     }

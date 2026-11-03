@@ -23,7 +23,7 @@ export default function StockPage() {
     setBusy(kind);
     try {
       await proposeAction(kind, payload);
-      toast.success("Added to Actions. Approve it there when you're ready.");
+      toast.success("Added to Approvals. Approve it there when you're ready.");
     } catch {
       toast.error("Couldn't add it. Try again.");
     } finally {
@@ -84,9 +84,9 @@ export default function StockPage() {
                     })
                   }
                 >
-                  {claimPending ? "Return is waiting in Actions" : `Return stock worth ${bdt(expiry.return_eligible_value)}`}
+                  {claimPending ? "Return is waiting in Approvals" : `Return stock worth ${bdt(expiry.return_eligible_value)}`}
                 </Button>
-                <p className="mt-2 text-sm text-ink-2">Returns come back as supplier credit, usually within 1–2 weeks.</p>
+                <p className="mt-2 text-sm text-ink-2">Suppliers take the amount off your next bills, usually within 1–2 weeks.</p>
               </>
             )}
           </Carton>
@@ -139,7 +139,7 @@ export default function StockPage() {
                 </div>
                 {trimDone ? (
                   <div className="mt-3">
-                    <Stamp approved>Trimmed · saves {bdt(trim.saving)}</Stamp>
+                    <Stamp approved>Ordered less · saves {bdt(trim.saving)}</Stamp>
                   </div>
                 ) : (
                   <Button
@@ -155,7 +155,7 @@ export default function StockPage() {
                       })
                     }
                   >
-                    {trimPending ? "Smaller order is waiting in Actions" : `Order less, save ${bdt(trim.saving)}`}
+                    {trimPending ? "Smaller order is waiting in Approvals" : `Order less, save ${bdt(trim.saving)}`}
                   </Button>
                 )}
               </>

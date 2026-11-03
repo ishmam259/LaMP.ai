@@ -22,7 +22,7 @@ export default function CashPage() {
       <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
         <div className="space-y-4 lg:col-span-7">
           <Carton tone="cash" title="Next 30 days" aside={first && last ? `${shortDate(first)} – ${shortDate(last)}` : undefined}>
-            {error && <LoadError what="the forecast" />}
+            {error && <LoadError what="your cash" />}
             {!forecast && !error && <Skel className="h-24" />}
             {forecast && (
               <>
@@ -39,7 +39,7 @@ export default function CashPage() {
               <Skel className="m-4 h-40" />
             ) : (
               <table className="w-full text-left">
-                <caption className="sr-only">Named payments and receipts in the next 30 days, with the cash balance at the end of each day</caption>
+                <caption className="sr-only">Money in and out over the next 30 days, and the cash left at the end of each day</caption>
                 <thead className="bg-board text-sm font-semibold text-ink-2">
                   <tr className="border-b border-rule">
                     <th scope="col" className="px-4 py-2 font-semibold">Day</th>
@@ -71,7 +71,7 @@ export default function CashPage() {
         </div>
 
         <div className="space-y-4 lg:col-span-5">
-          <Carton tone="cash" title="Supplier bills" aside={dues ? `${dues.items.length} invoices` : undefined}>
+          <Carton tone="cash" title="Supplier bills" aside={dues ? `${dues.items.length} bills` : undefined}>
             {!dues ? (
               <Skel className="h-40" />
             ) : (
@@ -81,7 +81,7 @@ export default function CashPage() {
                     <li key={d.invoice_no} className="flex items-start gap-3 py-3 first:pt-0">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-ink">{d.supplier}</p>
-                        <p className="text-sm text-ink-2">{d.invoice_no.startsWith("PO-") ? "Order" : "Invoice"} {d.invoice_no}</p>
+                        <p className="text-sm text-ink-2">{d.invoice_no.startsWith("PO-") ? `Order ${d.invoice_no.slice(3)}` : `Invoice ${d.invoice_no}`}</p>
                         <Stamp tone={d.status === "overdue" ? "alert" : d.status === "due_soon" ? "warn" : undefined} className="mt-1.5">
                           Due {stampDate(d.due_date)}
                         </Stamp>
@@ -107,8 +107,8 @@ export default function CashPage() {
                   <dl className="num divide-y divide-rule">
                     {[
                       ["Sales", accounts.sales, ""],
-                      [`Profit on goods sold (${accounts.gross_margin_pct}%)`, accounts.gross_profit, ""],
-                      ["Rent, salaries, utilities", -accounts.overheads, ""],
+                      [`Profit on what you sold (${accounts.gross_margin_pct}%)`, accounts.gross_profit, ""],
+                      ["Rent, salaries and bills", -accounts.overheads, ""],
                     ].map(([label, value]) => (
                       <div key={String(label)} className="flex justify-between py-2">
                         <dt className="text-ink-2">{label}</dt>
@@ -124,12 +124,11 @@ export default function CashPage() {
                     <div className="pr-4">
                       <dt className="text-ink-2">Stock on shelves</dt>
                       <dd className="num font-bold text-ink">{bdt(accounts.stock_value)}</dd>
-                      <dd className="text-ink-2">{accounts.stock_days} days of stock</dd>
+                      <dd className="text-ink-2">About {Math.round(accounts.stock_days)} days of sales</dd>
                     </div>
                     <div className="pl-4">
-                      <dt className="text-ink-2">Patients owe you</dt>
+                      <dt className="text-ink-2">Customers owe you</dt>
                       <dd className="num font-bold text-ink">{bdt(accounts.patient_dues)}</dd>
-                      <dd className="text-ink-2">{accounts.patient_due_days} days of sales</dd>
                       <dd>
                         <Link href="/customers" className="font-semibold text-cash underline underline-offset-2">
                           See who owes you
@@ -138,7 +137,7 @@ export default function CashPage() {
                     </div>
                   </dl>
                   <h3 className="mt-4 font-semibold text-ink">Who you buy from</h3>
-                  <p className="text-xs text-ink-2">{accounts.active_suppliers} suppliers. The biggest five:</p>
+                  <p className="text-xs text-ink-2">{accounts.active_suppliers} suppliers. Your biggest five, by share of what you buy:</p>
                   <ul className="mt-2 space-y-1.5">
                     {accounts.top_suppliers.map((s) => (
                       <li key={s.name} className="grid grid-cols-[96px_1fr_44px] items-center gap-2 text-sm">

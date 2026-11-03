@@ -19,14 +19,22 @@ const TIERS: { tier: LogEvent["tier"]; label: string }[] = [
 /** The part of LaMP that wrote the event, in the owner's words. */
 const PART: Record<string, string> = {
   DEV: "Demo",
+  SYSTEM: "App",
   AUTH: "Sign-in",
-  EXECUTOR: "Actions",
+  ACTIONS: "Approvals",
+  EXECUTOR: "Approvals",
   REGISTRY: "Double-loan check",
   PATIENT: "Customer",
   FOLLOWUP: "Follow-up",
   NOTIFY: "Alert",
   CONSENT: "Sharing",
   EXPIRY: "Stock",
+  CAPTURE: "Scan",
+  FORECAST: "Cash",
+  CASH: "Cash",
+  POLICY: "Rules",
+  PAYOUT: "Wallet",
+  WALLET: "Wallet",
 };
 const part = (c: string) => PART[c] ?? c.charAt(0) + c.slice(1).toLowerCase();
 
@@ -40,15 +48,15 @@ const capital = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** Action kinds with their article, as the owner would say them. */
 const KIND: Record<string, string> = {
-  return_claim: "a return claim",
+  return_claim: "sending stock back",
   trim_order: "a smaller order",
-  extension_request: "a request for more days",
+  extension_request: "asking for more days",
   loan_application: "a loan application",
-  set_aside: "a set-aside",
+  set_aside: "putting money aside",
 };
 const kind = (v: unknown) => KIND[String(v)] ?? `a ${words(v)}`;
 
-/** Known events in the owner's words; anything else falls back to the event name. */
+/** Each event in the owner's words; anything new falls back to the event name. */
 function sentence(e: LogEvent): string {
   const d = e.data;
   switch (e.event) {
@@ -65,7 +73,7 @@ function sentence(e: LogEvent): string {
     case "action_failed":
       return `Couldn't carry out ${kind(d.kind)}: ${words(d.reason)}`;
     case "lock_rejected":
-      return `Refused: invoice ${d.invoice} is already financed`;
+      return `Refused: ${d.invoice} already has a loan against it`;
     case "extension_declined":
       return `${d.supplier} said no to more days`;
     case "extension_accepted":
@@ -73,7 +81,7 @@ function sentence(e: LogEvent): string {
     case "capture_created":
       return "Photo read; waiting for the owner to check it";
     case "forecast_updated":
-      return "Cash forecast updated";
+      return "Cash for the next 30 days worked out again";
     case "inbox_viewed":
       return "A lender opened its inbox";
     case "chat_message":
@@ -85,7 +93,7 @@ function sentence(e: LogEvent): string {
     case "order_trimmed":
       return `Order cut from ${money(d.from)} to ${money(d.to)}`;
     case "return_claim_sent":
-      return `Return claim sent for ${money(d.amount)}`;
+      return `Stock worth ${money(d.amount)} sent back to suppliers`;
     case "extension_requested":
       return `Asked ${d.supplier} for ${d.days} more days`;
     case "set_aside_scheduled":
@@ -97,7 +105,7 @@ function sentence(e: LogEvent): string {
     case "application_blocked_no_consent":
       return `Blocked: ${who(d.lender)} has no permission to see the credit record`;
     case "lock_acquired":
-      return `Invoice ${d.invoice} locked so it can't be financed twice`;
+      return `${d.invoice} marked so it can't get a second loan`;
     case "application_submitted":
       return `Loan application for ${money(d.amount)} sent`;
     case "application_approved":
@@ -105,7 +113,7 @@ function sentence(e: LogEvent): string {
     case "application_declined":
       return "Lender declined the application";
     case "document_read":
-      return `Read a ${words(d.kind)}`;
+      return `Read a ${d.kind === "invoice" ? "supplier invoice" : "sales book page"}`;
     case "suspicious_text_flagged":
       return "Ignored instructions written inside a document";
     case "capture_confirmed":
@@ -113,7 +121,7 @@ function sentence(e: LogEvent): string {
     case "reset":
       return "Demo data loaded";
     case "notify":
-      return `Notified the ${d.audience}: ${d.title}`;
+      return `Alert: ${d.title}`;
     case "owner_unlocked":
       return "Owner unlocked with the PIN";
     case "approval_pin_rejected":
@@ -145,7 +153,13 @@ function sentence(e: LogEvent): string {
       return `${d.customer} promised to pay ${money(d.amount)}${d.parts === 1 ? " in one go" : ` in ${d.parts} weekly parts`}`;
     case "sandbox_payout":
     case "wallet_credited":
-      return `Wallet credited ${money(d.amount)}`;
+      return `${money(d.amount)} arrived in the wallet`;
+    case "extension_no_reply":
+      return `${d.supplier} didn't answer about more days`;
+    case "demo_auto_reset":
+      return "Demo data loaded again";
+    case "system_error":
+      return "Something went wrong; LaMP noted it";
     default:
       return capital(words(e.event));
   }
@@ -154,16 +168,6 @@ function sentence(e: LogEvent): string {
 /** "wallet-lender" -> "Wallet Lender" */
 function who(id: unknown): string {
   return String(id).split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-}
-
-// Settings a developer needs, not the owner.
-const HIDDEN = new Set(["model", "mode", "prompt_version", "with_demo_captures"]);
-
-function raw(data: Record<string, unknown>) {
-  return Object.entries(data)
-    .filter(([k]) => !HIDDEN.has(k))
-    .map(([k, v]) => `${k}=${typeof v === "object" ? JSON.stringify(v) : String(v)}`)
-    .join(" ");
 }
 
 export function LiveLog() {
@@ -181,7 +185,7 @@ export function LiveLog() {
       ),
     []
   );
-  // Re-verify the hash chain whenever a new event arrives.
+  // Check the history again whenever a new entry arrives.
   useEffect(() => {
     if (live.length) recheck();
   }, [live.length, recheck]);
@@ -197,14 +201,13 @@ export function LiveLog() {
   }, [events.length]);
 
   return (
-    <section aria-label="Activity log" className="flex h-full min-h-0 flex-col">
+    <section aria-label="History" className="flex h-full min-h-0 flex-col">
       <div className="band band-ink">
-        <span>Activity log</span>
+        <span>History</span>
       </div>
       {chain && (
         <p
           role="status"
-          title={chain.intact ? `Head hash ${chain.head_hash}` : `Chain broken at ${chain.first_bad_id}`}
           className={cn(
             "flex items-center gap-1.5 border-b border-rule px-3 py-1.5 text-xs font-semibold",
             chain.intact ? "text-stock" : "bg-alert-tint text-alert"
@@ -213,10 +216,10 @@ export function LiveLog() {
           {chain.intact ? <ShieldCheck className="size-4 shrink-0" aria-hidden /> : <ShieldAlert className="size-4 shrink-0" aria-hidden />}
           {chain.intact ? (
             <span>
-              Verified · <span className="num">{chain.count}</span> events, none changed
+              Checked · <span className="num">{chain.count}</span> entries, none changed
             </span>
           ) : (
-            <span>The log was changed after it was written</span>
+            <span>Someone changed this history after it was saved</span>
           )}
         </p>
       )}
@@ -237,21 +240,15 @@ export function LiveLog() {
         ))}
       </div>
       <ol ref={listRef} className="min-h-0 flex-1 overflow-y-auto text-sm" aria-live="polite">
-        {events.length === 0 && <li className="p-4 text-ink-2">No events yet. Actions you take appear here.</li>}
+        {events.length === 0 && <li className="p-4 text-ink-2">Nothing yet. What you and LaMP do appears here.</li>}
         {events.map((e) => (
           <li key={e.id} className="border-b border-rule px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="num font-board text-ink-2">{timeOfDay(e.ts)}</span>
-              <span className="rounded-[2px] bg-muted px-1.5 text-xs font-bold text-ink" title={e.tier}>{tierWord(e.tier)}</span>
+              <span className="rounded-[2px] bg-muted px-1.5 text-xs font-bold text-ink">{tierWord(e.tier)}</span>
               <span className="text-xs font-bold text-ink-2">{part(e.component)}</span>
             </div>
             <p className={cn("mt-0.5 font-semibold break-words", isProblem(e) ? "text-alert" : "text-ink")}>{sentence(e)}</p>
-            {Object.keys(e.data).length > 0 && (
-              <details className="text-xs text-ink-2">
-                <summary className="cursor-pointer">Details</summary>
-                <p className="font-board break-all">{raw(e.data)}</p>
-              </details>
-            )}
           </li>
         ))}
       </ol>

@@ -37,7 +37,7 @@ export default function CapturePage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PageTitle title="Capture" />
+      <PageTitle title="Scan" />
 
       {!capture && (
         <Carton tone="ink" title="What are you photographing?">
@@ -236,7 +236,7 @@ function Review({
           </div>
         ) : (
           <Button size="lg" variant="outline" className="mt-4" onClick={onAnother}>
-            Capture another
+            Scan another
           </Button>
         )}
       </Carton>
@@ -311,7 +311,7 @@ function SalesReview({
           </div>
         ) : (
           <Button size="lg" variant="outline" className="mt-4" onClick={onAnother}>
-            Capture another
+            Scan another
           </Button>
         )}
       </Carton>

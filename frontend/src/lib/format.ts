@@ -1,3 +1,14 @@
+import type { ActionKind } from "./types";
+
+/** Each kind of step the owner approves, in their words. */
+export const ACTION_LABEL: Record<ActionKind, string> = {
+  return_claim: "Send stock back",
+  extension_request: "Ask supplier for more days",
+  loan_application: "Loan application",
+  set_aside: "Put money aside daily",
+  trim_order: "Smaller order",
+};
+
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

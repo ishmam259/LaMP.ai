@@ -74,7 +74,7 @@ export default function FundingPage() {
           ...(s.action_kind === "loan_application" ? { lender_id: "wallet-lender", product_key: "wallet_loan", fallback: true } : {}),
         });
       }
-      toast.success("Plan added to Actions. Approve each step there.");
+      toast.success("Plan added to Approvals. Approve each step there.");
     } catch {
       toast.error("Couldn't add the plan. Try again.");
     } finally {
@@ -84,8 +84,8 @@ export default function FundingPage() {
 
   return (
     <div>
-      <PageTitle title="Funding" />
-      {error && <LoadError what="your funding plan" />}
+      <PageTitle title="Plan" />
+      {error && <LoadError what="your plan" />}
       {!plan && !error && <Skel className="h-96" />}
       {plan && (
         <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
@@ -106,16 +106,16 @@ export default function FundingPage() {
               {waiting.loan && (
                 <Carton tone="warn" title="Loan applied, waiting for the lender" aside={bdt(Number(waiting.loan.payload.amount ?? 0))}>
                   <p className="text-ink">
-                    {resultSummary(waiting.loan) ?? "Your application is with the lender."} Your cash forecast counts the money once the lender pays it
-                    into your wallet, so the shortfall below stays until then. There&apos;s no need to apply again.
+                    {resultSummary(waiting.loan) ?? "Your application is with the lender."} LaMP counts the money once the lender pays it into your
+                    wallet, so the amount short below stays until then. There&apos;s no need to apply again.
                   </p>
                 </Carton>
               )}
               {waiting.extension && (
                 <Carton tone="warn" title="Asked for more days, waiting for the supplier">
                   <p className="text-ink">
-                    {resultSummary(waiting.extension) ?? "Your request is with the supplier."} If they don&apos;t agree in time, LaMP suggests the fallback
-                    in Actions.
+                    {resultSummary(waiting.extension) ?? "Your request is with the supplier."} If they don&apos;t agree in time, LaMP suggests the backup
+                    loan in Approvals.
                   </p>
                 </Carton>
               )}
@@ -159,11 +159,11 @@ export default function FundingPage() {
                 </div>
               )}
               <Button size="lg" className="mt-4 w-full sm:w-auto" disabled={busy || !!alreadyProposed} onClick={proposePlan}>
-                {inActions ? "Plan is in Actions" : waitingStep ? "Waiting for an answer" : "Add this plan to Actions"}
+                {inActions ? "Plan is waiting in Approvals" : waitingStep ? "Waiting for an answer" : "Add this plan to Approvals"}
               </Button>
               {inActions && (
                 <Link href="/actions" className="mt-2 inline-flex items-center gap-1 font-semibold text-cash hover:underline sm:ml-3">
-                  Go to Actions <ArrowRight className="size-4" aria-hidden />
+                  Go to Approvals <ArrowRight className="size-4" aria-hidden />
                 </Link>
               )}
             </Carton>
@@ -255,7 +255,7 @@ function Catalogue({ c }: { c: CatalogueOut }) {
                 {terms(o) && <p className="num mt-1 text-sm text-ink-2">{terms(o)}</p>}
                 {o.to_confirm.length > 0 && <p className="mt-1 text-sm text-ink-2">To confirm: {o.to_confirm.join(", ")}.</p>}
                 <details className="mt-1 text-sm text-ink-2">
-                  <summary className="cursor-pointer font-semibold text-cash">Source</summary>
+                  <summary className="cursor-pointer font-semibold text-cash">Where this comes from</summary>
                   <p className="mt-1">{o.note}</p>
                   <a href={o.source} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 font-semibold text-cash hover:underline">
                     {o.anchored_on}

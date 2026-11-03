@@ -15,6 +15,20 @@ const SUGGESTIONS = [
 ];
 
 type Trace = { traced: number; total: number; blocked: boolean };
+
+/** What LaMP looked at, in the owner's words. */
+const LOOKED_AT: Record<string, string> = {
+  get_accounts: "Looked at your accounts",
+  get_dues: "Looked at bills due",
+  get_forecast: "Looked at cash for the next 30 days",
+  get_alerts: "Looked at warnings",
+  get_expiry: "Looked at expiring stock",
+  get_orders: "Looked at your orders",
+  get_trim: "Looked at a smaller order",
+  get_funding_plan: "Looked at ways to cover it",
+  get_passport: "Looked at your credit record",
+  propose_action: "Suggested a step",
+};
 type Turn = { id: string; role: "user" | "assistant"; text: string; tools?: string[]; plan?: string[]; trace?: Trace };
 
 /** LaMP chat: POST /api/v1/chat (backend/app/agents/router.py), streamed with the AI SDK UI message protocol. */
@@ -125,7 +139,7 @@ function ChatFrame({
                 {t.tools.map((tool, i) => (
                   <span key={`${tool}-${i}`} className="inline-flex items-center gap-1 rounded-[2px] bg-muted px-2 py-0.5 text-xs font-semibold text-ink-2">
                     <Wrench className="size-3" aria-hidden />{" "}
-                    {tool === "propose_action" ? "Suggested an action" : `Checked ${tool.replace(/^get_/, "").replaceAll("_", " ")}`}
+                    {LOOKED_AT[tool] ?? "Looked at your figures"}
                   </span>
                 ))}
               </div>
