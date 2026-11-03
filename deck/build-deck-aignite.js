@@ -68,8 +68,8 @@ async function build() {
     T(s, "THE PROBLEM", { x: M, y: 2.05, w: 7, h: 0.35, fontSize: 13, fontFace: F.semi, color: K.mid });
     const rows = [
       "173,500+ licensed pharmacies in Bangladesh, most run by one family. Every number lives on paper.",
-      "Each buys on credit from 10–50 companies on 10–15% margins. Green Life sold BDT 412,500 last month and kept BDT 13,500.",
-      "Expiring stock and a cash crunch before a big supplier bill mean empty shelves, so families go without medicine.",
+      "Each buys on credit from 10–50 companies and keeps only 10–15% of each sale. Green Life sold BDT 412,500 last month and kept BDT 13,500.",
+      "Expiring stock and running out of cash before a big supplier bill mean empty shelves, so families go without medicine.",
       "Families buy on credit too. Green Life is owed BDT 38,000, and customers have no clear way to see or plan what they owe.",
     ];
     rows.forEach((t, i) => barRow(s, M, 2.5 + i * 1.05, 7, 0.9, t, { size: 12 }));
@@ -79,11 +79,11 @@ async function build() {
   // 2. Solution
   {
     const s = pres.addSlide({ masterName: "PLAIN" });
-    head(s, "The solution", "Take a photo. Get a clear money picture. Ask in plain words. Approve every action yourself.");
+    head(s, "The solution", "Take a photo. Get a clear money picture. Ask in plain words. Approve every step yourself.");
     const cards = [
       ["Reads paper for you", "AI reads photos of supplier invoices and the sales book. The owner checks every field before it is saved."],
-      ["Sees trouble early", "30-day cash forecast, supplier dues and stock expiring in 60 days, with alerts before the money runs out."],
-      ["Cheapest money first", "Uses trapped cash and free supplier terms first, then compares loans. Demo: BDT 0, or BDT 181.97 instead of 421.64."],
+      ["Sees trouble early", "Cash for the next 30 days, bills due and stock expiring in 60 days, with a warning before the money runs out."],
+      ["Cheapest money first", "Uses money already in the shop and free extra days from suppliers first, then compares loans. Demo: BDT 0, or BDT 181.97 instead of 421.64."],
       ["A card for every customer", "NEW. A family opens their card with a code, sees what they owe and picks a weekly plan. Amounts only, never names or medicines."],
     ];
     cards.forEach(([h, b], i) => {
@@ -93,7 +93,7 @@ async function build() {
       T(s, h, { x: x + 0.2, y: y + 0.3, w: w - 0.4, h: 0.9, fontSize: 16, fontFace: F.semi, color: K.deep });
       T(s, b, { x: x + 0.2, y: y + 1.25, w: w - 0.4, h: 1.8, fontSize: 12.5 });
     });
-    barRow(s, M, 5.3, 12.2, 0.9, "Safe by design: LaMP reads and suggests. The owner approves every action, loans need the PIN again, and LaMP never moves money.", { size: 13 });
+    barRow(s, M, 5.3, 12.2, 0.9, "Safe by design: LaMP reads and suggests. The owner approves every step, loans need the PIN again, and LaMP never moves money.", { size: 13 });
     strip(s);
   }
 
@@ -102,15 +102,15 @@ async function build() {
     const s = pres.addSlide({ masterName: "PLAIN" });
     head(s, "How it works", "AI where it helps, plain math where money is involved.");
     const steps = [
-      "1. Photo in: AI (OpenAI vision) reads invoices and sales-book pages into fields.",
+      "1. Snap a photo: AI reads supplier invoices and sales-book pages.",
       "2. The owner checks and corrects. Nothing is saved without their yes.",
-      "3. Plain Python does all the money math: profit, cash forecast, expiry risk, loan costs. The AI never calculates money.",
+      "3. Plain code does all the money math: profit, cash ahead, expiring stock, loan costs. The AI never calculates money.",
       "4. Ask LaMP: the chat explains the shop's own figures and suggests the next step.",
-      "5. The owner approves; customers set plans on their own card. Every step lands in a tamper-evident activity log.",
+      "5. The owner approves; customers set plans on their own card. Every step is saved in a history no one can secretly change.",
     ];
     steps.forEach((t, i) => barRow(s, M, 1.6 + i * 1.0, 6.4, 0.85, t, { size: 11.5 }));
     T(s, "Next.js · FastAPI · PostgreSQL · OpenAI Responses API", { x: M, y: 6.7, w: 6.4, h: 0.3, fontSize: 10, color: K.grey });
-    const shots = [["today-m.jpg", "Owner: today"], ["funding-m.jpg", "Owner: funding plan"], ["card-m.jpg", "Customer: their card"]];
+    const shots = [["today-m.jpg", "Owner: today"], ["funding-m.jpg", "Owner: the plan"], ["card-m.jpg", "Customer: their card"]];
     for (const [i, [f, cap]] of shots.entries()) {
       await fit(s, f, 7.3 + i * 2.0, 1.45, 1.85, 5.2);
       T(s, cap, { x: 7.3 + i * 2.0, y: 6.7, w: 1.85, h: 0.3, fontSize: 9.5, color: K.grey, align: "center" });
@@ -129,9 +129,9 @@ async function build() {
     T(s, `${ME.where} · ${ME.github}`, { x: M + 0.4, y: 2.7, w: 11, h: 0.4, fontSize: 12, color: K.grey });
     T(s, "WHAT'S NEW FOR AIGNITE", { x: M, y: 3.8, w: 12, h: 0.35, fontSize: 13, fontFace: F.semi, color: K.mid });
     const rows = [
-      "Started as a team prototype for FinTechathon 2026. Farhan Tahsin Khan co-built the original engines and API and agreed to this solo entry.",
+      "Started as a team prototype for FinTechathon 2026. Farhan Tahsin Khan co-built the original money math and server and agreed to this solo entry.",
       "New for AIgnite: customer cards with weekly payment plans, a Customers page for the owner, plain wording across the app, a public link and the official sticker.",
-      "379 automated tests check every figure; the shared demo makes no paid AI calls and resets itself every hour.",
+      "383 automated tests check every figure; the shared demo makes no paid AI calls and resets itself every hour.",
     ];
     rows.forEach((t, i) => barRow(s, M, 4.2 + i * 0.95, 12.2, 0.8, t, { size: 12 }));
     strip(s);
@@ -148,7 +148,7 @@ async function build() {
     T(s, "Free hosting: the first load can take up to a minute.", { x: M, y: 3.55, w: 12, h: 0.4, fontSize: 11, color: "CFE8DA" });
     const why = [
       "Real problem: one expired batch or one needless loan wipes out a week of a family's income.",
-      "Meaningful AI: reads paper, explains numbers in plain words, proposes the cheapest path.",
+      "Meaningful AI: reads paper, explains numbers in plain words, suggests the cheapest way.",
       "Safe by design: the owner approves everything; the AI never touches money.",
     ];
     why.forEach((t, i) => T(s, "▶  " + t, { x: M, y: 4.2 + i * 0.6, w: 12, h: 0.5, fontSize: 14, color: K.white }));
