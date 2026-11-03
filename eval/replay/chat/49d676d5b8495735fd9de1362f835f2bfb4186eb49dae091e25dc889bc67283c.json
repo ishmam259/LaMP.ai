@@ -1,0 +1,57 @@
+[
+  {
+    "parts": [
+      {
+        "content": "",
+        "id": "rs_02f9ebe28f2556b5006ad67b1896d087d292d8887f587fccc8",
+        "signature": "gAAAAABq1nsZwnDFuBNBgG6l4rj3TiU8vzCN9-CzY5_hw4QaDSke55s-D8OffkfeT0UZRveSKJAOo6xBkwoOFxQAyEUvwcVwtBAhUtv5DTR0XOKSSyiBoUDgGps0C1E-1eluXXsE88wgt7XAQ6FfizWMMDfUFrTqQX_XMQmdsi1hFw9NWKli27_KLGNvbwPWl7DbfH6UOL4pAckRlAizeVaP7FfPyN5tAu872EfimMk80WLdkhjstm3OqiY_AnibSzqDztWQ5E0xtkQTWetCXnXGOBat4CB9bSkJ2y0VffvdPDQDpyFreeRIKnW7IPC2voP_-tI8c0H_7jmGcl-sMspehkz7JUn8XsjcrwPPzc56uOZE0euip4jDKBgsLMsu2yuhHjMi-KH8NAuXg2w0rX-ZBsNUTVcptkCa-7qufLDcHUo6qxuQgEtCMmYQeW_7wWTUeB-hsaII_go2Tod4ecchwR8N65_n6oaZ3c4ZUhB_X2IGym7GgAoRla4NQ8kfgVpuWhJWHEFJciIKzIAme2YDQWT7gLGX4JpsgEVoxu5_oAu4OS4LmYTUHykyPb-Ayzw-h9JvDt08N9yZaUdxf6yixRYs97IyeWJ8yRiXuntLoO3EvZnuKsF2vTs45xBLDp-czEE7De26pqG9fJnJjtOFP2Lx_skXnz2jb-6VjM2lxoEcvPVmw9sTEkpdBrTTsDAJGUkl7jvGw4uogxFddhQGTqAg9NGNOf_YLZF4G1KktF5fz4Ao4n73MamqcrCUptP0h82QtY7IoWmpnqNbgW8CER2wLo_liV_JDhYmTQa3k1pP76QFQGK5_qgsjzBZRXLRm1H35WotZ8MYMJEXwcmgMiftCAEhg2m8YtjkB-fHifs38z-pIgemU7iSxfMOxkAjFak7OAPwI_GXOHQZJIA_1GwWEZAvabtTiLN8p0HKpMaZ1vonedkddQUTcur3_dYK9nH6rBFNkygTUB83g768ciF-ht2BNAIj2m6Fy7FcoF6LwoLHf_Yase7A6hn-wE00AQ3g9Hv1JkcLvhewWrLofJeFWaF3pvxHTtdKPJAAoJer-ebmc8VovQnaD8XIwvqbVhmYG7VUM6j8Z2wqpH2CTe0tOkof6orZ7KXtolOdzFl5Nf9Pt5OrFs8Ff8ynnxS4zGeAYLt-fHOFXUa_QdoXL_Sg3BXYD8CKI71vq4OqQdR4Y9GoW-4eselJjYjXRY7Jg70XydjY0WqpEvhxQcORRNHA3YyE2C62RcpImLLSsKSEgBXQqFkaItt7FHNGdr6ViXM00CTdxuik8sk2jpfo_nNPIpKcCr4Lxr07-tWrXgXZYh1uSvVM0KtC0jXK86E04sykWUkDFj2WGVyB7DUpshmZLeYNwnBsOXJm5x5B4_7jsnmvPB9BUTI6j9y4x7W1AehfxCTWxZugr2JwJkFs0pQVDu68TjyRmd81Bfx4QNzZMPmegtx_X7D0qkQuKOeRJ_lX0PKsXrNumBRgT1e3W43OJaDLK0inTzTmpEFXt29WTtoedCMrg-JQs-JNgsUPIe0XvALNY3bUo74PJ7tUp_PQ25BZZsuDr5_9kjswHmTNQzszLZvzx1P_GxpD3DUhCEvR9soo",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "thinking"
+      },
+      {
+        "tool_name": "share_plan",
+        "args": "{\"steps\":[\"Review stock expiring within 60 days\",\"Propose eligible supplier returns for approval\"]}",
+        "tool_call_id": "call_pSzB2cw29k1hO21Fp7tDxzoH",
+        "tool_kind": null,
+        "id": "fc_02f9ebe28f2556b5006ad67b18d18c87d2ad7ebf9cbdfb356a",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 1960,
+      "cache_write_tokens": 0,
+      "cache_read_tokens": 1957,
+      "output_tokens": 51,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 15
+      },
+      "cost": null,
+      "output_reasoning_tokens": 15
+    },
+    "model_name": "gpt-6-luna",
+    "timestamp": "2026-10-19T20:18:33.510485Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-10-19T20:18:31Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_02f9ebe28f2556b5006ad67b17c77887d2bcb0b419190d5433",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

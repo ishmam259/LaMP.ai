@@ -1,0 +1,14 @@
+{
+  "id": "act-1",
+  "kind": "return_claim",
+  "status": "proposed",
+  "payload": {
+    "summary": "Return expiring stock",
+    "amount": 9200
+  },
+  "proposed_by": "owner",
+  "created_at": "2026-11-03T05:51:35.895591Z",
+  "decided_at": null,
+  "result": null,
+  "requires_pin": false
+}

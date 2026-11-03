@@ -1,0 +1,48 @@
+[
+  {
+    "parts": [
+      {
+        "content": "The bank’s offer is 75.2% because the passport shows 38 of 41 invoices paid on time. Its cautious on-time estimate is 0.826, and the estimated default probability is 0.03. The record includes 3 late invoices, which may be holding the offer down. Paying more invoices on time can raise the advance rate.",
+        "id": "msg_01d65cb9d674c1f1006ad67b23282887d2aa360fc1b1121d46",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 1787,
+      "cache_write_tokens": 0,
+      "cache_read_tokens": 1784,
+      "output_tokens": 77,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null,
+      "output_reasoning_tokens": 0
+    },
+    "model_name": "gpt-6-luna",
+    "timestamp": "2026-10-19T20:18:44.029176Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-10-19T20:18:42Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_01d65cb9d674c1f1006ad67b224ee087d2bc35fbc4580b9ac6",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

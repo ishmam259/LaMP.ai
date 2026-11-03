@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "action_id": "act-1",
+      "kind": "return_claim",
+      "label": "Stock returned to suppliers",
+      "amount": 9200.0,
+      "basis": "Credit expected from suppliers for the stock they take back.",
+      "counterfactual": "The stock expires on the shelf and is written off."
+    }
+  ],
+  "total": 9200.0
+}

@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lamp
+      POSTGRES_PASSWORD: lamp
+      POSTGRES_DB: lamp
+    ports:
+      # 5433 on the host: a local PostgreSQL install often already holds 5432.
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lamp"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    # Comes back on its own after a crash; scripts/watchdog.py emails when it stays down.
+    restart: unless-stopped
+    build:
+      context: ./backend
+      additional_contexts:
+        seed: ./seed
+        replay: ./eval/replay
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://lamp:lamp@db:5432/lamp
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_MODE: live
+        BACKEND_URL: http://backend:8000
+    ports:
+      # 3001 on the host, so it can run next to `npm run dev` on 3000.
+      - "3001:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

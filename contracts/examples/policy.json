@@ -1,0 +1,31 @@
+{
+  "paused": false,
+  "pin_required_for": [
+    "loan_application"
+  ],
+  "dbr_cap_pct": 35.0,
+  "monthly_net_cash_flow": 13500.0,
+  "source": {
+    "title": "Prudential Regulations for Consumer Financing",
+    "issuer": "Bangladesh Bank",
+    "edition": "First Edition, 2004",
+    "clause": "Unsecured Personal Loan PPG Guideline No. 12 - Debt Burden Ratio (DBR %): a maximum of 35% based on Net Monthly Income",
+    "page": 65,
+    "principle": "Regulation 3: total instalments must be commensurate with the borrower's take-home/disposable income and repayment capacity",
+    "file": "seed/sources/bangladesh_bank_prudential_regulations_consumer_financing_2004.pdf",
+    "url": "https://www.bb.org.bd/mediaroom/circulars/brpd/pgfcf.pdf"
+  },
+  "examples": [
+    {
+      "label": "A loan for the full shortfall",
+      "amount": 10800.0,
+      "months": 3,
+      "monthly_repayment": 3679.89,
+      "existing_monthly_repayment": 0.0,
+      "monthly_net_cash_flow": 13500.0,
+      "dbr_pct": 27.3,
+      "cap_pct": 35.0,
+      "ok": true
+    }
+  ]
+}

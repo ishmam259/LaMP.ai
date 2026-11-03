@@ -1,0 +1,49 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "share_plan",
+        "args": "{\"steps\":[\"Check the cash shortfall and options\",\"Propose the cheapest steps for approval\"]}",
+        "tool_call_id": "call_om7zc2qskTxEE58IbgBrKBXG",
+        "tool_kind": null,
+        "id": "fc_08a151a9ffad848c006ad55f4444c487d29897aeefce87ada5",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 1505,
+      "cache_write_tokens": 14,
+      "cache_read_tokens": 1488,
+      "output_tokens": 33,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null,
+      "output_reasoning_tokens": 0
+    },
+    "model_name": "gpt-6-luna",
+    "timestamp": "2026-10-19T00:07:33.018495Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-10-19T00:07:31Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_08a151a9ffad848c006ad55f43b03887d29e53d797e7d41e7b",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]
