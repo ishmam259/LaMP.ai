@@ -101,14 +101,21 @@ export default function FundingPage() {
               </ol>
               {untrimmed != null && untrimmed > plan.need.amount && (
                 <dl className="mt-4 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 border-t border-rule pt-3 text-ink">
-                  <dt>
+                  <dt className="whitespace-nowrap">
                     Borrow all <span className="num">{bdt(untrimmed)}</span>
                   </dt>
                   <dd className="num text-right">{bdt(plan.naive_cost_bdt)}</dd>
                   <dt className="font-semibold">This plan</dt>
                   <dd className="num text-right font-bold">
                     {bdt(plan.plan.total_cost_bdt)}
-                    {hasFallback && fallback && fallback.cost_bdt !== plan.plan.total_cost_bdt && ` · ${bdt(fallback.cost_bdt!)} with the loan`}
+                    {hasFallback && fallback && fallback.cost_bdt !== plan.plan.total_cost_bdt && (
+                      <>
+                        <span className="hidden sm:inline"> · </span>
+                        <span className="block text-sm font-normal whitespace-nowrap text-ink-2 sm:inline sm:text-base sm:font-bold sm:text-ink">
+                          {bdt(fallback.cost_bdt!)} with the loan
+                        </span>
+                      </>
+                    )}
                   </dd>
                 </dl>
               )}

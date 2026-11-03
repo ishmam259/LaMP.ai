@@ -7,7 +7,7 @@
 |---|---|---|
 | Live web app (mandatory) | To deploy | Render Blueprint from `render.yaml` (steps below) |
 | Deck, max 5 slides (mandatory) | Ready | `deck/LaMP-AIgnite.pdf` (rebuild if the live link changes) |
-| Demo video in English (optional) | Recorded: 1:52, 1080p at 60 fps, English captions | `video/LaMP-AIgnite-demo.mp4` (not in git): upload to YouTube, unlisted is fine. How to re-cut: `video/README.md` |
+| Demo video in English (optional) | Recorded: 1:54, 1080p at 60 fps, English captions | `video/LaMP-AIgnite-demo.mp4` (not in git): upload to YouTube, unlisted is fine. How to re-cut: `video/README.md` |
 | GitHub repo (optional) | Ready, private | https://github.com/ishmam259/LaMP.ai (organizers may ask for access) |
 
 Done: official sticker on every page (PIN screen, owner header, customer header), customer cards, plain wording, Farhan's agreement to the solo entry.
@@ -38,5 +38,4 @@ LaMP started as a team prototype for FinTechathon 2026 (with Farhan Tahsin Khan,
 The app shows no test logins, so judges need these from Devpost, the deck or the video's end card:
 - Owner: open the live link and enter PIN **2468** (Green Life Pharmacy, Bogura).
 - Customer: on the PIN screen tap "Bought medicine on credit? Check what you owe" and enter card **GL-7KQM-4XPA**.
-- Lender side: open `<live link>/lender` to see what a lender sees after the owner shares their credit record.
 - The shared data resets itself every hour.
