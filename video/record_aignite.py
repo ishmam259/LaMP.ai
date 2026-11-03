@@ -1,13 +1,17 @@
-"""Record the AIgnite demo against the local app (python video/record_aignite.py <out_dir> [channel]).
+"""Record the AIgnite demo against the local app at 60 fps (python video/record_aignite.py <out_dir> [channel]).
 
-Needs the API on :8000 (DEV_MODE, replay) and the frontend on :3000. Writes three Playwright videos
-with scene marks: owner.webm (1920x1080), phone.webm (390x844 customer card), owner_end.webm, and
-scenes_<take>.json (scene start times in seconds). video/make_aignite.py turns them into the film."""
-import json, os, shutil, sys, time
+Needs the API on :8000 (DEV_MODE, replay) and the frontend on :3000 (a production build: no dev
+overlay, smoother). Frames come straight from the browser's screencast. The browser can't send a
+full 1080p frame every 1/60 s, so each take is played at 1/SLOW speed (the cursor, scrolling,
+waits, typing and the page's own CSS animations) and its frames are retimed SLOW times faster:
+every frame of the 60 fps result is a real one. Takes are encoded to <take>.mp4: owner.mp4
+(1920x1080), phone.mp4 (390x844 customer card at 2x), owner_end.mp4. Scene start times go to
+scenes_<take>.json in seconds of the result. video/make_aignite.py turns them into the film."""
+import base64, json, os, shutil, subprocess, sys, time
 import httpx
 from playwright.sync_api import sync_playwright
 
-OUT = sys.argv[1]
+OUT = os.path.abspath(sys.argv[1])
 # A signed browser channel ("msedge" by default): Windows Smart App Control can block Playwright's own Chromium.
 CHANNEL = sys.argv[2] if len(sys.argv) > 2 else "msedge"
 os.makedirs(OUT, exist_ok=True)
@@ -15,10 +19,28 @@ APP, API = "http://localhost:3000", "http://127.0.0.1:8000/api/v1"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 INVOICE = os.path.join(ROOT, "eval", "images", "e01_invoice.jpg")
 CARD = "GL-7KQM-4XPA"
+FPS = 60
+SLOW = 3  # record at a third of real speed
 
 # A visible cursor (arrow on desktop, a fingertip dot on the phone) and a ring on each click.
+# __glide and __scroll animate on requestAnimationFrame, so every 60 fps frame moves a little.
 CURSOR = r"""
 (() => {
+  try { localStorage.setItem('lamp:notify-asked', '1'); } catch {}  // no desktop-alerts prompt on screen
+  // The page's own CSS animations and transitions at the recording speed (window.__RATE).
+  const rate = window.__RATE || 1;
+  if (rate !== 1) {
+    const tick = () => { for (const a of document.getAnimations()) if (a.playbackRate !== rate) a.playbackRate = rate; requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
+  const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const animate = (ms, f) => new Promise((done) => {
+    const t0 = performance.now();
+    const step = (now) => { const k = Math.min(1, (now - t0) / ms); f(ease(k)); k < 1 ? requestAnimationFrame(step) : done(); };
+    requestAnimationFrame(step);
+  });
+  const pos = () => { try { return JSON.parse(sessionStorage.getItem('__curpos')); } catch { return null; } };
+  const save = (p) => { try { sessionStorage.setItem('__curpos', JSON.stringify(p)); } catch {} };
   const add = () => {
     if (document.getElementById('__cur')) return;
     const phone = innerWidth < 600;
@@ -28,23 +50,71 @@ CURSOR = r"""
     const r = document.createElement('div'); r.id = '__ring';
     Object.assign(r.style, {position:'fixed', width:'36px', height:'36px', borderRadius:'50%', border:'3px solid #f5b400', zIndex:2147483646, pointerEvents:'none', opacity:0, transform:'translate(-18px,-18px) scale(.4)'});
     document.documentElement.append(c, r);
-    const pos = (window.__curpos || {x: innerWidth / 2, y: innerHeight * 0.65}); c.style.left = pos.x + 'px'; c.style.top = pos.y + 'px';
-    addEventListener('mousemove', e => { c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; window.__curpos = {x: e.clientX, y: e.clientY}; }, true);
+    const p = pos() || {x: innerWidth / 2, y: innerHeight * 0.65};
+    c.style.left = p.x + 'px'; c.style.top = p.y + 'px';
+    addEventListener('mousemove', e => { c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; save({x: e.clientX, y: e.clientY}); }, true);
     addEventListener('mousedown', e => { r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; r.style.transition = 'none'; r.style.opacity = 1; r.style.transform = 'translate(-18px,-18px) scale(.4)';
       requestAnimationFrame(() => { r.style.transition = 'opacity .45s, transform .45s'; r.style.opacity = 0; r.style.transform = 'translate(-18px,-18px) scale(1.4)'; }); }, true);
-    const st = document.createElement('style'); st.textContent = 'nextjs-portal{display:none!important}'; document.head.append(st);
   };
-  try { localStorage.setItem('lamp:notify-asked', '1'); } catch {}  // no desktop-alerts prompt on screen
+  window.__glide = (x, y, ms) => {
+    const c = document.getElementById('__cur'); const from = pos() || {x: innerWidth / 2, y: innerHeight * 0.65};
+    return animate(ms, (e) => { const p = {x: from.x + (x - from.x) * e, y: from.y + (y - from.y) * e}; c.style.left = p.x + 'px'; c.style.top = p.y + 'px'; save(p); });
+  };
+  window.__scroll = (dy, ms) => { const y0 = scrollY; return animate(ms, (e) => scrollTo(0, y0 + dy * e)); };
   if (document.readyState === 'loading') addEventListener('DOMContentLoaded', add); else add();
 })();
 """
 
-scenes, T0 = [], None
 
+class Take:
+    """One recorded take: a page whose screencast frames are saved with their times."""
 
-def mark(name):
-    t = round(time.monotonic() - T0, 2)
-    scenes.append({"t": t, "scene": name}); print(f"{t:7.2f}  {name}", flush=True)
+    def __init__(self, b, name, viewport, scale=1, mobile=False):
+        self.name, self.dir = name, os.path.join(OUT, f"{name}_frames")
+        shutil.rmtree(self.dir, ignore_errors=True); os.makedirs(self.dir)
+        self.ctx = b.new_context(viewport=viewport, device_scale_factor=scale, is_mobile=mobile, has_touch=False)
+        self.ctx.add_init_script(f"window.__RATE = {1 / SLOW};")
+        self.ctx.add_init_script(CURSOR)
+        self.pg = self.ctx.new_page()
+        self.frames, self.scenes = [], []
+        self.cdp = self.ctx.new_cdp_session(self.pg)
+        self.cdp.on("Page.screencastFrame", self._frame)
+        self.cdp.send("Page.startScreencast", {"format": "jpeg", "quality": 90, "everyNthFrame": 1,
+                                               "maxWidth": viewport["width"] * scale, "maxHeight": viewport["height"] * scale})
+
+    def _frame(self, ev):
+        path = os.path.join(self.dir, f"{len(self.frames):06d}.jpg")
+        with open(path, "wb") as f:
+            f.write(base64.b64decode(ev["data"]))
+        self.frames.append((ev["metadata"]["timestamp"], os.path.basename(path)))
+        self.cdp.send("Page.screencastFrameAck", {"sessionId": ev["sessionId"]})
+
+    def mark(self, scene):
+        self.scenes.append({"t": time.time(), "scene": scene}); print(f"{self.name:9s} {scene}", flush=True)
+
+    def finish(self):
+        """Encode the frames at a constant 60 fps, each held until the next one arrived, SLOW times faster."""
+        hold(self.pg, 300)
+        self.cdp.send("Page.stopScreencast")
+        end = time.time()
+        self.ctx.close()
+        t0 = self.frames[0][0]
+        lines = []
+        for (t, f), nxt in zip(self.frames, [t for t, _ in self.frames[1:]] + [end]):
+            lines += [f"file '{f}'", f"duration {max(nxt - t, 0.001) / SLOW:.6f}"]
+        lines.append(f"file '{self.frames[-1][1]}'")
+        with open(os.path.join(self.dir, "frames.txt"), "w") as fh:
+            fh.write("\n".join(lines) + "\n")
+        out = os.path.join(OUT, f"{self.name}.mp4")
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", "frames.txt",
+                        "-vf", f"fps={FPS},format=yuv420p", "-c:v", "libx264", "-crf", "14", "-preset", "fast", out],
+                       cwd=self.dir, check=True)
+        json.dump([{"t": round((s["t"] - t0) / SLOW, 3), "scene": s["scene"]} for s in self.scenes],
+                  open(os.path.join(OUT, f"scenes_{self.name}.json"), "w"), indent=1)
+        gaps = sorted(b - a for (a, _), (b, _) in zip(self.frames, self.frames[1:]))
+        print(f"{self.name}: {len(self.frames)} frames, median gap {gaps[len(gaps) // 2] * 1000 / SLOW:.0f} ms "
+              f"(90% under {gaps[int(len(gaps) * 0.9)] * 1000 / SLOW:.0f} ms) -> {out}")
+        shutil.rmtree(self.dir)
 
 
 def shot(pg, name):
@@ -52,14 +122,20 @@ def shot(pg, name):
 
 
 def hold(pg, ms):
-    pg.wait_for_timeout(ms)
+    """Wait ms of the finished film's time."""
+    pg.wait_for_timeout(ms * SLOW)
 
 
-def move_to(pg, loc, settle=350):
-    loc.scroll_into_view_if_needed(); pg.wait_for_timeout(250)
+def move_to(pg, loc, settle=250):
+    """Glide the cursor to the middle of loc, then put the real mouse there (for hover)."""
+    loc.scroll_into_view_if_needed(); hold(pg, 200)
     bb = loc.bounding_box()
-    pg.mouse.move(bb["x"] + bb["width"] / 2, bb["y"] + bb["height"] / 2, steps=28)
-    pg.wait_for_timeout(settle)
+    x, y = bb["x"] + bb["width"] / 2, bb["y"] + bb["height"] / 2
+    start = pg.evaluate("() => { try { return JSON.parse(sessionStorage.getItem('__curpos')); } catch { return null; } }") or {"x": x, "y": y}
+    dist = ((x - start["x"]) ** 2 + (y - start["y"]) ** 2) ** 0.5
+    pg.evaluate("([x, y, ms]) => window.__glide(x, y, ms)", [x, y, min(1000, max(420, 300 + dist * 0.45)) * SLOW])
+    pg.mouse.move(x, y)
+    hold(pg, settle)
 
 
 def click(pg, loc, after=900):
@@ -68,57 +144,39 @@ def click(pg, loc, after=900):
     except Exception:
         shot(pg, "FAIL"); raise
     move_to(pg, loc)
-    pg.mouse.down(); pg.wait_for_timeout(90); pg.mouse.up()
-    pg.wait_for_timeout(after)
+    pg.mouse.down(); hold(pg, 90); pg.mouse.up()
+    hold(pg, after)
 
 
 def nav(pg, label, after=2200):
     click(pg, pg.get_by_role("link", name=label, exact=True).locator("visible=true").last, after)
 
 
-def scroll(pg, dy, steps=14, ms=60):
-    for _ in range(steps):
-        pg.mouse.wheel(0, dy / steps); pg.wait_for_timeout(ms)
-    pg.wait_for_timeout(500)
+def scroll(pg, dy, ms=1100):
+    pg.evaluate("([dy, ms]) => window.__scroll(dy, ms)", [dy, ms * SLOW]); hold(pg, 350)
 
 
 def type_slow(pg, loc, text, delay=160):
-    click(pg, loc, 200); loc.press_sequentially(text, delay=delay)
-
-
-def start(b, name, viewport, size, mobile=False):
-    global T0
-    d = os.path.join(OUT, name); os.makedirs(d, exist_ok=True)
-    ctx = b.new_context(viewport=viewport, record_video_dir=d, record_video_size=size,
-                        device_scale_factor=2 if mobile else 1, is_mobile=mobile, has_touch=False)
-    ctx.add_init_script(CURSOR)
-    pg = ctx.new_page(); T0 = time.monotonic(); scenes.clear()
-    return ctx, pg
-
-
-def finish(ctx, pg, name):
-    video = pg.video; ctx.close()
-    shutil.move(video.path(), os.path.join(OUT, name + ".webm"))
-    json.dump(scenes, open(os.path.join(OUT, f"scenes_{name}.json"), "w"), indent=1)
+    click(pg, loc, 200); loc.press_sequentially(text, delay=delay * SLOW)
 
 
 def owner(b):
-    ctx, pg = start(b, "owner", {"width": 1920, "height": 1080}, {"width": 1920, "height": 1080})
+    t = Take(b, "owner", {"width": 1920, "height": 1080}); pg = t.pg
     try:
         pg.goto(APP + "/", wait_until="load")
         pin = pg.get_by_label("Owner PIN"); pin.wait_for(timeout=30000)
-        pg.mouse.move(960, 760); hold(pg, 800)
-        mark("pin")
+        hold(pg, 800)
+        t.mark("pin")
         hold(pg, 2500)
         type_slow(pg, pin, "2468", 260); hold(pg, 300)
         if pin.is_visible(): pin.press("Enter")
         pg.get_by_text("Short BDT").first.wait_for(timeout=30000)
-        mark("today")
+        t.mark("today")
         hold(pg, 3500); shot(pg, "o1_today")
         scroll(pg, 420); hold(pg, 2500); scroll(pg, -420); hold(pg, 800)
 
-        mark("capture")
-        nav(pg, "Capture", 1500)
+        t.mark("capture")
+        nav(pg, "Scan", 1500)
         with pg.expect_file_chooser() as fc:
             click(pg, pg.get_by_role("button", name="Take or choose a photo"), 0)
         fc.value.set_files(INVOICE)
@@ -126,12 +184,12 @@ def owner(b):
         hold(pg, 2500); shot(pg, "o2_capture")
         scroll(pg, 450); hold(pg, 3000); scroll(pg, -450); hold(pg, 600)
 
-        mark("funding")
-        nav(pg, "Funding", 3500); shot(pg, "o3_funding")
-        mark("funding_cost")
+        t.mark("funding")
+        nav(pg, "Plan", 3500); shot(pg, "o3_funding")
+        t.mark("funding_cost")
         scroll(pg, 380); hold(pg, 4500)
 
-        mark("chat")
+        t.mark("chat")
         click(pg, pg.get_by_role("button", name="Ask LaMP"), 1200)
         click(pg, pg.get_by_role("button", name="Can I pay Supplier A's order next week?"), 600)
         busy = pg.get_by_text("LaMP is checking your figures")
@@ -140,51 +198,50 @@ def owner(b):
         except Exception:
             pass
         busy.wait_for(state="hidden", timeout=60000)
-        hold(pg, 7500); shot(pg, "o4_chat")
+        hold(pg, 8500); shot(pg, "o4_chat")
         pg.keyboard.press("Escape"); hold(pg, 1000)
 
-        # The chat's answer already put the plan's steps in Actions, suggested by LaMP.
-        mark("approve")
-        click(pg, pg.get_by_role("link", name="Actions").locator("visible=true").first, 2500); shot(pg, "o5_actions")
+        # The chat's answer already put the plan's steps in Approvals, suggested by LaMP.
+        t.mark("approve")
+        click(pg, pg.get_by_role("link", name="Approvals").locator("visible=true").first, 2500); shot(pg, "o5_actions")
         for _ in range(2):
             card = pg.locator("li").filter(has=pg.get_by_role("button", name="Approve", exact=True)).filter(has_not_text="needs your PIN")
             if card.count() == 0: break
             click(pg, card.first.get_by_role("button", name="Approve", exact=True), 3000)
         scroll(pg, 350); hold(pg, 3500); shot(pg, "o6_saved")
-        mark("end")
+        t.mark("end")
     finally:
-        finish(ctx, pg, "owner")
+        t.finish()
 
 
 def phone(b):
-    # Recorded at the viewport size: Playwright doesn't scale a page up to a bigger video.
-    ctx, pg = start(b, "phone", {"width": 390, "height": 844}, {"width": 390, "height": 844}, mobile=True)
+    t = Take(b, "phone", {"width": 390, "height": 844}, scale=2, mobile=True); pg = t.pg
     try:
         pg.goto(APP + "/me", wait_until="load")
         pg.get_by_role("button", name="Try a demo card").wait_for(timeout=30000)
         pg.mouse.move(195, 600); hold(pg, 600)
-        mark("customer_home")
+        t.mark("customer_home")
         hold(pg, 2500)
         field = pg.get_by_label("Card code")
         type_slow(pg, field, CARD, 120); hold(pg, 500)
         click(pg, pg.get_by_role("button", name="Open", exact=True), 0)
         pg.get_by_text("You owe", exact=True).wait_for(timeout=30000)
-        mark("customer_card")
+        t.mark("customer_card")
         hold(pg, 3000); shot(pg, "p1_card")
         click(pg, pg.get_by_text("4 weekly parts of BDT 1,625"), 800)
-        mark("customer_plan")
+        t.mark("customer_plan")
         hold(pg, 1500)
         click(pg, pg.get_by_role("button", name="Promise this plan"), 0)
         pg.get_by_text("Your plan", exact=True).wait_for(timeout=30000)
-        mark("customer_saved")
+        t.mark("customer_saved")
         hold(pg, 4500); shot(pg, "p2_plan")
-        mark("end")
+        t.mark("end")
     finally:
-        finish(ctx, pg, "phone")
+        t.finish()
 
 
 def owner_end(b):
-    ctx, pg = start(b, "owner_end", {"width": 1920, "height": 1080}, {"width": 1920, "height": 1080})
+    t = Take(b, "owner_end", {"width": 1920, "height": 1080}); pg = t.pg
     try:
         pg.goto(APP + "/", wait_until="load")
         pin = pg.get_by_label("Owner PIN"); pin.wait_for(timeout=30000)
@@ -193,14 +250,14 @@ def owner_end(b):
         pg.goto(APP + "/customers", wait_until="load")
         pg.get_by_text("Owed to you").wait_for(timeout=30000)
         pg.mouse.move(1100, 700); hold(pg, 1200)
-        mark("owner_customers")
+        t.mark("owner_customers")
         hold(pg, 1500)
         move_to(pg, pg.get_by_text("4 parts from").first, 3500); shot(pg, "e1_customers")
-        mark("owner_log")
-        nav(pg, "Activity log", 4500); shot(pg, "e2_log")
-        mark("end")
+        t.mark("owner_log")
+        nav(pg, "History", 4500); shot(pg, "e2_log")
+        t.mark("end")
     finally:
-        finish(ctx, pg, "owner_end")
+        t.finish()
 
 
 httpx.post(f"{API}/dev/reset?with_demo_captures=true", timeout=60).raise_for_status()

@@ -1,8 +1,8 @@
-"""Cut the AIgnite demo film from record_aignite.py's takes, with English captions burned in.
+"""Cut the AIgnite demo film (1080p, 60 fps) from record_aignite.py's takes, with English captions burned in.
 
 python video/make_aignite.py <rec_dir> <out.mp4> [live_url]
 Needs ffmpeg on PATH and Pillow. Captions are timed against the scene marks in scenes_<take>.json,
-so re-recording keeps them in step with the screen."""
+so re-recording keeps them in step with the screen. Sections meet with a short crossfade."""
 import json, os, subprocess, sys
 from PIL import Image, ImageDraw, ImageFont
 
@@ -11,7 +11,8 @@ LIVE_URL = sys.argv[3] if len(sys.argv) > 3 else "lamp-ai-web.onrender.com"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 STICKER = os.path.join(ROOT, "frontend", "public", "aignite-sticker.png")
 WORK = os.path.join(REC, "cut"); os.makedirs(WORK, exist_ok=True)
-W, H, FPS = 1920, 1080, 30
+W, H, FPS = 1920, 1080, 60
+FADE = 0.5  # seconds of crossfade between sections
 GREEN, SIGNAL, MINT = (15, 77, 58), (255, 212, 0), (207, 232, 218)
 FONT = {k: os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts", f) for k, f in
         {"reg": "segoeui.ttf", "semi": "seguisb.ttf", "black": "seguibl.ttf"}.items()}
@@ -37,7 +38,7 @@ CAPTIONS = {
     ],
     "owner_end": [
         ("owner_customers", 0, "The owner sees the plan straight away on the Customers page."),
-        ("owner_log", 0, "Every step, by the owner, LaMP or a customer, is kept in a tamper-evident activity log."),
+        ("owner_log", 0, "Every step, by the owner, LaMP or a customer, is saved in a history no one can secretly change."),
     ],
 }
 FIRST = {"owner": "pin", "phone": "customer_home", "owner_end": "owner_customers"}
@@ -75,13 +76,13 @@ def ass(name, cues, length, style="Cap"):
 
 
 def segment(take):
-    """Trim a take from its first scene to its end mark, caption it, encode at 1080p30."""
+    """Trim a take from its first scene to its end mark, caption it, encode at 1080p60."""
     marks = json.load(open(os.path.join(REC, f"scenes_{take}.json")))
     at = {m["scene"]: m["t"] for m in marks}
     start, end = at[FIRST[take]], at["end"]
     cues = [(at[scene] + offset - start, text) for scene, offset, text in CAPTIONS[take]]
     subs = ass(take, cues, end - start, "Side" if take == "phone" else "Cap")
-    src = os.path.join(REC, f"{take}.webm")
+    src = os.path.join(REC, f"{take}.mp4")
     out = f"seg_{take}.mp4"
     if take == "phone":
         bg, frame = phone_layers()
@@ -162,6 +163,22 @@ parts = [
         ("reg", 34, MINT, "LaMP reads and suggests. People approve. It never moves money."),
     ], 7),
 ]
-open(os.path.join(WORK, "list.txt"), "w").write("".join(f"file '{p}'\n" for p in parts))
-run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "list.txt", "-c", "copy", "-movflags", "+faststart", OUT])
+
+
+def length(clip):
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", clip],
+                         cwd=WORK, check=True, capture_output=True, text=True).stdout
+    return float(out)
+
+
+# Crossfade each section into the next; offset is where the incoming one starts on the joined timeline.
+inputs, graph, offset, last = [], [], 0.0, "0:v"
+for i, clip in enumerate(parts):
+    inputs += ["-i", clip]
+    if i:
+        offset += length(parts[i - 1]) - FADE
+        graph.append(f"[{last}][{i}:v]xfade=transition=fade:duration={FADE}:offset={offset:.3f}[v{i}]")
+        last = f"v{i}"
+run(["ffmpeg", "-y", *inputs, "-filter_complex", ";".join(graph), "-map", f"[{last}]", "-r", str(FPS),
+     "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT])
 print("wrote", OUT)

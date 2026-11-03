@@ -29,6 +29,6 @@ LaMP is a solo entry by @ishmam259 for **Ostad Presents YUNet AIgnite Buildathon
 - Keep OpenAI spend tiny: no loops that call the API; resize images to ≤ 1,600 px.
 - The golden numbers in `docs/PLAN.md` section 6 must be reproduced exactly.
 - Customer cards (`/me/<code>`) show amounts only. Never store or show medicine names linked to a customer, or a customer's real name.
-- Plain English everywhere in the UI: no AI or developer jargon (no "model", "replay", "passport", "audit", setting names).
+- Plain English everywhere in the UI, chat answers, captions and deck: no AI, finance or developer jargon (no "model", "replay", "passport", "audit", "funding", "capture", "gross profit", "overheads", "shortfall", setting names). The owner's pages are Today, Cash, Scan, Stock, Plan, Customers, Approvals, Credit record, Wallet, Rules and History.
 - English only in the app, docs and UI. No blockchain.
 - Check current library docs (OpenAI SDK, PydanticAI, Next.js, AI SDK) before using an API name you aren't sure of.

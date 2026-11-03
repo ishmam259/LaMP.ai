@@ -16,7 +16,7 @@ Built solo by A K M Ishmam Tahmid for **Ostad Presents YUNet AIgnite Buildathon 
 - **Cheapest money first.** Order less, ask the supplier for more days, and only then borrow the gap, with every loan's real cost side by side. In the demo this turns a BDT 421.64 loan into BDT 0 (or BDT 181.97 if the supplier says no).
 - **Customers.** Everyone who owes the shop, their payment plans, and a link to send each one their card.
 - **Ask LaMP.** A chat that answers from the shop's own figures. It can only read and suggest; the owner approves every action, and loans need the PIN again.
-- **Activity log.** Every change is recorded in a tamper-evident log.
+- **History.** Every change is recorded in a history that shows if anyone edits it later.
 
 All money math is plain Python in `backend/app/engines/`. The AI reads photos and explains; it never calculates money or moves it.
 
