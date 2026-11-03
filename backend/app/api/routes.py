@@ -474,6 +474,9 @@ async def stream_logs(once: bool = False, db: Session = Depends(get_db)):
     `once=true` sends the backlog and closes (for tests). After /dev/reset the log ids restart
     at lg-1, so the stream closes; the browser's EventSource reconnects and gets the new log."""
     factory = sessionmaker(bind=db.get_bind())
+    # End the sign-in check's read transaction now. Held open for the whole stream, its lock
+    # on owner_session blocks the DROP TABLE of a demo reset on PostgreSQL.
+    db.close()
 
     async def gen():
         last = 0

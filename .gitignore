@@ -48,3 +48,6 @@ video/*.wav
 .agents/
 .claude/
 .impeccable/
+
+# Raw demo takes (re-cut with make_aignite.py)
+video/takes/

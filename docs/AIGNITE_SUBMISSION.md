@@ -7,7 +7,7 @@
 |---|---|---|
 | Live web app (mandatory) | To deploy | Render Blueprint from `render.yaml` (steps below) |
 | Deck, max 5 slides (mandatory) | Ready | `deck/LaMP-AIgnite.pdf` (rebuild if the live link changes) |
-| Demo video in English (optional) | To record | Story below |
+| Demo video in English (optional) | Recorded: 2:03, English captions | `video/LaMP-AIgnite-demo.mp4` (not in git): upload to YouTube, unlisted is fine. How to re-cut: `video/README.md` |
 | GitHub repo (optional) | Ready, private | https://github.com/ishmam259/LaMP.ai (organizers may ask for access) |
 
 Done: official sticker on every page (PIN screen, owner header, customer header), customer cards, plain wording, Farhan's agreement to the solo entry.
@@ -21,7 +21,7 @@ Done: official sticker on every page (PIN screen, owner header, customer header)
 
 Free services sleep after 15 idle minutes, so open the link a minute before judging, and say on Devpost that the first load can take up to a minute.
 
-## Demo video story (about 2 minutes, English)
+## Demo video story (as recorded)
 1. PIN screen with the sticker: "LaMP helps the person behind a neighborhood pharmacy counter, and the families who buy there on credit."
 2. Today: short BDT 19,000 in 10 days. See the fix.
 3. Capture: a supplier invoice photo is read by AI; the owner checks it.
