@@ -22,13 +22,14 @@ Done: official sticker on every page (PIN screen, owner header, customer header)
 Free services sleep after 15 idle minutes, so open the link a minute before judging, and say on Devpost that the first load can take up to a minute.
 
 ## Demo video story (as recorded)
-1. PIN screen with the sticker: "LaMP helps the person behind a neighborhood pharmacy counter, and the families who buy there on credit."
-2. Today: short BDT 19,000 in 10 days. See the fix.
-3. Capture: a supplier invoice photo is read by AI; the owner checks it.
+1. Title card with the sticker, then the owner unlocks with the PIN.
+2. Today: short BDT 19,000 on 26 Oct.
+3. Capture: AI reads a supplier invoice photo; the owner checks it.
 4. Funding: order fewer slow sellers, ask for more days, borrow only the gap. BDT 0, or BDT 181.97 instead of 421.64.
-5. Ask LaMP: "How did we do this month?"
-6. Customer side: "Check what you owe" → card GL-7KQM-4XPA → 4 weekly parts → the owner's Customers page shows the plan.
-7. Safety: the owner approves every action; loans need the PIN again; the activity log records everything.
+5. Ask LaMP: "Can I pay Supplier A's order next week?" LaMP answers and suggests the plan's steps.
+6. The owner approves two steps; the savings show BDT 11,039.67.
+7. On the customer's phone: card GL-7KQM-4XPA → 4 weekly parts of BDT 1,625.
+8. The owner's Customers page shows the plan; the activity log records every step. End card with the live link.
 
 ## Devpost "what's new" text (draft)
 LaMP started as a team prototype for FinTechathon 2026 (with Farhan Tahsin Khan, who agreed to this solo entry). For AIgnite I added a consumer side: each family that buys on credit gets a card where they can see what they owe and choose a weekly payment plan, and the owner sees every plan on a new Customers page. I also rewrote the app in plain language, deployed it publicly for judges, added the official sticker, and rebuilt the pitch as a 5-slide story.
