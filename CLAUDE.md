@@ -25,7 +25,7 @@ LaMP is a solo entry by @ishmam259 for **Ostad Presents YUNet AIgnite Buildathon
 - All money math lives in `backend/app/engines/` as deterministic Python. The LLM never computes money.
 - The chat's tools are read-only plus `propose_action`. Never give it a tool that approves, executes, transfers money or contacts anyone.
 - Engines use `settings.as_of_date` from the pharmacy, never the real clock.
-- Tests never call the OpenAI API (`LLM_MODE=replay`). The shared demo runs live (`LLM_MODE=live`, key set in Render only): recorded inputs are served free, and new calls stop at `LLM_DAILY_BUDGET_USD`.
+- Tests never call the OpenAI API (`LLM_MODE=replay`). The shared demo runs live (`LLM_MODE=live`, key set in Render only): recorded inputs are served free, and new calls have no daily limit (`LLM_DAILY_BUDGET_USD=0`).
 - Keep OpenAI spend tiny: no loops that call the API; resize images to ≤ 1,600 px.
 - The golden numbers in `docs/PLAN.md` section 6 must be reproduced exactly.
 - Customer cards (`/me/<code>`) show amounts only. Never store or show medicine names linked to a customer, or a customer's real name.

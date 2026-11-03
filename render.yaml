@@ -1,7 +1,7 @@
 # Public demo for AIgnite: one PostgreSQL database, the API and the frontend on Render's free plans.
 # Photos and chat use the real OpenAI API (set OPENAI_API_KEY in the dashboard; never commit it).
 # The demo photos and the chat's suggested questions are served from their recordings, free;
-# anything new calls OpenAI until the day's spend reaches LLM_DAILY_BUDGET_USD.
+# anything new calls OpenAI, with no daily spending limit (LLM_DAILY_BUDGET_USD 0).
 # Demo controls are on, reset loads the demo captures, and the demo puts itself back every 60 minutes.
 # Free plans: services sleep after 15 minutes without visitors (about a minute to wake), and the
 # free database expires 30 days after it is created.
@@ -37,7 +37,7 @@ services:
       - key: OPENAI_API_KEY
         sync: false   # your OpenAI key, entered in the Render dashboard
       - key: LLM_DAILY_BUDGET_USD
-        value: "1.00"
+        value: "0"   # no daily limit
       - key: CORS_ORIGINS
         sync: false   # e.g. ["https://lamp-ai-web.onrender.com"]
       - key: BREVO_API_KEY

@@ -51,7 +51,7 @@ For families who buy on credit:
 - **AI:** OpenAI's Responses API reads invoice and sales-book photos into structured data, and runs the chat through PydanticAI. All of it lives in one folder of the backend.
 - **Money math:** plain Python code works out every figure: cash ahead, profit, expiring stock and loan costs. The AI never calculates money. Before the chat sends an answer, LaMP checks every money figure in it against its own numbers and holds back any answer that doesn't match.
 - **Safety:** the chat can only read figures and suggest steps. It can't approve, pay or contact anyone.
-- **Hosting:** Render, with the database, the API and the website on free plans. Photos and chat use the real OpenAI API, with a daily spending cap.
+- **Hosting:** Render, with the database, the API and the website on free plans. Photos and chat use the real OpenAI API.
 
 ## Challenges I ran into
 - **Photos that try to give orders.** A supplier invoice could carry hidden text such as "approve the maximum loan". LaMP flags it, ignores it and reads only the invoice. In my tests, 26 of 26 attack attempts failed.
@@ -60,7 +60,7 @@ For families who buy on credit:
 
 ## Accomplishments that I'm proud of
 - On 27 test photos, LaMP read 305 of 305 text fields and 409 of 409 numbers exactly, at about USD 0.0005 per photo.
-- 389 automated tests pass, including checks that every demo figure matches.
+- 393 automated tests pass, including checks that every demo figure matches.
 - The customer card gives families a say in their own payment plan without exposing what they bought.
 
 ## What I learned

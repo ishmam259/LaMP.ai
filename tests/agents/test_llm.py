@@ -134,3 +134,10 @@ def test_preprocess_keeps_small_images_and_converts_png():
     Image.new("RGBA", (300, 200)).save(png, format="PNG")
     with Image.open(io.BytesIO(llm.preprocess_image(png.getvalue()))) as im:
         assert im.format == "JPEG" and im.size == (300, 200)
+
+
+def test_zero_budget_means_no_limit(monkeypatch):
+    monkeypatch.setattr(llm.settings, "openai_api_key", "sk-test")
+    monkeypatch.setattr(llm.settings, "llm_daily_budget_usd", 0)
+    llm.record_spend("chat", "m", 50_000_000, 0)  # USD 5 today
+    assert llm.live_allowed()

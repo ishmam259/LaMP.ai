@@ -21,7 +21,7 @@ Done: official sticker on every page (PIN screen, owner header, customer header)
 
 Free plans: each service sleeps after 15 minutes without visitors, and the first visit after that takes about a minute. Open the link yourself a minute before you expect judges. The free database expires 30 days after it is created (Render then gives 14 days to upgrade before deleting it), so a database made now lasts through judging. Render allows one free database per account.
 
-OpenAI: new photos and new chat questions use your key, capped at USD 1 a day (`LLM_DAILY_BUDGET_USD`). The cap resets when the free service restarts, so also set a monthly budget limit on the OpenAI project in OpenAI's settings.
+OpenAI: new photos and new chat questions use your key with no daily limit (`LLM_DAILY_BUDGET_USD=0`). Demo photos and the suggested questions stay free.
 
 ## Demo video story (as recorded)
 1. Title card with the sticker, then the owner unlocks with the PIN.

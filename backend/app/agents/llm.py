@@ -82,8 +82,9 @@ def record_spend(component: str, model: str, input_tokens: int, output_tokens: i
 
 
 def live_allowed() -> bool:
-    """True if an API key is set and today's spend is under LLM_DAILY_BUDGET_USD."""
-    return bool(settings.openai_api_key) and spent_today() < settings.llm_daily_budget_usd
+    """True if an API key is set and today's spend is under LLM_DAILY_BUDGET_USD (0 means no limit)."""
+    cap = settings.llm_daily_budget_usd
+    return bool(settings.openai_api_key) and (cap <= 0 or spent_today() < cap)
 
 
 # --- Images ---------------------------------------------------------------------------
