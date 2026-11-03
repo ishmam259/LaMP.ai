@@ -33,3 +33,10 @@ Paid plans don't sleep, so the link answers straight away. Check the Billing pag
 
 ## Devpost "what's new" text (draft)
 LaMP started as a team prototype for FinTechathon 2026 (with Farhan Tahsin Khan, who agreed to this solo entry). For AIgnite I added a consumer side: each family that buys on credit gets a card where they can see what they owe and choose a weekly payment plan, and the owner sees every plan on a new Customers page. I also rewrote the app in plain language, deployed it publicly for judges, added the official sticker, and rebuilt the pitch as a 5-slide story.
+
+## Devpost "how to try it" text (draft)
+The app shows no test logins, so judges need these from Devpost, the deck or the video's end card:
+- Owner: open the live link and enter PIN **2468** (Green Life Pharmacy, Bogura).
+- Customer: on the PIN screen tap "Bought medicine on credit? Check what you owe" and enter card **GL-7KQM-4XPA**.
+- Lender side: open `<live link>/lender` to see what a lender sees after the owner shares their credit record.
+- The shared data resets itself every hour.

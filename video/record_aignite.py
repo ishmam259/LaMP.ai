@@ -218,7 +218,7 @@ def phone(b):
     t = Take(b, "phone", {"width": 390, "height": 844}, scale=2, mobile=True); pg = t.pg
     try:
         pg.goto(APP + "/me", wait_until="load")
-        pg.get_by_role("button", name="Try a demo card").wait_for(timeout=30000)
+        pg.get_by_label("Card code").wait_for(timeout=30000)
         pg.mouse.move(195, 600); hold(pg, 600)
         t.mark("customer_home")
         hold(pg, 2500)
