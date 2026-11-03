@@ -65,6 +65,27 @@ def test_record_then_replay(monkeypatch):
     assert llm.spent_today() == pytest.approx(llm.cost_usd(2_000, 500))
 
 
+def test_live_serves_a_recording_free(monkeypatch):
+    """Live mode answers a recorded input from its recording: no key needed, no OpenAI call."""
+    monkeypatch.setattr(llm.settings, "openai_api_key", "sk-test")
+
+    async def fake_openai(*a):
+        return {"total": 60000}, 2_000, 500
+
+    monkeypatch.setattr(llm, "_call_openai", fake_openai)
+    asyncio.run(llm.structured_call(**ARGS, image=b"img", mode="record"))
+
+    async def no_openai(*a):
+        raise AssertionError("OpenAI called for a recorded input")
+
+    monkeypatch.setattr(llm.settings, "openai_api_key", "")
+    monkeypatch.setattr(llm, "_call_openai", no_openai)
+    live = asyncio.run(llm.structured_call(**ARGS, image=b"img", mode="live"))
+    assert live.mode == "replay" and live.data == {"total": 60000}
+    with pytest.raises(llm.BudgetExceeded):
+        asyncio.run(llm.structured_call(**ARGS, image=b"new", mode="live"))
+
+
 def test_cache_key_changes_with_each_input():
     base = llm.cache_key("m", "v1", "t", b"a")
     assert base == llm.cache_key("m", "v1", "t", b"a")

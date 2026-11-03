@@ -6,7 +6,7 @@ import { Camera, CircleAlert, CircleCheck, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Carton, PageTitle } from "@/components/carton";
-import { confirmCapture, uploadCapture } from "@/lib/api";
+import { ApiError, confirmCapture, errorDetail, uploadCapture } from "@/lib/api";
 import { dayDate, num, stampDate } from "@/lib/format";
 import type { CaptureOut, ExtractionLine, ExtractionResult } from "@/lib/types";
 
@@ -27,8 +27,9 @@ export default function CapturePage() {
     setSaved(false);
     try {
       setCapture(await uploadCapture(kind, file));
-    } catch {
-      toast.error("LaMP couldn't read that photo. Try again in better light.");
+    } catch (e) {
+      const fallback = "LaMP couldn't read that photo. Try again in better light.";
+      toast.error(e instanceof ApiError && e.status === 503 ? errorDetail(e, fallback) : fallback);
     } finally {
       setReading(false);
       if (fileRef.current) fileRef.current.value = "";

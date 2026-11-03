@@ -1,7 +1,8 @@
 """OpenAI client for photo reading: Responses API, structured output, replay and a budget guard.
 
 LLM_MODE picks how the model is reached:
-- live:   call OpenAI. Cost goes to eval/spend.log; refused once today's spend passes
+- live:   serve the saved response if this exact input has one (free); otherwise call
+          OpenAI. Cost goes to eval/spend.log; refused once today's spend passes
           LLM_DAILY_BUDGET_USD.
 - record: like live, and the parsed response is saved under eval/replay/<component>/.
 - replay: never call OpenAI. Serve the saved response for the same key; raise
@@ -169,6 +170,8 @@ async def structured_call(*, component: str, prompt_version: str, instructions: 
 
     if mode not in ("live", "record"):
         raise ValueError(f"Unknown LLM_MODE '{mode}'")
+    if mode == "live" and (saved := _load(component, key)) is not None:
+        return LLMResult(data=saved["output"], model=saved["model"], mode="replay", key=key)
     if not live_allowed():
         raise BudgetExceeded(f"Live call refused: no OPENAI_API_KEY, or today's spend "
                              f"${spent_today():.4f} is over ${settings.llm_daily_budget_usd:.2f}.")

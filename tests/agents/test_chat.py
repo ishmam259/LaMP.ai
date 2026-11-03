@@ -146,3 +146,20 @@ def test_replay_key_uses_only_the_latest_question():
              ModelResponse(parts=[TextPart(content="Fine.")]),
              ModelRequest(parts=[UserPromptPart(content="What is expiring?")])]
     assert chat.conversation_key(first) == chat.conversation_key(later)
+
+
+def test_live_mode_replays_a_suggested_question_without_openai(client, monkeypatch, tmp_path):
+    """Live mode: a suggested question with a recording replays it; OpenAI is not called."""
+    monkeypatch.setattr(llm.settings, "llm_mode", "live")
+    monkeypatch.setattr(llm.settings, "openai_api_key", "sk-test")
+    monkeypatch.setattr(llm, "SPEND_LOG", tmp_path / "spend.log")
+    monkeypatch.setattr(chat, "REPLAY_DIR", chat.REPO_ROOT / "eval" / "replay" / "chat")  # the real recordings
+
+    def no_openai():
+        raise AssertionError("OpenAI called for a recorded question")
+
+    monkeypatch.setattr(chat, "_openai_model", no_openai)
+    assert chat.model_for_mode().model_name.startswith("live:")
+    r = ask(client, "How did we do this month?")
+    for figure in ("412,500", "49,500", "36,000", "13,500"):
+        assert figure in r["text"]

@@ -33,13 +33,8 @@ async def chat_endpoint(request: Request, db: Session = Depends(get_db),
                 if ":" in model.model_name else "live", prompt_version=chat.PROMPT_VERSION)
     db.commit()
 
-    async def on_complete(result) -> None:
-        usage = result.usage
-        if chat.settings.llm_mode == "live" and not model.model_name.startswith("replay"):
-            chat.record_spend(usage.input_tokens, usage.output_tokens)
-
     adapter = await VercelAIAdapter.from_request(request, agent=chat.agent, sdk_version=7)
     events = adapter.run_stream(model=model, deps=ChatDeps(db=db, pharmacy_id=pid),
-                                usage_limits=chat.USAGE_LIMITS, on_complete=on_complete)
+                                usage_limits=chat.USAGE_LIMITS)
     # Every money figure in the answer must trace to this turn's tool outputs before it is shown.
     return adapter.streaming_response(chat.guard_stream(events, db))

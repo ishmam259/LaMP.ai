@@ -123,7 +123,7 @@ export async function uploadCapture(kind: "invoice" | "sales_page", file: File):
   form.append("kind", kind);
   const res = await fetch(`${BASE}/pharmacies/${PID}/captures`, { method: "POST", body: form, credentials: "include" });
   if (res.status === 401) window.dispatchEvent(new Event(LOCKED_EVENT));
-  if (!res.ok) throw new ApiError(res.status, "Couldn't upload the photo. Try again.");
+  if (!res.ok) throw new ApiError(res.status, await res.text().catch(() => ""));
   return res.json();
 }
 

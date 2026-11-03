@@ -52,3 +52,22 @@ def test_injection_photo_is_flagged_and_does_nothing(client):
     assert "suspicious_text_flagged" in [e["event"] for e in client.get("/api/v1/logs").json()]
     assert client.get(f"{P}/actions").json() == actions_before
     assert cap["status"] == "needs_review"
+
+
+def test_live_mode_reads_demo_photos_free_and_refuses_new_ones_plainly(client, monkeypatch, tmp_path):
+    """The shared demo runs live: recorded demo photos still read with no key; a new photo over
+    budget (here: no key) gets a plain message."""
+    import io
+
+    from PIL import Image
+
+    monkeypatch.setattr(llm.settings, "llm_mode", "live")
+    monkeypatch.setattr(llm.settings, "openai_api_key", "")
+    monkeypatch.setattr(llm, "SPEND_LOG", tmp_path / "spend.log")
+    assert upload(client, "invoice_supplier_f", "invoice")["extraction"]["mode"] == "replay"
+
+    buf = io.BytesIO()
+    Image.new("RGB", (40, 30), "white").save(buf, format="JPEG")
+    r = client.post(f"{P}/captures", files={"file": ("new.jpg", buf.getvalue(), "image/jpeg")}, data={"kind": "invoice"})
+    assert r.status_code == 503
+    assert r.json()["detail"] == "LaMP can't read new photos right now. Try again later."

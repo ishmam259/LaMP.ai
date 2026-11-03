@@ -13,13 +13,15 @@
 Done: official sticker on every page (PIN screen, owner header, customer header), customer cards, plain wording, Farhan's agreement to the solo entry.
 
 ## Deploy on Render
-1. Render → New → Blueprint → connect the `ishmam259/LaMP.ai` repo → apply. It creates `lamp-ai-db`, `lamp-ai-api` and `lamp-ai-web`. The services and database are on always-on paid plans, paid from the account's $50 Hackathon credit (Render may ask for a payment method).
+1. Render → New → Blueprint → connect the `ishmam259/LaMP.ai` repo → apply. It creates `lamp-ai-db`, `lamp-ai-api` and `lamp-ai-web`, all on free plans. When it asks for `OPENAI_API_KEY`, paste your OpenAI key (it stays in Render; never put it in the repo). Leave the Brevo and alert-email values empty.
 2. When `lamp-ai-api` is live, copy its URL (for example `https://lamp-ai-api.onrender.com`).
 3. On `lamp-ai-web` → Environment, set `BACKEND_URL` to that URL, then Manual Deploy → Clear build cache & deploy (the URL is baked in at build time).
 4. Open the `lamp-ai-web` URL in a private window: PIN 2468 works, and "Check what you owe" opens card `GL-7KQM-4XPA`.
 5. If the web URL isn't `https://lamp-ai-web.onrender.com`, rebuild the deck: `cd deck && LIVE_URL=<url> node build-deck-aignite.js`, then export the PDF again.
 
-Paid plans don't sleep, so the link answers straight away. Check the Billing page now and then to see the credit lasts through judging.
+Free plans: each service sleeps after 15 minutes without visitors, and the first visit after that takes about a minute. Open the link yourself a minute before you expect judges. The free database expires 30 days after it is created (Render then gives 14 days to upgrade before deleting it), so a database made now lasts through judging. Render allows one free database per account.
+
+OpenAI: new photos and new chat questions use your key, capped at USD 1 a day (`LLM_DAILY_BUDGET_USD`). The cap resets when the free service restarts, so also set a monthly budget limit on the OpenAI project in OpenAI's settings.
 
 ## Demo video story (as recorded)
 1. Title card with the sticker, then the owner unlocks with the PIN.
@@ -38,4 +40,6 @@ LaMP started as a team prototype for FinTechathon 2026 (with Farhan Tahsin Khan,
 The app shows no test logins, so judges need these from Devpost, the deck or the video's end card:
 - Owner: open the live link and enter PIN **2468** (Green Life Pharmacy, Bogura).
 - Customer: on the PIN screen tap "Bought medicine on credit? Check what you owe" and enter card **GL-7KQM-4XPA**.
+- Ask LaMP anything about the shop, or scan your own supplier invoice.
+- If the site has been idle, the first visit takes about a minute.
 - The shared data resets itself every hour.

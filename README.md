@@ -30,7 +30,7 @@ LaMP started as a team prototype for FinTechathon 2026. Farhan Tahsin Khan co-bu
 - **Ops:** Docker Compose, Render, pytest
 
 ## Setup
-Copy `.env.example` to `.env` and add your own OpenAI API key. Never commit `.env`. Tests and the shared demo use replay mode, which makes no OpenAI calls.
+Copy `.env.example` to `.env` and add your own OpenAI API key. Never commit `.env`. Tests use replay mode, which makes no OpenAI calls. The shared demo runs live (see below).
 
 ## Run it
 You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) running. Python 3.12 and Node 20+ are only needed for the tests, the demo script and the frontend.
@@ -72,7 +72,7 @@ python scripts/demo_run.py
 ```
 It runs the whole story against the API, checking each golden number: reset, captures, accounts, expiry, return claim, order trim, funding plan, supplier extension, consent, loan application, a refused duplicate application, and the lender's decision. Then it writes the activity log to `logs/sandbox_execution_trace.log`. `python scripts/export_trace.py` exports the log on its own at any time.
 
-**Live link (Render).** `render.yaml` sets up a PostgreSQL database, the API (`backend/Dockerfile.render`) and the frontend. In Render: New → Blueprint → this repo. Then set `BACKEND_URL` on `lamp-ai-web` to the API's URL (for example `https://lamp-ai-api.onrender.com`) and redeploy it. Chat stays in replay (no OpenAI key on the server), reset loads the demo captures, and the demo resets itself every 60 minutes because everyone shares one database. The plans are Render's smallest always-on ones, so nothing sleeps.
+**Live link (Render).** `render.yaml` sets up a PostgreSQL database, the API (`backend/Dockerfile.render`) and the frontend. In Render: New → Blueprint → this repo. Then set `BACKEND_URL` on `lamp-ai-web` to the API's URL (for example `https://lamp-ai-api.onrender.com`) and redeploy it. Enter your `OPENAI_API_KEY` on `lamp-ai-api` when Render asks: the demo runs live, so judges can scan their own photos and ask any question. The demo photos and the chat's four suggested questions are served from their recordings for free, and new calls stop once the day's spend reaches `LLM_DAILY_BUDGET_USD` (USD 1). Reset loads the demo captures, and the demo resets itself every 60 minutes because everyone shares one database. Everything is on Render's free plans: the services sleep after 15 minutes without visitors and take about a minute to wake, and the free database expires 30 days after it is created.
 
 **5. Run the tests**
 ```bash
@@ -83,6 +83,6 @@ python -m venv .venv
 ```
 Tests use an in-memory SQLite database by default. To run them against the Docker PostgreSQL, create a test database once (`docker compose exec db createdb -U lamp lamp_test`), then set `TEST_DATABASE_URL=postgresql+psycopg://lamp:lamp@127.0.0.1:5433/lamp_test` before running pytest.
 
-**Replay vs live mode.** `LLM_MODE=replay` (the default, used by tests and the demo script) makes no OpenAI calls. The demo photos in `seed/images/` and the 27 evaluation photos in `eval/images/` replay from saved recordings; any other photo returns a sample draft to correct. The copilot chat answers its four suggested questions offline from the same engines. Set `LLM_MODE=live` and `OPENAI_API_KEY` in `.env` to read real photos with OpenAI. Keep live runs short: each photo and chat answer costs money.
+**Replay vs live mode.** `LLM_MODE=replay` (the default, used by tests and the demo script) makes no OpenAI calls. The demo photos in `seed/images/` and the 27 evaluation photos in `eval/images/` replay from saved recordings; any other photo returns a sample draft to correct. The copilot chat answers its four suggested questions offline from the same engines. Set `LLM_MODE=live` and `OPENAI_API_KEY` in `.env` to read real photos with OpenAI; anything already recorded is still served from its recording. Keep live runs short: each new photo and chat answer costs money.
 
 **Regenerating files.** `python scripts/build_seed.py` rebuilds `seed/` from the numbers in that script. `python scripts/export_openapi.py` rebuilds `contracts/openapi.json` and `contracts/examples/` from real API responses.

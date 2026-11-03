@@ -1,10 +1,13 @@
-# Public demo for AIgnite: one PostgreSQL database, the API and the frontend on Render.
-# Chat runs in replay only (no OpenAI key on the server, so no spend). Demo controls are on,
-# reset loads the demo captures, and the demo puts itself back every 60 minutes.
-# Always-on paid plans (paid from the account's credit): no spin-down, no 30-day database expiry.
+# Public demo for AIgnite: one PostgreSQL database, the API and the frontend on Render's free plans.
+# Photos and chat use the real OpenAI API (set OPENAI_API_KEY in the dashboard; never commit it).
+# The demo photos and the chat's suggested questions are served from their recordings, free;
+# anything new calls OpenAI until the day's spend reaches LLM_DAILY_BUDGET_USD.
+# Demo controls are on, reset loads the demo captures, and the demo puts itself back every 60 minutes.
+# Free plans: services sleep after 15 minutes without visitors (about a minute to wake), and the
+# free database expires 30 days after it is created.
 databases:
   - name: lamp-ai-db
-    plan: 0.1c-256mb   # Basic, the smallest paid Postgres (legacy name basic-256mb)
+    plan: free
     databaseName: lamp
     user: lamp
 
@@ -12,7 +15,7 @@ services:
   - type: web
     name: lamp-ai-api
     runtime: docker
-    plan: 0.5c-512mb   # Starter (legacy name starter)
+    plan: free
     dockerfilePath: ./backend/Dockerfile.render
     dockerContext: .
     healthCheckPath: /api/v1/health
@@ -30,7 +33,11 @@ services:
       - key: DEMO_AUTO_RESET_MINUTES
         value: "60"
       - key: LLM_MODE
-        value: replay
+        value: live
+      - key: OPENAI_API_KEY
+        sync: false   # your OpenAI key, entered in the Render dashboard
+      - key: LLM_DAILY_BUDGET_USD
+        value: "1.00"
       - key: CORS_ORIGINS
         sync: false   # e.g. ["https://lamp-ai-web.onrender.com"]
       - key: BREVO_API_KEY
@@ -43,7 +50,7 @@ services:
   - type: web
     name: lamp-ai-web
     runtime: docker
-    plan: 0.5c-512mb   # Starter (legacy name starter)
+    plan: free
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     envVars:

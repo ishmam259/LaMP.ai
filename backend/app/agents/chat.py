@@ -263,12 +263,30 @@ async def _replay(messages: list[ModelMessage], info: AgentInfo) -> AsyncIterato
             for chunk in re.findall(r"\S+\s*", NOT_RECORDED):
                 yield chunk
         return
-    for i, part in enumerate(saved.parts):
+    for chunk in _stream(saved):
+        yield chunk
+
+
+def _stream(response: ModelResponse):
+    """A saved or fresh response as stream chunks: tool calls, then the text word by word."""
+    for i, part in enumerate(response.parts):
         if isinstance(part, ToolCallPart):
             yield {i: DeltaToolCall(name=part.tool_name, json_args=part.args_as_json_str(), tool_call_id=part.tool_call_id)}
         elif isinstance(part, TextPart):
             for chunk in re.findall(r"\S+\s*", part.content):
                 yield chunk
+
+
+async def _live(messages: list[ModelMessage], info: AgentInfo) -> AsyncIterator[str | dict[int, DeltaToolCall]]:
+    """Live mode: a conversation that has a recording (the suggested questions) replays it, free and
+    already checked; anything else goes to OpenAI."""
+    saved = _load(conversation_key(messages))
+    if saved is None:
+        saved = await _openai_model().request(messages, {"openai_reasoning_effort": "low"},
+                                              info.model_request_parameters)
+        record_spend(saved.usage.input_tokens, saved.usage.output_tokens)
+    for chunk in _stream(saved):
+        yield chunk
 
 
 async def _record(messages: list[ModelMessage], info: AgentInfo) -> AsyncIterator[str | dict[int, DeltaToolCall]]:
@@ -284,7 +302,7 @@ async def _record(messages: list[ModelMessage], info: AgentInfo) -> AsyncIterato
 def model_for_mode(mode: str | None = None):
     mode = mode or settings.llm_mode
     if mode == "live" and llm.live_allowed():
-        return _openai_model()
+        return FunctionModel(stream_function=_live, model_name=f"live:{CHAT_MODEL}")
     if mode == "record" and llm.live_allowed():
         return FunctionModel(stream_function=_record, model_name=f"record:{CHAT_MODEL}")
     return FunctionModel(stream_function=_replay, model_name=f"replay:{CHAT_MODEL}")

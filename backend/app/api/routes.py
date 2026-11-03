@@ -195,8 +195,8 @@ async def _extract(image: bytes, kind: str, db: Session, today=None) -> dict:
         return ex.fallback_extraction(kind)
     try:
         result = await extraction.extract(image, kind, db=db, today=today)
-    except llm.BudgetExceeded as e:
-        raise HTTPException(503, str(e))
+    except llm.BudgetExceeded:
+        raise HTTPException(503, "LaMP can't read new photos right now. Try again later.")
     return ExtractionResult.model_validate(result).model_dump(mode="json")
 
 
