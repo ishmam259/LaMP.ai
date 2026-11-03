@@ -9,7 +9,7 @@ const STATUS: Record<MatchStatus, { label: string; tone?: "alert" | "warn" | "st
   matched: { label: "Matched", tone: "stock" },
   duplicate: { label: "Paid twice", tone: "alert" },
   unmatched: { label: "No bill", tone: "warn" },
-  missing_from_statement: { label: "Not on statement", tone: "warn" },
+  missing_from_statement: { label: "Not in wallet", tone: "warn" },
 };
 
 const ORDER: MatchStatus[] = ["duplicate", "unmatched", "missing_from_statement", "matched"];
@@ -40,7 +40,7 @@ function Wallet({ a }: { a: AccountOut }) {
             Starting balance <span className="num">{bdt(a.opening_balance)}</span>
           </p>
           {a.transactions.length === 0 ? (
-            <p className="mt-3 text-sm text-ink-2">No money in or out yet. An approved loan arrives here.</p>
+            <p className="mt-3 text-sm text-ink-2">No money in or out yet.</p>
           ) : (
             <ul className="mt-3 divide-y divide-rule border-t border-rule">
               {a.transactions.map((t) => (
@@ -60,7 +60,7 @@ function Wallet({ a }: { a: AccountOut }) {
 
         <Carton tone={problems.length ? "warn" : "stock"} title="What to do" aside={problems.length ? `${problems.length} to check` : "All clear"}>
           {a.recommendations.length === 0 ? (
-            <p className="text-ink">Every payment on the statement matches a bill in your books.</p>
+            <p className="text-ink">Every wallet payment matches one of your bills.</p>
           ) : (
             <ul className="space-y-2 text-ink">
               {a.recommendations.map((r) => (
@@ -77,7 +77,7 @@ function Wallet({ a }: { a: AccountOut }) {
       <div className="lg:col-span-7">
         <Carton
           tone="ink"
-          title="Wallet statement vs your books"
+          title="Wallet payments vs your bills"
           aside={ORDER.filter((s) => a.counts[s])
             .map((s) => `${a.counts[s]} ${STATUS[s].label.toLowerCase()}`)
             .join(" · ")}
@@ -101,7 +101,6 @@ function Wallet({ a }: { a: AccountOut }) {
                       <span className="block text-xs text-ink-2 sm:hidden">{stampDate(m.date)}</span>
                       {m.supplier ?? m.payee}
                       {m.invoice_no && <span className="whitespace-nowrap text-ink-2"> · {m.invoice_no}</span>}
-                      {m.status !== "matched" && <p className="text-xs text-ink-2">{m.note}</p>}
                     </td>
                     <td className="py-2 pr-4 pl-2 text-right align-top font-semibold sm:pr-2 whitespace-nowrap text-ink sm:align-middle">
                       {signed(m.amount)}

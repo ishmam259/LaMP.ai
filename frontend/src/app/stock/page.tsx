@@ -86,7 +86,6 @@ export default function StockPage() {
                 >
                   {claimPending ? "Return is waiting in Approvals" : `Return stock worth ${bdt(expiry.return_eligible_value)}`}
                 </Button>
-                <p className="mt-2 text-sm text-ink-2">Suppliers take the amount off your next bills, usually within 1–2 weeks.</p>
               </>
             )}
           </Carton>
@@ -139,7 +138,7 @@ export default function StockPage() {
                 </div>
                 {trimDone ? (
                   <div className="mt-3">
-                    <Stamp approved>Ordered less · saves {bdt(trim.saving)}</Stamp>
+                    <Stamp approved>{trim.saving > 0 ? `Ordered less · saves ${bdt(trim.saving)}` : "Ordered less"}</Stamp>
                   </div>
                 ) : (
                   <Button

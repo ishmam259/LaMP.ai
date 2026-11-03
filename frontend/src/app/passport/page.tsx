@@ -65,7 +65,6 @@ export default function PassportPage() {
                   </li>
                 ))}
               </ol>
-              <p className="mt-2 text-sm text-ink-2">One square per invoice, oldest first. Red means paid late.</p>
             </Carton>
 
             <Carton tone="ink" title="What a lender would offer">
@@ -80,24 +79,12 @@ export default function PassportPage() {
                   <dd className="num text-[1.75rem] font-bold text-ink">{num(passport.default_probability * 100, 1)}%</dd>
                 </div>
               </dl>
-              <details className="mt-3 text-sm text-ink">
-                <summary className="cursor-pointer font-semibold text-cash">How this is worked out</summary>
-                <p className="mt-2">
-                  You paid {passport.paid_on_time} of {passport.invoices_total} supplier invoices on time. LaMP counts this carefully, so a few good
-                  weeks can&apos;t make it look better than it is.
-                </p>
-                <p className="mt-2">
-                  The better your record, the more of an order a lender will pay and the lower the chance of not repaying. Every on-time payment
-                  improves both.
-                </p>
-              </details>
             </Carton>
           </div>
 
           <div className="lg:col-span-5">
             <Carton tone="warn" title="Who can see it">
-              <p className="text-sm text-ink-2">Nobody sees your credit record until you switch a lender on below. You can stop sharing at any time.</p>
-              <ul className="mt-3 divide-y divide-rule">
+              <ul className="divide-y divide-rule">
                 {lenders?.map((l) => {
                   const on = !!consents?.some((c) => c.lender_id === l.id);
                   return (

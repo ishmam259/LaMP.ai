@@ -8,32 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { Explain } from "@/components/explain";
 import { proposeAction, useAccount, useActions, useCatalogue, useForecast, useFundingPlan } from "@/lib/api";
-import { bdt, dayDate, num, shortDate, stampDate } from "@/lib/format";
-import type { ActionKind, CatalogueOut, FundingOption } from "@/lib/types";
+import { bdt, dayDate, shortDate, stampDate } from "@/lib/format";
+import type { ActionKind, CatalogueOut } from "@/lib/types";
 import { resultSummary, waitingOn } from "@/lib/waiting";
 
 /** 9 -> "9", 12.2 -> "12.2", 13.75 -> "13.75" */
 const pct = (n: number) => String(Math.round(n * 100) / 100);
-
-/** "12.2% a year on BDT 49,200 for 30 days": what the rate applies to, and for how long. */
-function terms(o: { apr_pct: number | null; amount_financed?: number | null; tenor_days?: number | null }): string | null {
-  if (o.apr_pct == null || o.amount_financed == null || o.tenor_days == null) return null;
-  return `${pct(o.apr_pct)}% a year on ${bdt(o.amount_financed)} for ${period(o.tenor_days)}`;
-}
-
-/** 90 -> "3 months", 1095 -> "3 years", 30 -> "30 days" */
-function period(days: number): string {
-  if (days % 365 === 0) return days === 365 ? "1 year" : `${days / 365} years`;
-  if (days >= 60 && days % 30 === 0) return `${days / 30} months`;
-  return `${num(days)} days`;
-}
-
-/** "To cover BDT 8,200 it costs BDT 492, 6.0% of the amount." */
-function gapCost(o: Pick<FundingOption, "cost_of_gap_bdt" | "cost_of_gap_pct_of_need">, need: number): string | null {
-  if (o.cost_of_gap_bdt == null || o.cost_of_gap_pct_of_need == null) return null;
-  if (o.cost_of_gap_bdt === 0) return `Covering the ${bdt(need)} gap costs nothing.`;
-  return `To cover ${bdt(need)} it costs ${bdt(o.cost_of_gap_bdt)}, ${num(o.cost_of_gap_pct_of_need, 1)}% of the amount.`;
-}
 
 export default function FundingPage() {
   const { data: plan, error } = useFundingPlan();
@@ -106,16 +86,14 @@ export default function FundingPage() {
               {waiting.loan && (
                 <Carton tone="warn" title="Loan applied, waiting for the lender" aside={bdt(Number(waiting.loan.payload.amount ?? 0))}>
                   <p className="text-ink">
-                    {resultSummary(waiting.loan) ?? "Your application is with the lender."} LaMP counts the money once the lender pays it into your
-                    wallet, so the amount short below stays until then. There&apos;s no need to apply again.
+                    {resultSummary(waiting.loan) ?? "Your application is with the lender."}
                   </p>
                 </Carton>
               )}
               {waiting.extension && (
                 <Carton tone="warn" title="Asked for more days, waiting for the supplier">
                   <p className="text-ink">
-                    {resultSummary(waiting.extension) ?? "Your request is with the supplier."} If they don&apos;t agree in time, LaMP suggests the backup
-                    loan in Approvals.
+                    {resultSummary(waiting.extension) ?? "Your request is with the supplier."}
                   </p>
                 </Carton>
               )}
@@ -187,12 +165,7 @@ export default function FundingPage() {
                           {o.provider} · {o.speed}
                           {o.certainty === "uncertain" ? " · not guaranteed" : ""}
                         </p>
-                        <p className="mt-1 text-sm text-ink">{o.reason}</p>
-                        {(terms(o) || gapCost(o, plan.need.amount)) && (
-                          <p className="num mt-1 text-sm text-ink-2">
-                            {[terms(o), o.apr_pct == null ? null : gapCost(o, plan.need.amount)].filter(Boolean).join(". ")}
-                          </p>
-                        )}
+                        {!o.eligible && <p className="mt-1 text-sm text-ink">{o.reason}</p>}
                       </div>
                       <div className="text-right">
                         <p className="num font-bold text-ink">{o.cost_bdt === null ? "—" : o.cost_bdt === 0 ? "Free" : bdt(o.cost_bdt)}</p>
@@ -204,8 +177,7 @@ export default function FundingPage() {
               </ul>
             </Carton>
             {catalogue && <Catalogue c={catalogue} />}
-            <p className="mt-3 text-sm text-ink-2">
-              Lenders see your record only if you share it.{" "}
+            <p className="mt-3 text-sm">
               <Link href="/passport" className="font-semibold text-cash hover:underline">
                 Your credit record
               </Link>
@@ -227,15 +199,6 @@ function Catalogue({ c }: { c: CatalogueOut }) {
       className="mt-4"
       bodyClassName="p-0"
     >
-      <p className="px-4 pb-3 text-sm text-ink-2">
-        Priced for {bdt(c.need.amount)} by {shortDate(c.need.needed_by)}. Each cost is the interest for the first {period(c.horizon_days)}, so
-        longer loans compare fairly.{" "}
-        {c.plan_holds && c.plan_fallback_cost_bdt != null
-          ? `None costs less than the plan's backup loan, ${bdt(c.plan_fallback_cost_bdt)}.`
-          : c.cheapest_eligible_cost_bdt != null
-            ? `The cheapest one you qualify for costs ${bdt(c.cheapest_eligible_cost_bdt)}.`
-            : ""}
-      </p>
       <ul className="divide-y divide-rule border-t border-rule">
         {c.options.map((o) => (
           <li key={o.key} className={`p-4 ${o.eligible ? "" : "opacity-75"}`}>
@@ -252,8 +215,7 @@ function Catalogue({ c }: { c: CatalogueOut }) {
                   {o.provider_type} · {o.speed_days === 0 ? "same day" : `about ${o.speed_days} day${o.speed_days === 1 ? "" : "s"}`}
                 </p>
                 {!o.eligible && o.ineligible_reason && <p className="mt-1 text-sm font-semibold text-ink">{o.ineligible_reason}</p>}
-                {terms(o) && <p className="num mt-1 text-sm text-ink-2">{terms(o)}</p>}
-                {o.to_confirm.length > 0 && <p className="mt-1 text-sm text-ink-2">To confirm: {o.to_confirm.join(", ")}.</p>}
+                {o.to_confirm.length > 0 && <p className="mt-1 text-sm text-ink-2">You&apos;ll need: {o.to_confirm.join(", ")}.</p>}
                 <details className="mt-1 text-sm text-ink-2">
                   <summary className="cursor-pointer font-semibold text-cash">Where this comes from</summary>
                   <p className="mt-1">{o.note}</p>
@@ -266,7 +228,7 @@ function Catalogue({ c }: { c: CatalogueOut }) {
               </div>
               <div className="text-right">
                 <p className="num font-bold text-ink">{o.cost_of_gap_bdt == null ? "—" : bdt(o.cost_of_gap_bdt)}</p>
-                {o.cost_of_gap_pct_of_need != null && <p className="num text-xs text-ink-2">{num(o.cost_of_gap_pct_of_need, 1)}% of the amount</p>}
+                {o.apr_pct != null && <p className="num text-xs text-ink-2">{pct(o.apr_pct)}% a year</p>}
               </div>
             </div>
           </li>

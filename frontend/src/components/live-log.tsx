@@ -69,9 +69,9 @@ function sentence(e: LogEvent): string {
     case "action_approved_by_owner":
       return `Owner approved ${kind(d.kind)}`;
     case "action_executed":
-      return `Carried out ${kind(d.kind)}`;
+      return `Done: ${kind(d.kind)}`;
     case "action_failed":
-      return `Couldn't carry out ${kind(d.kind)}: ${words(d.reason)}`;
+      return `Couldn't do ${kind(d.kind)}: ${words(d.reason)}`;
     case "lock_rejected":
       return `Refused: ${d.invoice} already has a loan against it`;
     case "extension_declined":
@@ -119,7 +119,7 @@ function sentence(e: LogEvent): string {
     case "capture_confirmed":
       return "Owner saved a photo to the accounts";
     case "reset":
-      return "Records loaded";
+      return "Shop figures loaded";
     case "notify":
       return `Alert: ${d.title}`;
     case "owner_unlocked":
@@ -157,7 +157,7 @@ function sentence(e: LogEvent): string {
     case "extension_no_reply":
       return `${d.supplier} didn't answer about more days`;
     case "demo_auto_reset":
-      return "Records loaded again";
+      return "Shop figures loaded again";
     case "system_error":
       return "Something went wrong; LaMP noted it";
     default:

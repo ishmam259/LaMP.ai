@@ -75,7 +75,7 @@ function PinScreen() {
           La<span className="text-signal">M</span>P
         </p>
         <p className="mt-3 text-sm text-rail-2">
-          Cash, stock and credit for your pharmacy, in plain words.
+          Cash, stock and credit for your pharmacy.
         </p>
         <div className="mt-8 rounded-[8px] bg-shelf p-6 text-ink">
           <LockKeyhole className="mx-auto size-7 text-cash" aria-hidden />

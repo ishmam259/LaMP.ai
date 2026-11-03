@@ -67,7 +67,7 @@ export default function ActionsPage() {
         <div className="space-y-4">
           <Carton tone="warn" title="Waiting for you" aside={`${waiting.length}`}>
             {waiting.length === 0 ? (
-              <p className="text-ink-2">You&apos;re all caught up. When you or LaMP suggest something, it appears here for approval.</p>
+              <p className="text-ink-2">You&apos;re all caught up.</p>
             ) : (
               <ul className="divide-y divide-rule">
                 {waiting.map((a) => (
@@ -140,8 +140,6 @@ export default function ActionsPage() {
                   <li key={`${v.action_id}-${v.kind}`} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-ink">{v.label}</p>
-                      <p className="text-sm text-ink-2">{v.basis}</p>
-                      <p className="text-sm text-ink-2">Without it: {v.counterfactual}</p>
                     </div>
                     <span className="num font-bold text-stock">{bdt(v.amount)}</span>
                   </li>

@@ -26,7 +26,7 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
       </header>
       <main className="mx-auto w-full max-w-xl flex-1 px-4 pt-5 pb-12">{children}</main>
       <footer className="mx-auto w-full max-w-xl px-4 pb-6 text-xs text-ink-2">
-        Your card shows amounts only: never your name or what you bought. Run a pharmacy?{" "}
+        Run a pharmacy?{" "}
         <Link href="/" className="font-semibold text-cash underline underline-offset-2">
           Open the owner app
         </Link>

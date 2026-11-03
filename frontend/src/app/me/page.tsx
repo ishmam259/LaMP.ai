@@ -13,7 +13,7 @@ export default function CustomerHome() {
     <div>
       <h1 className="font-board text-3xl font-extrabold tracking-tight text-ink">Check what you owe your pharmacy</h1>
       <p className="mt-2 text-ink-2">
-        Enter the code on your slip from the pharmacy to see what you owe and choose how to pay it back.
+        Enter the code on your slip from the pharmacy.
       </p>
       <form
         className="carton mt-5 p-4"

@@ -61,7 +61,6 @@ export default function CustomerCard() {
               </li>
             ))}
           </ol>
-          <p className="mt-2 text-sm text-ink-2">Pay each part at the counter as usual. No money moves through this page.</p>
           <button type="button" onClick={() => setEditing(true)} className="mt-3 font-semibold text-cash underline underline-offset-2">
             Change my plan
           </button>
@@ -69,13 +68,6 @@ export default function CustomerCard() {
       ) : (
         <PlanPicker card={card} code={decodeURIComponent(code)} onDone={() => setEditing(false)} />
       )}
-
-      <Carton tone="ink" title="Why it helps">
-        <p className="text-ink">
-          A small pharmacy buys medicine on credit too. When customers pay back on a plan, the owner can pay suppliers on time and keep
-          your medicine on the shelf.
-        </p>
-      </Carton>
     </div>
   );
 }
@@ -149,7 +141,6 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
         >
           <CalendarCheck className="size-5" aria-hidden /> {busy ? "Saving…" : "Promise this plan"}
         </button>
-        <p className="mt-2 text-sm text-ink-2">This is a promise, not a payment. You pay at the counter as usual.</p>
       </form>
     </Carton>
   );

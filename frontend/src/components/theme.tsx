@@ -15,12 +15,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 const ORDER = ["system", "light", "dark"] as const;
 const META = {
-  system: { icon: Monitor, label: "Theme: match device" },
-  light: { icon: Sun, label: "Theme: light" },
-  dark: { icon: Moon, label: "Theme: dark" },
+  system: { icon: Monitor, label: "Light or dark: automatic" },
+  light: { icon: Sun, label: "Light screen" },
+  dark: { icon: Moon, label: "Dark screen" },
 };
 
-/** Cycles match-device → light → dark. */
+/** Cycles automatic → light → dark. */
 export function ThemeToggle({ className, withLabel = false, onRail = false }: { className?: string; withLabel?: boolean; onRail?: boolean }) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -35,7 +35,7 @@ export function ThemeToggle({ className, withLabel = false, onRail = false }: { 
     <button
       type="button"
       onClick={() => setTheme(next)}
-      aria-label={`${label}. Switch to ${META[next].label.replace("Theme: ", "")}`}
+      aria-label={`${label}. Switch to ${META[next].label.toLowerCase()}`}
       title={label}
       className={cn(
         "inline-flex h-11 items-center gap-2 rounded-[var(--radius)]",
@@ -45,7 +45,7 @@ export function ThemeToggle({ className, withLabel = false, onRail = false }: { 
       )}
     >
       <Icon className="size-5" aria-hidden />
-      {withLabel && <span>{label.replace("Theme: m", "M").replace("Theme: l", "L").replace("Theme: d", "D")}</span>}
+      {withLabel && <span>{label}</span>}
     </button>
   );
 }

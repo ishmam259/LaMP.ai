@@ -30,7 +30,7 @@ export default function CustomersPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PageTitle title="Customers" sub="Who owes you, and how they plan to pay. Each customer sees only their own card: amounts, never names or medicines." />
+      <PageTitle title="Customers" />
       {error && <LoadError what="your customers" />}
       {!data && !error && <Skel className="h-80" />}
       {data && (

@@ -85,7 +85,6 @@ export function NotificationBridge() {
         <BellRing className="mt-0.5 size-5 shrink-0 text-cash" aria-hidden />
         <div className="min-w-0 flex-1">
           <p className="font-semibold text-ink">Get desktop alerts?</p>
-          <p className="mt-0.5 text-sm text-ink-2">LaMP tells you when a follow-up needs your approval, even if this tab is in the background. Alerts never approve anything.</p>
           <div className="mt-3 flex gap-2">
             <button
               type="button"
