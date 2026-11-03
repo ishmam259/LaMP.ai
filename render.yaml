@@ -1,9 +1,10 @@
 # Public demo for AIgnite: one PostgreSQL database, the API and the frontend on Render.
 # Chat runs in replay only (no OpenAI key on the server, so no spend). Demo controls are on,
 # reset loads the demo captures, and the demo puts itself back every 60 minutes.
+# Always-on paid plans (paid from the account's credit): no spin-down, no 30-day database expiry.
 databases:
   - name: lamp-ai-db
-    plan: free
+    plan: 0.1c-256mb   # Basic, the smallest paid Postgres (legacy name basic-256mb)
     databaseName: lamp
     user: lamp
 
@@ -11,7 +12,7 @@ services:
   - type: web
     name: lamp-ai-api
     runtime: docker
-    plan: free
+    plan: 0.5c-512mb   # Starter (legacy name starter)
     dockerfilePath: ./backend/Dockerfile.render
     dockerContext: .
     healthCheckPath: /api/v1/health
@@ -42,7 +43,7 @@ services:
   - type: web
     name: lamp-ai-web
     runtime: docker
-    plan: free
+    plan: 0.5c-512mb   # Starter (legacy name starter)
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     envVars:

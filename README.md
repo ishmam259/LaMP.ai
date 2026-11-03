@@ -72,7 +72,7 @@ python scripts/demo_run.py
 ```
 It runs the whole story against the API, checking each golden number: reset, captures, accounts, expiry, return claim, order trim, funding plan, supplier extension, consent, loan application, a refused duplicate application, and the lender's decision. Then it writes the activity log to `logs/sandbox_execution_trace.log`. `python scripts/export_trace.py` exports the log on its own at any time.
 
-**Live link (Render).** `render.yaml` sets up a free PostgreSQL database, the API (`backend/Dockerfile.render`) and the frontend. In Render: New → Blueprint → this repo. Then set `BACKEND_URL` on `lamp-ai-web` to the API's URL (for example `https://lamp-ai-api.onrender.com`) and redeploy it. Chat stays in replay (no OpenAI key on the server), reset loads the demo captures, and the demo resets itself every 60 minutes because everyone shares one database. Free services sleep when idle, so the first request can take about a minute.
+**Live link (Render).** `render.yaml` sets up a PostgreSQL database, the API (`backend/Dockerfile.render`) and the frontend. In Render: New → Blueprint → this repo. Then set `BACKEND_URL` on `lamp-ai-web` to the API's URL (for example `https://lamp-ai-api.onrender.com`) and redeploy it. Chat stays in replay (no OpenAI key on the server), reset loads the demo captures, and the demo resets itself every 60 minutes because everyone shares one database. The plans are Render's smallest always-on ones, so nothing sleeps.
 
 **5. Run the tests**
 ```bash

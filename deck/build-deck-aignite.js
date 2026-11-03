@@ -145,7 +145,6 @@ async function build() {
     T(s, LIVE_URL, { x: M, y: 2.3, w: 12, h: 0.6, fontSize: 24, fontFace: F.semi, color: K.strip, hyperlink: { url: LIVE_URL } });
     T(s, "Owner: PIN 2468 (Green Life Pharmacy, Bogura).   Customer: tap \"Check what you owe\", card GL-7KQM-4XPA.",
       { x: M, y: 3.1, w: 12, h: 0.5, fontSize: 14, color: K.white });
-    T(s, "Free hosting: the first load can take up to a minute.", { x: M, y: 3.55, w: 12, h: 0.4, fontSize: 11, color: "CFE8DA" });
     const why = [
       "Real problem: one expired batch or one needless loan wipes out a week of a family's income.",
       "Meaningful AI: reads paper, explains numbers in plain words, suggests the cheapest way.",

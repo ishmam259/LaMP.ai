@@ -13,13 +13,13 @@
 Done: official sticker on every page (PIN screen, owner header, customer header), customer cards, plain wording, Farhan's agreement to the solo entry.
 
 ## Deploy on Render
-1. Render → New → Blueprint → connect the `ishmam259/LaMP.ai` repo → apply. It creates `lamp-ai-db`, `lamp-ai-api` and `lamp-ai-web`. The free plan allows one free database per account: delete the old FinTechathon one first if it still exists.
+1. Render → New → Blueprint → connect the `ishmam259/LaMP.ai` repo → apply. It creates `lamp-ai-db`, `lamp-ai-api` and `lamp-ai-web`. The services and database are on always-on paid plans, paid from the account's $50 Hackathon credit (Render may ask for a payment method).
 2. When `lamp-ai-api` is live, copy its URL (for example `https://lamp-ai-api.onrender.com`).
 3. On `lamp-ai-web` → Environment, set `BACKEND_URL` to that URL, then Manual Deploy → Clear build cache & deploy (the URL is baked in at build time).
 4. Open the `lamp-ai-web` URL in a private window: PIN 2468 works, and "Check what you owe" opens card `GL-7KQM-4XPA`.
 5. If the web URL isn't `https://lamp-ai-web.onrender.com`, rebuild the deck: `cd deck && LIVE_URL=<url> node build-deck-aignite.js`, then export the PDF again.
 
-Free services sleep after 15 idle minutes, so open the link a minute before judging, and say on Devpost that the first load can take up to a minute.
+Paid plans don't sleep, so the link answers straight away. Check the Billing page now and then to see the credit lasts through judging.
 
 ## Demo video story (as recorded)
 1. Title card with the sticker, then the owner unlocks with the PIN.
