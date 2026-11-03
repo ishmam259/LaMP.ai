@@ -1,6 +1,6 @@
 # LaMP
 
-An AI money helper for neighborhood pharmacies in Bangladesh, and for the families who buy medicine there on credit.
+Helps neighborhood pharmacies in Bangladesh see their cash for the weeks ahead, sell stock before it expires and pay for the next order the cheapest way. It also helps the families who buy medicine there on credit.
 
 Built solo by A K M Ishmam Tahmid for **Ostad Presents YUNet AIgnite Buildathon 2026**. Submission checklist: [docs/AIGNITE_SUBMISSION.md](docs/AIGNITE_SUBMISSION.md).
 

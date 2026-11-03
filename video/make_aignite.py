@@ -149,7 +149,7 @@ def card(name, lines, seconds, sticker_h=150):
 parts = [
     card("title", [
         ("black", 150, "white", [("La", "white"), ("M", SIGNAL), ("P", "white")]),
-        ("semi", 52, "white", "An AI money helper for neighborhood pharmacies,"),
+        ("semi", 52, "white", "Cash, stock and supplier bills for neighborhood pharmacies,"),
         ("semi", 52, "white", "and the families who buy there on credit."),
         ("reg", 34, MINT, "Bangladesh · A K M Ishmam Tahmid"),
     ], 5),

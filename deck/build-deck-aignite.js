@@ -64,7 +64,7 @@ async function build() {
     s.addImage({ path: A("counter.jpg"), x: 7.9, y: 0, w: W - 7.9, h: H, sizing: { type: "cover", w: W - 7.9, h: H } });
     T(s, [{ text: "La", options: { color: K.ink } }, { text: "M", options: { color: K.bright } }, { text: "P", options: { color: K.ink } }],
       { x: M, y: 0.45, w: 7, h: 0.7, fontSize: 32, fontFace: F.xbold });
-    T(s, "An AI money helper for the neighborhood pharmacy, and the families who buy there on credit", { x: M, y: 1.15, w: 7, h: 0.6, fontSize: 14, color: K.grey });
+    T(s, "Cash, stock and supplier bills for the neighborhood pharmacy, and the families who buy there on credit", { x: M, y: 1.15, w: 7, h: 0.6, fontSize: 14, color: K.grey });
     T(s, "THE PROBLEM", { x: M, y: 2.05, w: 7, h: 0.35, fontSize: 13, fontFace: F.semi, color: K.mid });
     const rows = [
       "173,500+ licensed pharmacies in Bangladesh, most run by one family. Every number lives on paper.",
@@ -104,7 +104,7 @@ async function build() {
     const steps = [
       "1. Snap a photo: AI reads supplier invoices and sales-book pages.",
       "2. The owner checks and corrects. Nothing is saved without their yes.",
-      "3. Plain code does all the money math: profit, cash ahead, expiring stock, loan costs. The AI never calculates money.",
+      "3. Plain code does all the money math: profit, cash for the coming weeks, expiring stock, loan costs. The AI never calculates money.",
       "4. Ask LaMP: the chat explains the shop's own figures and suggests the next step.",
       "5. The owner approves; customers set plans on their own card. Every step is saved in a history no one can secretly change.",
     ];
