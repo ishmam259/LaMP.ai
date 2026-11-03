@@ -229,7 +229,7 @@ async def create_capture(pid: str, file: UploadFile = File(...),
 def _get_capture(db: Session, pid: str, cid: str) -> m.Capture:
     cap = db.get(m.Capture, cid)
     if cap is None or cap.pharmacy_id != pid:
-        raise HTTPException(404, f"Unknown capture '{cid}'")
+        raise HTTPException(404, "That photo wasn't found. Take it again.")
     return cap
 
 
@@ -368,7 +368,7 @@ def approve_action(pid: str, aid: str, body: ApprovalIn | None = Body(default=No
         if not auth.check_pin(db, ph, body.pin if body else None):
             engines.log("T3", "ACTIONS", "approval_pin_rejected", db, action=aid, kind=a.kind)
             db.commit()
-            raise HTTPException(401, "This approval needs the owner PIN")
+            raise HTTPException(401, "Enter your PIN to approve this.")
     return action_engine.execute_owner_approval(db, pid, aid)
 
 

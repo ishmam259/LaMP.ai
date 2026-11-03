@@ -42,9 +42,9 @@ class ChatSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
 
     openai_chat_model: str = "gpt-6-luna"
-    # chat_v7 spells out the owner's everyday words; the demo chats are recorded with it
+    # chat_v8 spells out the owner's everyday words; the demo chats are recorded with it
     # (scripts/record_demo_chats.py). Replay keys include the version.
-    chat_prompt_version: str = "chat_v7"
+    chat_prompt_version: str = "chat_v8"
 
 
 CHAT_MODEL = ChatSettings().openai_chat_model
@@ -302,7 +302,7 @@ agent = Agent(
 # --- Money-figure guard (win plan CORE-03) ----------------------------------------------
 
 SAFE_REPLY = ("I held that answer back because one of its money figures didn't match LaMP's own numbers. "
-              "Please ask again, or check the figures on the Funding and Cash screens.")
+              "Please ask again, or check the figures on the Plan and Cash pages.")
 
 
 async def guard_stream(events: AsyncIterator, db) -> AsyncIterator:

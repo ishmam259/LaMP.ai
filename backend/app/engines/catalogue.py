@@ -32,7 +32,7 @@ HORIZON_DAYS = 90
 BLOCKING = {"supplier_is_wallet_merchant": "your supplier may not accept wallet payments",
             "supplier_on_platform": "your supplier may not sell on this app"}
 CONFIRM = {"trade_licence": "a trade licence", "clean_cib": "a clean credit record with Bangladesh Bank",
-           "mfi_membership": "being a member of the microfinance institution"}
+           "mfi_membership": "membership of the microfinance institution"}
 PURPOSE_NOTE = {"personal": "A personal loan to the owner: check you may use it for a business bill.",
                 "merchant_purchase": "Only for buying from shops that take wallet payments.",
                 "business": "A business loan."}
@@ -57,11 +57,11 @@ def get_catalogue(db: Session, pid: str, need: FundingNeed | None = None) -> Cat
         if a["max_amount"] is not None and need.amount > a["max_amount"]:
             reasons.append(f"maximum is BDT {a['max_amount']:,.0f}")
         if a["speed_days"] > days_left:
-            reasons.append(f"takes about {a['speed_days']} days; the money is needed in {days_left}")
+            reasons.append(f"takes about {a['speed_days']} days, but you need the money in {days_left}")
         reasons += [BLOCKING[r] for r in a["requires"] if r in BLOCKING]
         cost = None
         if a["apr_pct"] is None:
-            reasons.append("its price isn't published")
+            reasons.append("its price isn't public")
         else:
             days = min(a["tenor_days"] or HORIZON_DAYS, HORIZON_DAYS)
             free = a.get("interest_free_days") or 0

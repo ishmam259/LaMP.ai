@@ -14,7 +14,7 @@ def get_pharmacy(db: Session, pid: str) -> m.Pharmacy:
     """The pharmacy row, or HTTP 404 if the id is unknown."""
     ph = db.get(m.Pharmacy, pid)
     if ph is None:
-        raise HTTPException(404, f"Unknown pharmacy '{pid}'")
+        raise HTTPException(404, "That pharmacy wasn't found.")
     return ph
 
 

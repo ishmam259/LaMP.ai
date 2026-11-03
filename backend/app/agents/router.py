@@ -26,7 +26,7 @@ async def chat_endpoint(request: Request, db: Session = Depends(get_db),
     body = json.loads(await request.body() or b"{}")
     pid = body.get("pharmacy_id") or "green-life"
     if caller.pharmacy_id != pid:
-        raise HTTPException(403, "This session belongs to another pharmacy")
+        raise HTTPException(403, "This belongs to another pharmacy. Unlock LaMP again with your PIN.")
     engines.get_pharmacy(db, pid)  # 404 for an unknown pharmacy
     model = chat.model_for_mode()
     engines.log("T1", "CHAT", "chat_message", db, pharmacy=pid, mode=model.model_name.split(":")[0]

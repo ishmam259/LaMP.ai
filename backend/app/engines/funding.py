@@ -127,7 +127,7 @@ def get_funding_plan(db: Session, pid: str, need: FundingNeed | None = None) -> 
     opt("return_claims", "Send expiring stock back to suppliers",
         "Suppliers " + " and ".join(s.removeprefix("Supplier ") for s in exp_suppliers) if exp_suppliers else "Suppliers",
         returns, 0, None, returns > 0,
-        f"Suppliers take it off your next bills instead of paying cash, so it doesn't help by {need.needed_by:%d %b}." if returns
+        f"Suppliers don't pay cash for returns. They lower your next bills, so this won't help on {need.needed_by:%d %b}." if returns
         else "Already sent: the return is with the suppliers." if claimed
         else "No expiring stock can go back to a supplier.",
         "1–2 weeks", "uncertain")
@@ -150,7 +150,7 @@ def get_funding_plan(db: Session, pid: str, need: FundingNeed | None = None) -> 
     ok = w.min_amount <= amount <= w.max_amount
     opt("wallet_loan", "Mobile-wallet loan, 3 months", w.lender.name, amount,
         _loan_cost(amount, w.apr_pct, w.tenor_days) if ok else None, w.apr_pct, ok,
-        f"This lender lends {_bdt(w.min_amount)} to {w.max_amount:,.0f}." if ok
+        f"Loans from {_bdt(w.min_amount)} to {w.max_amount:,.0f}." if ok
         else f"Loans run from {_bdt(w.min_amount)} to {w.max_amount:,.0f}.", "Same day", "certain",
         financed=amount, tenor=w.tenor_days)
 

@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "Within the next 60 days:\n\n- Omeprazole 20 mg: 10 boxes, expires 10 Dec; stock worth BDT 4,800.\n- Cetirizine 10 mg: 22 boxes, expires 3 Dec; stock worth BDT 4,400.\n- Amoxicillin 500 mg: 6 boxes, expires 10 Nov; stock worth BDT 3,600.\n- Metformin 500 mg: 13 boxes, expires 5 Nov; stock worth BDT 2,600.\n- Oral saline: 6 boxes, expires 28 Oct; stock worth BDT 1,800.\n- Vitamin B complex: 8 boxes, expires 25 Oct; stock worth BDT 1,200.\n\nTotal stock worth BDT 18,400. Suppliers will take back BDT 9,200 worth. I suggested asking them to take it back; it is waiting for your approval in Approvals.",
+        "id": "msg_070cf67f8599d10d006ae9ce4e2eb487d2bb74b68fc96ad13f",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2526,
+      "cache_write_tokens": 83,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2440,
+      "output_tokens": 202,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-03T12:06:40.899011Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-03T12:06:37Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_070cf67f8599d10d006ae9ce4d90a487d2a9d2b86578f1f27a",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

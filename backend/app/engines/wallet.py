@@ -79,28 +79,29 @@ def get_account(db: Session, pid: str) -> AccountOut:
                             "note": f"{inv.invoice_no} was already paid on {fits[0][0].paid_on:%d %b}: "
                                     f"this looks like a second payment."})
         else:
-            matches.append({**base, "status": "unmatched", "note": "No bill in the books matches this payment."})
+            matches.append({**base, "status": "unmatched", "note": "No bill matches this payment."})
     for p, inv, sup in payments:
         if p.id not in used:
             matches.append({"ref": inv.invoice_no, "date": p.paid_on, "amount": -p.amount, "payee": sup.name,
                             "status": "missing_from_statement", "invoice_no": inv.invoice_no, "supplier": sup.name,
-                            "note": "Recorded as paid, but no such payment is on the statement."})
+                            "note": "Marked paid, but this payment isn't in your wallet."})
     for t in txns:
-        matches.append({"ref": t.ref, "date": t.date, "amount": t.amount, "payee": "Loan payout",
-                        "status": "matched", "note": "Sandbox loan payout credited to the wallet."})
+        matches.append({"ref": t.ref, "date": t.date, "amount": t.amount, "payee": "Loan",
+                        "status": "matched", "note": "Loan money arrived in your wallet."})
 
     counts = {k: sum(1 for x in matches if x["status"] == k)
               for k in ("matched", "duplicate", "unmatched", "missing_from_statement")}
     recs = []
     for x in matches:
         if x["status"] == "duplicate":
-            recs.append(f"Ask {x['supplier']} to refund or credit BDT {-x['amount']:,.0f} paid twice for {x['invoice_no']}.")
+            recs.append(f"You paid {x['invoice_no']} twice. Ask {x['supplier']} to give back BDT {-x['amount']:,.0f} "
+                        "or take it off your next bill.")
         elif x["status"] == "unmatched":
-            recs.append(f"Check the BDT {-x['amount']:,.0f} payment to {x['payee']} on {x['date']:%d %b}: "
-                        "add the bill if it was a business expense.")
+            recs.append(f"You paid BDT {-x['amount']:,.0f} to {x['payee']} on {x['date']:%d %b} with no bill. "
+                        "If it was for the shop, add the bill.")
         elif x["status"] == "missing_from_statement":
-            recs.append(f"{x['invoice_no']} ({x['supplier']}) is marked paid but the money never left: "
-                        "confirm with the supplier before they chase it.")
+            recs.append(f"{x['invoice_no']} is marked paid, but the money never left your wallet. "
+                        f"Check with {x['supplier']} before they ask for it.")
     return AccountOut(opening_balance=r2(opening), balance=r2(balance),
                       transactions=[{"date": t.date, "amount": t.amount, "kind": t.kind, "ref": t.ref} for t in txns],
                       matches=matches, counts=counts, recommendations=recs)

@@ -77,7 +77,7 @@ def set_plan(db: Session, code: str, parts: int, first_on: date) -> PatientCardO
     d = _by_code(db, code)
     today = as_of(get_pharmacy(db, d.pharmacy_id))
     if parts not in PLAN_PARTS:
-        raise HTTPException(422, f"Pay in {', '.join(map(str, PLAN_PARTS))} parts")
+        raise HTTPException(422, f"Choose {', '.join(map(str, PLAN_PARTS[:-1]))} or {PLAN_PARTS[-1]} parts.")
     if not today <= first_on <= today + timedelta(days=FIRST_PART_WITHIN_DAYS):
         raise HTTPException(422, f"Pick a first payment date within {FIRST_PART_WITHIN_DAYS} days")
     d.plan_parts, d.plan_first_on = parts, first_on

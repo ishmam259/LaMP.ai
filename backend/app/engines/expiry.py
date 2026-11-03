@@ -81,7 +81,7 @@ def get_trim(db: Session, pid: str, order_id: str) -> TrimOut:
     today = as_of(ph)
     order = db.get(m.PlannedOrder, order_id)
     if order is None or order.pharmacy_id != pid:
-        raise HTTPException(404, f"Unknown order '{order_id}'")
+        raise HTTPException(404, "That order wasn't found.")
     rates = sales_rates(db, pid, today)
     lines = []
     for l in order.lines:

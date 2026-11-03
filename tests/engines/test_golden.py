@@ -46,7 +46,7 @@ def test_alerts(db):
     alerts = {a.kind: a for a in get_alerts(db, PID)}
     assert alerts["shortfall"].title == "Short BDT 19,000 on 26 Oct"
     assert "BDT 41,000" in alerts["shortfall"].detail
-    assert alerts["return_window"].title == "Claim returns worth BDT 9,200"
+    assert alerts["return_window"].title == "Send back stock worth BDT 9,200"
     assert alerts["expiry"].title == "BDT 18,400 of stock expires within 60 days"
     assert "patient_dues" in alerts and "suspicious_document" not in alerts
 

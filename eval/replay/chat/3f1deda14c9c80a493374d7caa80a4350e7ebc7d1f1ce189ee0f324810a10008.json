@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "propose_action",
+        "args": "{\"kind\":\"return_claim\",\"amount\":9200,\"reason\":\"Ask suppliers to take back expiring stock\"}",
+        "tool_call_id": "call_bIFJZnRnmXgCQOAdlHCafN2y",
+        "tool_kind": null,
+        "id": "fc_08aea4e38f66b2b0006ae9ce6b4cf487d2ac4966d651b7cd78",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2443,
+      "cache_write_tokens": 0,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2440,
+      "output_tokens": 36,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-03T12:07:08.526019Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-03T12:07:06Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_08aea4e38f66b2b0006ae9ce6a637c87d2b4cf5c2bd3b8d1d2",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

@@ -50,8 +50,8 @@ def get_alerts(db: Session, pid: str) -> list[Alert]:
     window = [b for b in expiring if 0 <= (b.expiry_date - today).days - b.supplier.return_cutoff_days <= 14
               and b.batch_no not in claimed]
     if window:
-        add("return_window", "warning", f"Claim returns worth {_bdt(sum(b.qty * b.unit_cost for b in window))}",
-            f"{len(window)} batches can still go back to their suppliers before the deadline to return them.")
+        add("return_window", "warning", f"Send back stock worth {_bdt(sum(b.qty * b.unit_cost for b in window))}",
+            f"{len(window)} batches can still go back to their suppliers, if you send them soon.")
     if expiring:
         past = sum(1 for b in expiring if (b.expiry_date - today).days < b.supplier.return_cutoff_days)
         add("expiry", "warning", f"{_bdt(sum(b.qty * b.unit_cost for b in expiring))} of stock expires within 60 days",

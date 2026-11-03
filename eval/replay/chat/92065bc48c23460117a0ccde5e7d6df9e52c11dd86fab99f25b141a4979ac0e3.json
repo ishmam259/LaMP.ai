@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "Supplier A’s order is due 26 Oct. If nothing changes, you’ll be short BDT 19,000. A smaller order would save BDT 10,800, leaving BDT 8,200 to cover.\n\nThe suggested steps are:\n1. Order less of Montelukast, cutting from 30 to 12 boxes. Cost: BDT 0.\n2. Ask Supplier A for 20 more days to pay BDT 8,200. Cost: BDT 0.\n3. If Supplier A hasn’t agreed, apply for the backup mobile-wallet loan of BDT 8,200. Cost: BDT 181.97.\n\nThese steps are waiting for your approval in Approvals.",
+        "id": "msg_05d01d36c2a49f3a006ae9ce65fc9c87d2ae016446869fd55c",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 3358,
+      "cache_write_tokens": 278,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 3077,
+      "output_tokens": 152,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-03T12:07:04.171539Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-03T12:07:01Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_05d01d36c2a49f3a006ae9ce654cb887d284d86c668e29c26c",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

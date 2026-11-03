@@ -27,8 +27,8 @@ class Caller:
 
 def _no_owner(db: Session, request: Request) -> HTTPException:
     if auth.lender_for_key(db, request.headers.get("x-lender-key")) is not None:
-        return HTTPException(403, "Lenders can't use owner routes")
-    return HTTPException(401, "Owner session required: unlock with the PIN")
+        return HTTPException(403, "This page is for the pharmacy owner.")
+    return HTTPException(401, "Unlock LaMP with your PIN.")
 
 
 def require_owner(pid: str, request: Request, db: Session = Depends(get_db)) -> Caller:
@@ -37,7 +37,7 @@ def require_owner(pid: str, request: Request, db: Session = Depends(get_db)) -> 
     if s is None:
         raise _no_owner(db, request)
     if s.pharmacy_id != pid:
-        raise HTTPException(403, "This session belongs to another pharmacy")
+        raise HTTPException(403, "This belongs to another pharmacy. Unlock LaMP again with your PIN.")
     return Caller("owner", pharmacy_id=pid)
 
 
@@ -54,9 +54,9 @@ def require_lender(lid: str, db: Session = Depends(get_db),
     """The lender named in the path, from its key."""
     lender = auth.lender_for_key(db, x_lender_key)
     if lender is None:
-        raise HTTPException(401, "Lender key required")
+        raise HTTPException(401, "Sign in as a lender first.")
     if lender.id != lid:
-        raise HTTPException(403, "This key belongs to another lender")
+        raise HTTPException(403, "This belongs to another lender.")
     return Caller("lender", lender_id=lid)
 
 

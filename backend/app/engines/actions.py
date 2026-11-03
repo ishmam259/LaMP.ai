@@ -62,14 +62,14 @@ def _check_payload(proposal: ActionProposal) -> None:
     Unknown products and out-of-limit amounts still fail at execution, where they're logged."""
     amount = proposal.payload.get("amount")
     if amount is not None and (isinstance(amount, bool) or not isinstance(amount, int | float) or amount < 0):
-        raise HTTPException(422, "payload.amount must be a number of BDT, zero or more")
+        raise HTTPException(422, "The amount must be zero or more.")
 
 
 def propose_action(db: Session, pid: str, proposal: ActionProposal, proposed_by: str) -> ActionOut:
     """Store a proposal. It does nothing until the owner approves it."""
     get_pharmacy(db, pid)
     if proposed_by not in ("owner", "agent", "lamp-scheduler"):
-        raise HTTPException(422, "proposed_by must be 'owner', 'agent' or 'lamp-scheduler'")
+        raise HTTPException(422, "Only the owner or LaMP can suggest a step.")
     from .policy import check_borrowing_ceiling, check_can_propose
 
     check_can_propose(db, pid, proposed_by)
@@ -87,7 +87,7 @@ def propose_action(db: Session, pid: str, proposal: ActionProposal, proposed_by:
 def _get(db: Session, pid: str, aid: str) -> m.Action:
     a = db.get(m.Action, aid)
     if a is None or a.pharmacy_id != pid:
-        raise HTTPException(404, f"Unknown action '{aid}'")
+        raise HTTPException(404, "That step wasn't found.")
     if a.status != "proposed":
         raise HTTPException(409, "This was already declined." if a.status == "rejected" else "This was already approved.")
     return a
@@ -182,7 +182,7 @@ def _return_claim(db: Session, pid: str, a: m.Action) -> dict:
     db.flush()
     log("T2", "EXPIRY", "return_claim_sent", db, claim=claim_id, batches=[b.batch_no for b in batches], amount=credit)
     return {"claim_id": claim_id, "expected_credit": r2(credit), "batches": [b.batch_no for b in batches],
-            "summary": f"Return sent. Suppliers should take BDT {credit:,.0f} off your next bills."}
+            "summary": f"Return sent. Your next bills should be BDT {credit:,.0f} lower."}
 
 
 def _extension_request(db: Session, pid: str, a: m.Action) -> dict:
@@ -208,9 +208,9 @@ def supplier_reply(db: Session, aid: str, outcome: str | bool) -> ActionOut:
     accepted = outcome == "accepted"
     a = db.get(m.Action, aid)
     if a is None or a.kind != "extension_request":
-        raise HTTPException(404, f"No extension request '{aid}'")
+        raise HTTPException(404, "That request for more days wasn't found.")
     if a.status != "executed" or (a.result or {}).get("status") != "awaiting_supplier":
-        raise HTTPException(409, "This request isn't waiting for a supplier reply")
+        raise HTTPException(409, "The supplier has already replied to this request.")
     order = db.get(m.PlannedOrder, a.result["order_id"])
     amount = min(float(a.payload.get("amount") or order.total), order.total)
     if accepted:

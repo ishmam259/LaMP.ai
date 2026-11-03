@@ -39,7 +39,7 @@ def active_consent(db: Session, pid: str, lender_id: str) -> m.Consent | None:
 SCOPES = {
     "passport.summary": "Your on-time count (38 of 41) and the offer",
     "passport.evidence": "Each invoice and when you paid it",
-    "passport": "Summary and evidence (older scope)",
+    "passport": "Summary and invoices",
     "accounts": "Accounts summary (older scope; no lender screen uses it)",
 }
 
@@ -58,7 +58,7 @@ def consent_preview(db: Session, pid: str, lender_id: str, scopes: list[str]) ->
 
     get_pharmacy(db, pid)
     if db.get(m.Lender, lender_id) is None:
-        raise HTTPException(404, f"Unknown lender '{lender_id}'")
+        raise HTTPException(404, "That lender wasn't found.")
     _check_scopes(scopes)
     view = lender_view(get_passport(db, pid), scopes)
     shared = [k for k in ("passport.summary", "passport.evidence")
@@ -71,7 +71,7 @@ def consent_preview(db: Session, pid: str, lender_id: str, scopes: list[str]) ->
 def _check_scopes(scopes: list[str]) -> None:
     unknown = [s for s in scopes if s not in SCOPES]
     if unknown:
-        raise HTTPException(422, f"Unknown scope(s): {', '.join(unknown)}. Known: {', '.join(SCOPES)}")
+        raise HTTPException(422, "Choose what the lender sees: the summary only, or the summary and invoices.")
 
 
 def _consent_out(c: m.Consent) -> ConsentOut:
@@ -90,7 +90,7 @@ def grant_consent(db: Session, pid: str, body: ConsentIn) -> ConsentOut:
     """One active consent per lender: granting again replaces the old one."""
     get_pharmacy(db, pid)
     if db.get(m.Lender, body.lender_id) is None:
-        raise HTTPException(404, f"Unknown lender '{body.lender_id}'")
+        raise HTTPException(404, "That lender wasn't found.")
     _check_scopes(body.scopes)
     old = active_consent(db, pid, body.lender_id)
     if old:
@@ -107,7 +107,7 @@ def revoke_consent(db: Session, pid: str, consent_id: str) -> dict:
     """Revoke an active consent (sets revoked_at) and log it. 404 if not active."""
     c = db.get(m.Consent, consent_id)
     if c is None or c.pharmacy_id != pid or c.revoked_at is not None:
-        raise HTTPException(404, f"Unknown consent '{consent_id}'")
+        raise HTTPException(404, "That sharing choice wasn't found.")
     c.revoked_at = _now()
     log("T1", "CONSENT", "consent_revoked", db, consent=consent_id, lender=c.lender_id)
     db.commit()
@@ -130,7 +130,7 @@ def inbox(db: Session, lender_id: str) -> list[ApplicationOut]:
     """Every application sent to this lender. Where the owner has withdrawn consent the row
     keeps its status and amount, with consent "withdrawn" and no passport."""
     if db.get(m.Lender, lender_id) is None:
-        raise HTTPException(404, f"Unknown lender '{lender_id}'")
+        raise HTTPException(404, "That lender wasn't found.")
     apps = list(db.scalars(select(m.Application).where(m.Application.lender_id == lender_id)
                            .order_by(m.Application.created_at.desc())))
     log("T0", "LENDER", "inbox_viewed", db, lender=lender_id, applications=len(apps))
@@ -145,9 +145,9 @@ def decide(db: Session, lender_id: str, app_id: str) -> ApplicationOut:
     the pharmacy's cash."""
     a = db.get(m.Application, app_id)
     if a is None or a.lender_id != lender_id:
-        raise HTTPException(404, f"Unknown application '{app_id}'")
+        raise HTTPException(404, "That loan application wasn't found.")
     if a.status != "pending":
-        raise HTTPException(409, f"Application is already {a.status}")
+        raise HTTPException(409, f"This application is already {a.status}.")
     if active_consent(db, a.pharmacy_id, lender_id) is None:
         raise HTTPException(403, "The pharmacy no longer shares its credit record with this lender")
     from .passport import get_passport
