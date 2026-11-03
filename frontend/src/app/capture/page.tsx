@@ -76,7 +76,7 @@ export default function CapturePage() {
             <Camera className="size-5" aria-hidden />
             {reading ? "Reading the photo…" : "Take or choose a photo"}
           </Button>
-          <p className="mt-3 text-sm text-ink-2">Lay the page flat, fill the frame, avoid shadows. LaMP reads printed and handwritten English.</p>
+          <p className="mt-3 text-sm text-ink-2">Lay the page flat in good light. Printed or handwritten English both work.</p>
         </Carton>
       )}
 

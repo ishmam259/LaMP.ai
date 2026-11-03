@@ -18,7 +18,7 @@ const TIERS: { tier: LogEvent["tier"]; label: string }[] = [
 
 /** The part of LaMP that wrote the event, in the owner's words. */
 const PART: Record<string, string> = {
-  DEV: "Demo",
+  DEV: "App",
   SYSTEM: "App",
   AUTH: "Sign-in",
   ACTIONS: "Approvals",
@@ -119,7 +119,7 @@ function sentence(e: LogEvent): string {
     case "capture_confirmed":
       return "Owner saved a photo to the accounts";
     case "reset":
-      return "Demo data loaded";
+      return "Records loaded";
     case "notify":
       return `Alert: ${d.title}`;
     case "owner_unlocked":
@@ -157,7 +157,7 @@ function sentence(e: LogEvent): string {
     case "extension_no_reply":
       return `${d.supplier} didn't answer about more days`;
     case "demo_auto_reset":
-      return "Demo data loaded again";
+      return "Records loaded again";
     case "system_error":
       return "Something went wrong; LaMP noted it";
     default:

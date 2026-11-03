@@ -75,7 +75,7 @@ function PinScreen() {
           La<span className="text-signal">M</span>P
         </p>
         <p className="mt-3 text-sm text-rail-2">
-          An AI money helper for the person behind a neighborhood pharmacy counter, so families can find their medicine in stock.
+          Cash, stock and credit for your pharmacy, in plain words.
         </p>
         <div className="mt-8 rounded-[8px] bg-shelf p-6 text-ink">
           <LockKeyhole className="mx-auto size-7 text-cash" aria-hidden />
@@ -112,7 +112,6 @@ function PinScreen() {
           <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm font-semibold text-alert">
             {error ?? (busy ? <span className="text-ink-2">Checking…</span> : null)}
           </p>
-          <p className="mt-2 text-xs text-ink-2">Demo PIN: 2468</p>
         </div>
         <Link
           href="/me"

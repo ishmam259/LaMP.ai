@@ -30,7 +30,7 @@ export default function LenderPage() {
   return (
     <div>
       <PageTitle
-        title="Lender view"
+        title="Applications"
       />
       <div role="tablist" aria-label="Lender" className="mb-4 inline-flex rounded-[var(--radius)] border border-rule bg-board p-1">
         {lenders?.map((l) => (

@@ -9,7 +9,6 @@ import {
   CreditCard,
   HandCoins,
   Inbox,
-  Landmark,
   LockKeyhole,
   MessageCircle,
   PackageOpen,
@@ -20,7 +19,6 @@ import {
   Wallet,
 } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
-import { ResetDemoButton } from "@/components/reset-demo";
 import { cn } from "cn";
 import { lock, useActions, usePharmacy } from "@/lib/api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -46,10 +44,6 @@ const MORE_NAV = [
   { href: "/passport", label: "Credit record", icon: BadgeCheck },
   { href: "/wallet", label: "Wallet", icon: CreditCard },
   { href: "/rules", label: "Rules", icon: ShieldCheck },
-];
-
-const OTHER_NAV = [
-  { href: "/lender", label: "Lender view", icon: Landmark },
   { href: "/log", label: "History", icon: ScrollText },
 ];
 
@@ -94,10 +88,6 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
           {[...OWNER_NAV, ...MORE_NAV].map((item) => (
             <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} badge={item.href === "/actions" ? pending : 0} />
           ))}
-          <div className="mt-5 mb-1 border-t border-white/15 px-3 pt-4 text-sm font-semibold text-rail-2">Other views</div>
-          {OTHER_NAV.map((item) => (
-            <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} />
-          ))}
         </nav>
         <div className="space-y-2 border-t border-white/15 p-4">
           <ThemeToggle withLabel onRail className="-ml-3" />
@@ -110,7 +100,6 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               <LockKeyhole className="size-5" aria-hidden /> Lock
             </button>
           )}
-          <ResetDemoButton className="-ml-3 flex h-10 w-full items-center gap-3 rounded-[var(--radius)] px-3 font-semibold text-rail-2 hover:bg-white/10 hover:text-rail-ink disabled:opacity-60" />
         </div>
       </aside>
 
@@ -166,7 +155,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         <div className="sticky top-0 z-30 hidden items-center justify-end gap-3 border-b border-rule bg-shelf/90 px-8 py-3 backdrop-blur-sm lg:flex">
           <BuildathonSticker className="mr-auto h-10" />
           {isLender ? (
-            <span className="text-sm font-semibold text-ink-2">Viewing as a lender. You only see pharmacies that shared their credit record with you.</span>
+            <span className="text-sm font-semibold text-ink-2">Lender portal. You see only pharmacies that share their credit record with you.</span>
           ) : (
             <>
             <PauseToggle />

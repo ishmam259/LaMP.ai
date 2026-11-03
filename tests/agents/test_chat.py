@@ -136,7 +136,7 @@ def test_unrecorded_question_gets_an_honest_reply(client, monkeypatch):
     """Outside tests, replay never pretends: an unrecorded question says it wasn't recorded."""
     monkeypatch.setattr(chat, "OFFLINE_SCRIPT", False)
     r = ask(client, "How did we do this month?")
-    assert r["calls"] == [] and "suggested questions" in r["text"] and "LLM_MODE" not in r["text"]
+    assert r["calls"] == [] and "questions below" in r["text"] and "LLM_MODE" not in r["text"]
 
 
 def test_replay_key_uses_only_the_latest_question():

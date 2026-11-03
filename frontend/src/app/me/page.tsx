@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Ticket } from "lucide-react";
-
-const DEMO_CODE = "GL-7KQM-4XPA";
 
 /** A customer types the code from their slip to open their card. */
 export default function CustomerHome() {
@@ -16,8 +13,7 @@ export default function CustomerHome() {
     <div>
       <h1 className="font-board text-3xl font-extrabold tracking-tight text-ink">Check what you owe your pharmacy</h1>
       <p className="mt-2 text-ink-2">
-        Bought medicine on credit? Your pharmacy gives you a card code. Enter it to see what you owe and pick a way to pay it back
-        that fits your week.
+        Enter the code on your slip from the pharmacy to see what you owe and choose how to pay it back.
       </p>
       <form
         className="carton mt-5 p-4"
@@ -45,13 +41,6 @@ export default function CustomerHome() {
           </button>
         </div>
       </form>
-      <button
-        type="button"
-        onClick={() => open(DEMO_CODE)}
-        className="mt-4 inline-flex items-center gap-2 font-semibold text-cash underline underline-offset-2"
-      >
-        <Ticket className="size-4" aria-hidden /> Try a demo card ({DEMO_CODE})
-      </button>
     </div>
   );
 }

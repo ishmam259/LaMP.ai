@@ -65,7 +65,7 @@ export default function PassportPage() {
                   </li>
                 ))}
               </ol>
-              <p className="mt-2 text-sm text-ink-2">Each square is one invoice, oldest first.</p>
+              <p className="mt-2 text-sm text-ink-2">One square per invoice, oldest first. Red means paid late.</p>
             </Carton>
 
             <Carton tone="ink" title="What a lender would offer">

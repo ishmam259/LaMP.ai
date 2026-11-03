@@ -3,7 +3,6 @@
 import { Check, ExternalLink, KeyRound, X } from "lucide-react";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { PauseToggle } from "@/components/pause";
-import { ResetDemoButton } from "@/components/reset-demo";
 import { usePolicy } from "@/lib/api";
 import { bdt, num } from "@/lib/format";
 import type { ActionKind } from "@/lib/types";
@@ -30,18 +29,11 @@ export default function RulesPage() {
             <p className="text-ink">
               {p.paused
                 ? "LaMP is paused. It can't suggest or follow up on anything, and its earlier suggestions can't be approved."
-                : "LaMP can suggest actions and follow up on your plan. Nothing happens until you approve it."}
+                : "LaMP can suggest steps and follow up on your plan. Nothing happens until you approve it."}
             </p>
             <div className="mt-3">
               <PauseToggle />
             </div>
-          </Carton>
-
-          <Carton tone="ink" title="Demo">
-            <p className="text-ink">
-              No real money moves and no one is contacted.
-            </p>
-            <ResetDemoButton className="mt-3 inline-flex h-10 items-center gap-2 rounded-[var(--radius)] border border-rule px-3 font-semibold text-ink hover:bg-muted disabled:opacity-60" />
           </Carton>
 
           <Carton tone="ink" title="Your approval">

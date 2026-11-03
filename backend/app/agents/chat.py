@@ -246,8 +246,8 @@ def _openai_model():
 
 
 # Shown to judges on the shared demo (replay mode), so no setup details here.
-NOT_RECORDED = ("This demo can answer the suggested questions below. With a live connection, LaMP "
-                "answers any question about your cash, stock and loans.")
+NOT_RECORDED = ("I can't answer that one yet. Pick one of the questions below about your cash, stock "
+                "or loans.")
 
 # Tests set this to answer unrecorded questions with the offline script instead.
 OFFLINE_SCRIPT = False

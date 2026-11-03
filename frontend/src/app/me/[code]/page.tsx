@@ -140,7 +140,7 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
           className="num mt-1 h-11 w-full rounded-[var(--radius)] border border-rule bg-board px-3 text-ink"
         />
         <p className="mt-1 text-xs text-ink-2">
-          Any day from {shortDate(card.as_of)} to {shortDate(card.latest_first_on)}. Dates follow the pharmacy&apos;s books.
+          Any day from {shortDate(card.as_of)} to {shortDate(card.latest_first_on)}.
         </p>
         <button
           type="submit"

@@ -74,7 +74,7 @@ export function Skel({ className }: { className?: string }) {
 export function LoadError({ what }: { what: string }) {
   return (
     <p role="alert" className="rounded-[var(--radius)] border border-alert/40 bg-alert-tint p-4 font-semibold text-alert">
-      Couldn&apos;t load {what}. Check the connection and pull to refresh.
+      Couldn&apos;t load {what}. Check your connection and reload the page.
     </p>
   );
 }
