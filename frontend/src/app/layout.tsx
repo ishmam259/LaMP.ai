@@ -20,7 +20,7 @@ const board = Barlow_Semi_Condensed({
 
 export const metadata: Metadata = {
   title: { default: "LaMP", template: "%s · LaMP" },
-  description: "An AI money helper for the neighborhood pharmacy: cash ahead, expiring stock, and the cheapest way to fund the next order, so families find their medicine in stock.",
+  description: "See your cash for the weeks ahead, sell stock before it expires, and pay for the next order the cheapest way. For neighborhood pharmacies and the families who buy there on credit.",
   applicationName: "LaMP",
 };
 

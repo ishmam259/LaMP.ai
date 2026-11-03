@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "LaMP · Pharmacy finance",
+    name: "LaMP for pharmacies",
     short_name: "LaMP",
-    description: "Cash ahead, expiring stock, and the cheapest way to fund the next order.",
+    description: "See your cash for the weeks ahead, sell stock before it expires, and pay for the next order the cheapest way.",
     start_url: "/",
     display: "standalone",
     background_color: "#eef1f3",
