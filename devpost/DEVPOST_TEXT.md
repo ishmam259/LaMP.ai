@@ -60,7 +60,7 @@ For families who buy on credit:
 
 ## Accomplishments that I'm proud of
 - On 27 test photos, LaMP read 305 of 305 text fields and 409 of 409 numbers exactly, at about USD 0.0005 per photo.
-- 393 automated tests pass, including checks that every demo figure matches.
+- 396 automated tests pass, including checks that every demo figure matches.
 - The customer card gives families a say in their own payment plan without exposing what they bought.
 
 ## What I learned

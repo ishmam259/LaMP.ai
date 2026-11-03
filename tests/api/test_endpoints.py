@@ -88,3 +88,16 @@ def test_shelf_life_credit_endpoint(client):
 def test_financing_catalogue_endpoint(client):
     c = client.get(f"{P}/financing-catalogue").json()
     assert c["matched"] == 6 and c["plan_holds"] is True and c["options"][0]["eligible"]
+
+
+@pytest.mark.parametrize("raw,want", [
+    ('["https://a.com"]', ["https://a.com"]),
+    ("https://a.com", ["https://a.com"]),
+    ("https://a.com/, https://b.com", ["https://a.com", "https://b.com"]),
+])
+def test_cors_origins_accepts_json_comma_or_plain(monkeypatch, raw, want):
+    """Render users type CORS_ORIGINS by hand: a plain address must not crash the API."""
+    from app.config import Settings
+
+    monkeypatch.setenv("CORS_ORIGINS", raw)
+    assert Settings().cors_origins == want

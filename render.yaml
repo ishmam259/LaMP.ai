@@ -39,7 +39,7 @@ services:
       - key: LLM_DAILY_BUDGET_USD
         value: "0"   # no daily limit
       - key: CORS_ORIGINS
-        sync: false   # e.g. ["https://lamp-ai-web.onrender.com"]
+        sync: false   # the web address, e.g. https://lamp-ai-web.onrender.com (a JSON list also works)
       - key: BREVO_API_KEY
         sync: false   # optional crash alerts
       - key: ALERT_EMAIL_TO

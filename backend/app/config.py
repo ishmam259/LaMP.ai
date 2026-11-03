@@ -1,8 +1,11 @@
 """App settings, read from environment variables and the repo-root .env file."""
 
+import json
 from pathlib import Path
+from typing import Annotated
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -23,12 +26,23 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_extract_model: str = "gpt-6-luna"
     llm_daily_budget_usd: float = 1.00  # 0 means no daily limit
-    cors_origins: list[str] = ["http://localhost:3000"]
+    # A JSON list (["https://a", "https://b"]), a comma-separated list, or one address.
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
     # Crash alerts by email (engines/mailer.py). Any of the first three empty: no email is sent.
     brevo_api_key: str = ""
     alert_email_to: str = ""       # comma-separated
     alert_email_from: str = ""     # a verified sender in the Brevo account
     alert_cooldown_minutes: int = 10
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _origins(cls, v):
+        if not isinstance(v, str):
+            return v
+        v = v.strip()
+        if v.startswith("["):
+            return json.loads(v)
+        return [o.strip().strip('"').rstrip("/") for o in v.split(",") if o.strip()]
 
 
 DEV_REGISTRY_KEY = "dev-only-registry-key"
