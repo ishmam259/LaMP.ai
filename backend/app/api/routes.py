@@ -368,7 +368,7 @@ def approve_action(pid: str, aid: str, body: ApprovalIn | None = Body(default=No
         if not auth.check_pin(db, ph, body.pin if body else None):
             engines.log("T3", "ACTIONS", "approval_pin_rejected", db, action=aid, kind=a.kind)
             db.commit()
-            raise HTTPException(401, "Enter your PIN to approve this.")
+            raise HTTPException(401, "That PIN isn't right. Try again.")
     return action_engine.execute_owner_approval(db, pid, aid)
 
 

@@ -155,7 +155,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         <div className="sticky top-0 z-30 hidden items-center justify-end gap-3 border-b border-rule bg-shelf/90 px-8 py-3 backdrop-blur-sm lg:flex">
           <BuildathonSticker className="mr-auto h-10" />
           {isLender ? (
-            <span className="text-sm font-semibold text-ink-2">Lender portal. You see only pharmacies that share their credit record with you.</span>
+            <span className="text-sm font-semibold text-ink-2">Lender portal</span>
           ) : (
             <>
             <PauseToggle />

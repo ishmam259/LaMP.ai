@@ -45,7 +45,7 @@ export default function ActionsPage() {
       setPinFor(null);
       if (res.status === "failed") toast.error(String(res.result?.summary ?? "It didn't go through."));
       else if (decision === "approve") toast.success(String(res.result?.summary ?? "Approved."));
-      else toast("Declined. Nothing was done.");
+      else toast("Declined.");
       return true;
     } catch (e) {
       if (pin && e instanceof ApiError && e.status === 401) return false;
@@ -91,7 +91,7 @@ export default function ActionsPage() {
                         Decline
                       </Button>
                     </div>
-                    {held(a) && <p className="mt-2 text-sm text-ink-2">LaMP is paused. Resume it to approve this suggestion.</p>}
+                    {held(a) && <p className="mt-2 text-sm text-ink-2">LaMP is paused.</p>}
                   </li>
                 ))}
               </ul>
@@ -105,7 +105,7 @@ export default function ActionsPage() {
               </DialogHeader>
               {pinFor && (
                 <PinPrompt
-                  title={`${title(pinFor)}${pinFor.payload.amount !== undefined ? ` · ${bdt(Number(pinFor.payload.amount))}` : ""}. Loan applications need your PIN again.`}
+                  title={`${title(pinFor)}${pinFor.payload.amount !== undefined ? ` · ${bdt(Number(pinFor.payload.amount))}` : ""}`}
                   onSubmit={(pin) => decide(pinFor, "approve", pin)}
                   onCancel={() => setPinFor(null)}
                 />

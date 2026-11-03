@@ -81,7 +81,7 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
     setBusy(true);
     try {
       await setPlan(code, parts, firstOn);
-      toast.success("Plan saved. The pharmacy can see it now.");
+      toast.success("Plan saved.");
       onDone();
     } catch (e) {
       toast.error(errorDetail(e, "Couldn't save your plan. Try again."));

@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { Explain } from "@/components/explain";
 import { proposeAction, useAccount, useActions, useCatalogue, useForecast, useFundingPlan } from "@/lib/api";
-import { bdt, dayDate, shortDate, stampDate } from "@/lib/format";
+import { bdt, dayDate, stampDate } from "@/lib/format";
 import type { ActionKind, CatalogueOut } from "@/lib/types";
-import { resultSummary, waitingOn } from "@/lib/waiting";
+import { waitingOn } from "@/lib/waiting";
 
 /** 9 -> "9", 12.2 -> "12.2", 13.75 -> "13.75" */
 const pct = (n: number) => String(Math.round(n * 100) / 100);
@@ -25,7 +25,6 @@ export default function FundingPage() {
 
   // Every figure below comes from the API: the plan, its options, and the untrimmed forecast shortfall.
   const options = plan?.options ?? [];
-  const trim = options.find((o) => o.key === "trim_order" && o.eligible);
   const primary = plan?.plan.steps.find((s) => s.action_kind !== "trim_order" && !s.fallback_for);
   const primaryOption = primary?.action_kind === "extension_request" ? options.find((o) => o.key === "supplier_extension") : undefined;
   const fallback = options
@@ -54,7 +53,7 @@ export default function FundingPage() {
           ...(s.action_kind === "loan_application" ? { lender_id: "wallet-lender", product_key: "wallet_loan", fallback: true } : {}),
         });
       }
-      toast.success("Plan added to Approvals. Approve each step there.");
+      toast.success("Plan added to Approvals.");
     } catch {
       toast.error("Couldn't add the plan. Try again.");
     } finally {
@@ -74,31 +73,8 @@ export default function FundingPage() {
               <span className="num">{bdt(plan.need.amount)} to cover</span>
               <span className="sb-time">by {dayDate(plan.need.needed_by)}</span>
             </h2>
-            <Explain rows={plan.need.explain} title={`How ${bdt(plan.need.amount)} to cover was worked out`} onBoard />
-            {trim && (
-              <p className="sb-sub mt-1.5 text-[1.0625rem] font-medium">
-                Left after you {trim.label.charAt(0).toLowerCase() + trim.label.slice(1)} ({bdt(trim.amount)} saved).
-              </p>
-            )}
+            <Explain rows={plan.need.explain} title={`${bdt(plan.need.amount)} to cover`} onBoard />
           </section>
-          {(waiting.loan || waiting.extension) && (
-            <div className="space-y-4 lg:col-span-12">
-              {waiting.loan && (
-                <Carton tone="warn" title="Loan applied, waiting for the lender" aside={bdt(Number(waiting.loan.payload.amount ?? 0))}>
-                  <p className="text-ink">
-                    {resultSummary(waiting.loan) ?? "Your application is with the lender."}
-                  </p>
-                </Carton>
-              )}
-              {waiting.extension && (
-                <Carton tone="warn" title="Asked for more days, waiting for the supplier">
-                  <p className="text-ink">
-                    {resultSummary(waiting.extension) ?? "Your request is with the supplier."}
-                  </p>
-                </Carton>
-              )}
-            </div>
-          )}
           <div className="lg:col-span-12">
             <Carton tone="ink" title="Recommended plan" aside={primaryOption ? `Costs ${bdt(plan.plan.total_cost_bdt)} if ${primaryOption.provider} agrees` : `Costs ${bdt(plan.plan.total_cost_bdt)}`}>
               <ol className="space-y-3 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
@@ -124,17 +100,17 @@ export default function FundingPage() {
                 ))}
               </ol>
               {untrimmed != null && untrimmed > plan.need.amount && (
-                <div className="mt-4 border-t border-rule pt-3 text-ink">
-                  Borrowing the full <span className="num">{bdt(untrimmed)}</span> straight away would cost{" "}
-                  <span className="num font-bold">{bdt(plan.naive_cost_bdt)}</span> in interest, and you&apos;d still hold stock that expires. This plan costs{" "}
-                  <span className="num font-bold">{bdt(plan.plan.total_cost_bdt)}</span>
-                  {hasFallback && fallback && fallback.cost_bdt !== plan.plan.total_cost_bdt && (
-                    <>
-                      , or <span className="num font-bold">{bdt(fallback.cost_bdt!)}</span> if you need the loan
-                    </>
-                  )}
-                  .
-                </div>
+                <dl className="mt-4 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 border-t border-rule pt-3 text-ink">
+                  <dt>
+                    Borrow all <span className="num">{bdt(untrimmed)}</span>
+                  </dt>
+                  <dd className="num text-right">{bdt(plan.naive_cost_bdt)}</dd>
+                  <dt className="font-semibold">This plan</dt>
+                  <dd className="num text-right font-bold">
+                    {bdt(plan.plan.total_cost_bdt)}
+                    {hasFallback && fallback && fallback.cost_bdt !== plan.plan.total_cost_bdt && ` · ${bdt(fallback.cost_bdt!)} with the loan`}
+                  </dd>
+                </dl>
               )}
               <Button size="lg" className="mt-4 w-full sm:w-auto" disabled={busy || !!alreadyProposed} onClick={proposePlan}>
                 {inActions ? "Plan is waiting in Approvals" : waitingStep ? "Waiting for an answer" : "Add this plan to Approvals"}
@@ -177,11 +153,6 @@ export default function FundingPage() {
               </ul>
             </Carton>
             {catalogue && <Catalogue c={catalogue} />}
-            <p className="mt-3 text-sm">
-              <Link href="/passport" className="font-semibold text-cash hover:underline">
-                Your credit record
-              </Link>
-            </p>
           </div>
         </div>
       )}
@@ -216,15 +187,9 @@ function Catalogue({ c }: { c: CatalogueOut }) {
                 </p>
                 {!o.eligible && o.ineligible_reason && <p className="mt-1 text-sm font-semibold text-ink">{o.ineligible_reason}</p>}
                 {o.to_confirm.length > 0 && <p className="mt-1 text-sm text-ink-2">You&apos;ll need: {o.to_confirm.join(", ")}.</p>}
-                <details className="mt-1 text-sm text-ink-2">
-                  <summary className="cursor-pointer font-semibold text-cash">Where this comes from</summary>
-                  <p className="mt-1">{o.note}</p>
-                  <a href={o.source} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 font-semibold text-cash hover:underline">
-                    {o.anchored_on}
-                    {o.source_date ? `, ${shortDate(o.source_date)} ${o.source_date.slice(0, 4)}` : ""}
-                    <ExternalLink className="size-3.5" aria-hidden />
-                  </a>
-                </details>
+                <a href={o.source} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-cash hover:underline">
+                  Source <ExternalLink className="size-3.5" aria-hidden />
+                </a>
               </div>
               <div className="text-right">
                 <p className="num font-bold text-ink">{o.cost_of_gap_bdt == null ? "—" : bdt(o.cost_of_gap_bdt)}</p>

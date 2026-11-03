@@ -37,7 +37,7 @@ export default function TodayPage() {
 
       {suspicious && (
         <p role="alert" className="rounded-[var(--radius)] border border-alert/40 bg-alert-tint p-3 font-semibold text-alert lg:col-span-12">
-          {suspicious.title}. {suspicious.detail}
+          {suspicious.title}
         </p>
       )}
 
@@ -160,7 +160,7 @@ export default function TodayPage() {
             <>
               <p className="num text-[1.75rem] font-bold text-ink">{bdt(expiry.at_risk_value)}</p>
               <p className="mt-1 text-ink">
-                {expiry.batches.length} batches. <span className="num font-bold text-stock">{bdt(expiry.return_eligible_value)}</span> can still go back to suppliers.
+                {expiry.batches.length} batches · <span className="num font-bold text-stock">{bdt(expiry.return_eligible_value)}</span> can go back
               </p>
               <div className="mt-2">
                 <Stamp>All expire by {stampDate(expiry.batches.reduce((m, b) => (b.expiry_date > m ? b.expiry_date : m), expiry.batches[0].expiry_date))}</Stamp>
@@ -219,7 +219,6 @@ export default function TodayPage() {
           ))}
         </ul>
       </nav>
-      {asOf && <p className="text-center text-xs text-ink-2 lg:col-span-12">Figures as of {shortDate(asOf)} 2026</p>}
     </div>
   );
 }

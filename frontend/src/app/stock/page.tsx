@@ -23,7 +23,7 @@ export default function StockPage() {
     setBusy(kind);
     try {
       await proposeAction(kind, payload);
-      toast.success("Added to Approvals. Approve it there when you're ready.");
+      toast.success("Added to Approvals.");
     } catch {
       toast.error("Couldn't add it. Try again.");
     } finally {
@@ -114,9 +114,8 @@ export default function StockPage() {
                         </div>
                         {cut && (
                           <p className="mt-1 text-sm text-ink">
-                            Sells about 1 box every {Math.round(1 / l.sales_rate_per_day)} days. Only{" "}
-                            <span className="font-bold">{l.sellable_qty}</span> of {l.qty} will sell before expiry.{" "}
-                            <span className="font-bold text-warn">{bdt(l.at_risk_value)} at risk.</span>
+                            <span className="font-bold">{l.sellable_qty}</span> of {l.qty} sell before expiry ·{" "}
+                            <span className="font-bold text-warn">{bdt(l.at_risk_value)} at risk</span>
                           </p>
                         )}
                       </li>

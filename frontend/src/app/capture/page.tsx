@@ -126,7 +126,7 @@ export default function CapturePage() {
   );
 }
 
-function SuspiciousBanner({ capture, what }: { capture: CaptureOut; what: string }) {
+function SuspiciousBanner({ capture }: { capture: CaptureOut }) {
   const suspicious = capture.extraction.suspicious_text;
   if (suspicious.length === 0) return null;
   return (
@@ -135,7 +135,7 @@ function SuspiciousBanner({ capture, what }: { capture: CaptureOut; what: string
       <div>
         <p className="font-semibold text-alert">This photo had hidden instructions written in it. LaMP ignored them.</p>
         <p className="mt-1 text-sm">
-          Found: <q>{suspicious[0]}</q>. Nothing was approved or changed. Only the {what} below were read.
+          Found: <q>{suspicious[0]}</q>
         </p>
       </div>
     </div>
@@ -185,10 +185,9 @@ function Review({
 
   return (
     <div className="space-y-4">
-      <SuspiciousBanner capture={capture} what="invoice details" />
+      <SuspiciousBanner capture={capture} />
 
       <Carton tone={saved ? "stock" : "warn"} title={saved ? "Saved" : "Check what LaMP read"} aside={`${inv.supplier_name} · ${inv.invoice_no}`}>
-        <p className="text-sm text-ink-2">Fields LaMP wasn&apos;t sure about are highlighted. Correct them, then save.</p>
         <FailedChecks capture={capture} />
         <ul className="mt-3 divide-y divide-rule">
           {lines.map((l, i) => (
@@ -219,9 +218,15 @@ function Review({
         >
           {matches ? <CircleCheck className="size-5 shrink-0 text-stock" aria-hidden /> : <CircleAlert className="size-5 shrink-0 text-warn" aria-hidden />}
           <p>
-            Lines add up to <span className="num font-bold">BDT {num(linesTotal)}</span>. The invoice says{" "}
-            <span className="num font-bold">BDT {num(inv.total)}</span>.
-            {matches ? " They match." : " Check the highlighted prices."}
+            Total <span className="num font-bold">BDT {num(linesTotal)}</span>
+            {matches ? (
+              " · matches the invoice"
+            ) : (
+              <>
+                {" "}
+                · invoice says <span className="num font-bold">BDT {num(inv.total)}</span>
+              </>
+            )}
           </p>
         </div>
         {!saved ? (
@@ -273,9 +278,8 @@ function SalesReview({
 
   return (
     <div className="space-y-4">
-      <SuspiciousBanner capture={capture} what="sales figures" />
+      <SuspiciousBanner capture={capture} />
       <Carton tone={saved ? "stock" : "warn"} title={saved ? "Saved" : "Check what LaMP read"} aside={`Sales book · ${days.length} days`}>
-        <p className="text-sm text-ink-2">Fields LaMP wasn&apos;t sure about are highlighted. Correct them, then save.</p>
         <FailedChecks capture={capture} />
         <ul className="mt-3 divide-y divide-rule">
           {days.map((d, i) => (
@@ -297,7 +301,7 @@ function SalesReview({
           ))}
         </ul>
         <p className="mt-2 rounded-[var(--radius)] bg-board p-3 text-sm text-ink">
-          Sales on this page: <span className="num font-bold">BDT {num(total)}</span> over {days.length} days.
+          Total sales <span className="num font-bold">BDT {num(total)}</span>
         </p>
         {!saved ? (
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">

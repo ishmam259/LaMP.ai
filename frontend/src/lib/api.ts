@@ -67,10 +67,10 @@ async function liveFetch(method: string, path: string, body?: unknown, headers?:
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     // Lock only when the session is missing or expired; a wrong PIN at approval is answered in its dialog.
-    if (res.status === 401 && !path.startsWith("/lenders") && !text.includes("needs the owner PIN") && typeof window !== "undefined") {
+    if (res.status === 401 && !path.startsWith("/lenders") && !text.includes("That PIN isn't right") && typeof window !== "undefined") {
       window.dispatchEvent(new Event(LOCKED_EVENT));
     }
-    throw new ApiError(res.status, text || `${method} ${path} failed (${res.status})`);
+    throw new ApiError(res.status, text || "Something went wrong. Try again.");
   }
   return res.status === 204 ? null : res.json();
 }
@@ -108,7 +108,7 @@ export async function unlock(pin: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ pin }),
   });
-  if (!res.ok) throw new ApiError(res.status, await res.text().catch(() => `Unlock failed (${res.status})`));
+  if (!res.ok) throw new ApiError(res.status, await res.text().catch(() => "Couldn't reach LaMP. Try again."));
   window.dispatchEvent(new Event(UNLOCKED_EVENT));
   await refreshAll();
 }
@@ -123,7 +123,7 @@ export async function uploadCapture(kind: "invoice" | "sales_page", file: File):
   form.append("kind", kind);
   const res = await fetch(`${BASE}/pharmacies/${PID}/captures`, { method: "POST", body: form, credentials: "include" });
   if (res.status === 401) window.dispatchEvent(new Event(LOCKED_EVENT));
-  if (!res.ok) throw new ApiError(res.status, `Upload failed (${res.status})`);
+  if (!res.ok) throw new ApiError(res.status, "Couldn't upload the photo. Try again.");
   return res.json();
 }
 

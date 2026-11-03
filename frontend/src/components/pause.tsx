@@ -17,7 +17,7 @@ export function PauseToggle({ onRail = false }: { onRail?: boolean }) {
     setBusy(true);
     try {
       await setPaused(!paused);
-      toast(paused ? "LaMP is back on. It can suggest steps again." : "LaMP is paused. It won't suggest anything until you resume it.");
+      toast(paused ? "LaMP resumed." : "LaMP paused.");
     } catch {
       toast.error("Couldn't change Pause. Try again.");
     } finally {

@@ -137,7 +137,7 @@ export default function CashPage() {
                     </div>
                   </dl>
                   <h3 className="mt-4 font-semibold text-ink">Who you buy from</h3>
-                  <p className="text-xs text-ink-2">{accounts.active_suppliers} suppliers. Your biggest five, by share of what you buy:</p>
+                  <p className="text-xs text-ink-2">Top {accounts.top_suppliers.length} of {accounts.active_suppliers}</p>
                   <ul className="mt-2 space-y-1.5">
                     {accounts.top_suppliers.map((s) => (
                       <li key={s.name} className="grid grid-cols-[96px_1fr_44px] items-center gap-2 text-sm">

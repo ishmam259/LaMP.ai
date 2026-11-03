@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
-import { grantConsent, useConsentPreview, useConsents, useLenders, usePassport, withdrawConsent } from "@/lib/api";
+import { grantConsent, useConsents, useLenders, usePassport, withdrawConsent } from "@/lib/api";
 import { num, shortDate } from "@/lib/format";
 
 const SUMMARY = ["passport.summary"];
@@ -17,21 +16,18 @@ export default function PassportPage() {
   const { data: consents } = useConsents();
   const [busy, setBusy] = useState<string | null>(null);
   const [withEvidence, setWithEvidence] = useState(true);
-  const [previewFor, setPreviewFor] = useState<string | null>(null);
   const scopes = withEvidence ? FULL : SUMMARY;
-  const previewLender = previewFor ?? lenders?.[0]?.id ?? null;
-  const { data: preview } = useConsentPreview(previewLender, scopes);
 
   async function toggle(lenderId: string, on: boolean) {
     setBusy(lenderId);
     try {
       if (on) {
         await grantConsent(lenderId, scopes);
-        toast.success("Shared. This lender can now see your credit record.");
+        toast.success("Shared.");
       } else {
         const c = consents?.find((x) => x.lender_id === lenderId);
         if (c) await withdrawConsent(c.id);
-        toast("Stopped sharing. The lender can no longer see your credit record.");
+        toast("Stopped sharing.");
       }
     } catch {
       toast.error("Couldn't change sharing. Try again.");
@@ -108,8 +104,8 @@ export default function PassportPage() {
                 <legend className="float-left w-full text-sm font-semibold text-ink">What a lender sees</legend>
                 <div className="clear-left grid gap-2 pt-2 sm:grid-cols-2">
                   {[
-                    { v: false, label: "Summary only", sub: "Your on-time count and the offer" },
-                    { v: true, label: "Summary and invoices", sub: "Plus each invoice and when you paid it" },
+                    { v: false, label: "Summary only" },
+                    { v: true, label: "Summary and invoices" },
                   ].map((o) => (
                     <label
                       key={o.label}
@@ -117,50 +113,10 @@ export default function PassportPage() {
                     >
                       <input type="radio" name="scope" className="sr-only" checked={withEvidence === o.v} onChange={() => setWithEvidence(o.v)} />
                       <span className="block font-semibold text-ink">{o.label}</span>
-                      <span className="block text-ink-2">{o.sub}</span>
                     </label>
                   ))}
                 </div>
               </fieldset>
-              <div className="mt-3 flex flex-wrap items-baseline gap-x-2">
-                <h3 className="text-sm font-semibold text-ink">What this lender will see</h3>
-                {lenders && lenders.length > 1 && (
-                  <select
-                    aria-label="Lender to preview"
-                    value={previewLender ?? ""}
-                    onChange={(e) => setPreviewFor(e.target.value)}
-                    className="h-8 rounded-[var(--radius)] border border-rule bg-board px-2 text-sm text-ink"
-                  >
-                    {lenders.map((l) => (
-                      <option key={l.id} value={l.id}>
-                        {l.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
-              <ul className="mt-1 space-y-1 text-sm text-ink">
-                {preview?.shares.map((t) => (
-                  <li key={t} className="flex gap-2">
-                    <Check className="mt-0.5 size-4 shrink-0 text-stock" aria-hidden /> {t}
-                  </li>
-                ))}
-                {preview?.withholds.map((t) => (
-                  <li key={t} className="flex gap-2 text-ink-2">
-                    <X className="mt-0.5 size-4 shrink-0" aria-hidden /> Not shared: {t}
-                  </li>
-                ))}
-                <li className="flex gap-2 text-ink-2">
-                  <X className="mt-0.5 size-4 shrink-0" aria-hidden /> Never your customers, or what anyone bought
-                </li>
-              </ul>
-              {preview && (
-                <p className="mt-2 text-xs text-ink-2">
-                  {preview.passport.evidence.length > 0
-                    ? `This lender would see ${preview.passport.evidence.length} invoices.`
-                    : "This lender would see the summary only."}
-                </p>
-              )}
             </Carton>
           </div>
         </div>

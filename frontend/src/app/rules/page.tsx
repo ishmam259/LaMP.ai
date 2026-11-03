@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, ExternalLink, KeyRound, X } from "lucide-react";
-import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
+import { Check, ExternalLink, KeyRound } from "lucide-react";
+import { Carton, LoadError, PageTitle, Skel } from "@/components/carton";
 import { PauseToggle } from "@/components/pause";
 import { usePolicy } from "@/lib/api";
-import { bdt, num } from "@/lib/format";
+import { num } from "@/lib/format";
 import type { ActionKind } from "@/lib/types";
 
 const KIND: Record<ActionKind, string> = {
@@ -39,7 +39,7 @@ export default function RulesPage() {
                   <li key={k} className="flex items-center gap-2">
                     {pin ? <KeyRound className="size-4 shrink-0 text-warn" aria-hidden /> : <Check className="size-4 shrink-0 text-stock" aria-hidden />}
                     <span className="flex-1">{KIND[k]}</span>
-                    <span className="text-sm text-ink-2">{pin ? "Your approval and your PIN again" : "Your approval"}</span>
+                    {pin && <span className="text-sm text-ink-2">PIN required</span>}
                   </li>
                 );
               })}
@@ -47,35 +47,9 @@ export default function RulesPage() {
           </Carton>
 
           <Carton tone="ink" title="Borrowing limit" aside={`${num(p.dbr_cap_pct)}% of what you keep each month`}>
-            <ul className="divide-y divide-rule border-t border-rule">
-              {p.examples.map((e) => (
-                <li key={e.label} className="flex items-start gap-3 py-3">
-                  <span
-                    className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${e.ok ? "bg-stock-tint text-stock" : "bg-alert-tint text-alert"}`}
-                    aria-label={e.ok ? "Allowed" : "Refused"}
-                  >
-                    {e.ok ? <Check className="size-4" aria-hidden /> : <X className="size-4" aria-hidden />}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-ink">{e.label}</p>
-                    <p className="num text-sm text-ink-2">
-                      {bdt(e.amount)}: {bdt(e.monthly_repayment)} a month for {e.months} months, {num(e.dbr_pct, 1)}% of what you keep
-                    </p>
-                  </div>
-                  <Stamp tone={e.ok ? "stock" : "alert"}>{e.ok ? "Allowed" : "Refused"}</Stamp>
-                </li>
-              ))}
-            </ul>
-            <details className="mt-2 text-sm text-ink-2">
-              <summary className="cursor-pointer font-semibold text-cash">Where the {num(p.dbr_cap_pct)}% comes from</summary>
-              <p className="mt-2">
-                {p.source.issuer}&apos;s rules for personal loans: {p.source.clause}. {p.source.principle}. LaMP uses the same limit for what
-                the pharmacy keeps each month.
-              </p>
-              <a href={p.source.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 font-semibold text-cash hover:underline">
-                Read the rules ({p.source.issuer}, {p.source.edition.slice(-4)}, page {p.source.page}) <ExternalLink className="size-3.5" aria-hidden />
-              </a>
-            </details>
+            <a href={p.source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-cash hover:underline">
+              {p.source.issuer} rules <ExternalLink className="size-3.5" aria-hidden />
+            </a>
           </Carton>
         </div>
       )}

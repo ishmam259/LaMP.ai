@@ -94,14 +94,11 @@ def get_account(db: Session, pid: str) -> AccountOut:
     recs = []
     for x in matches:
         if x["status"] == "duplicate":
-            recs.append(f"You paid {x['invoice_no']} twice. Ask {x['supplier']} to give back BDT {-x['amount']:,.0f} "
-                        "or take it off your next bill.")
+            recs.append(f"{x['invoice_no']} paid twice: ask {x['supplier']} for BDT {-x['amount']:,.0f} back")
         elif x["status"] == "unmatched":
-            recs.append(f"You paid BDT {-x['amount']:,.0f} to {x['payee']} on {x['date']:%d %b} with no bill. "
-                        "If it was for the shop, add the bill.")
+            recs.append(f"BDT {-x['amount']:,.0f} to {x['payee']} on {x['date']:%d %b} has no bill")
         elif x["status"] == "missing_from_statement":
-            recs.append(f"{x['invoice_no']} is marked paid, but the money never left your wallet. "
-                        f"Check with {x['supplier']} before they ask for it.")
+            recs.append(f"{x['invoice_no']} is marked paid but isn't in your wallet: check with {x['supplier']}")
     return AccountOut(opening_balance=r2(opening), balance=r2(balance),
                       transactions=[{"date": t.date, "amount": t.amount, "kind": t.kind, "ref": t.ref} for t in txns],
                       matches=matches, counts=counts, recommendations=recs)

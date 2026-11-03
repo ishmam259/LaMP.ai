@@ -2,19 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "cn";
-import { ShieldAlert, ShieldCheck } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { subscribeLogs, useLogVerify } from "@/lib/api";
 import { shortDate, timeOfDay } from "@/lib/format";
 import type { LogEvent } from "@/lib/types";
 
-// Tiers say who acted, not whether it went well, so the chips stay neutral.
-// Only failed or blocked events use the alert colour.
-const TIERS: { tier: LogEvent["tier"]; label: string }[] = [
-  { tier: "T0", label: "Viewed" },
-  { tier: "T1", label: "You & LaMP" },
-  { tier: "T2", label: "Calculations" },
-  { tier: "T3", label: "Money" },
-];
+// Bookkeeping entries the owner doesn't need to read: each one repeats another entry or is LaMP's own housekeeping.
+const HIDDEN = new Set([
+  "reset", "demo_auto_reset", "forecast_updated", "document_read", "action_executed",
+  "followup_scheduled", "notify", "lock_acquired",
+]);
 
 /** The part of LaMP that wrote the event, in the owner's words. */
 const PART: Record<string, string> = {
@@ -23,7 +20,7 @@ const PART: Record<string, string> = {
   AUTH: "Sign-in",
   ACTIONS: "Approvals",
   EXECUTOR: "Approvals",
-  REGISTRY: "Double-loan check",
+  REGISTRY: "Loans",
   PATIENT: "Customer",
   FOLLOWUP: "Follow-up",
   NOTIFY: "Alert",
@@ -37,8 +34,6 @@ const PART: Record<string, string> = {
   WALLET: "Wallet",
 };
 const part = (c: string) => PART[c] ?? c.charAt(0) + c.slice(1).toLowerCase();
-
-const tierWord = (t: LogEvent["tier"]) => TIERS.find((x) => x.tier === t)?.label ?? t;
 
 const isProblem = (e: LogEvent) => /blocked|failed|declined|rejected|refused|suspicious/.test(e.event);
 
@@ -79,7 +74,7 @@ function sentence(e: LogEvent): string {
     case "extension_accepted":
       return `${d.supplier} agreed to more days`;
     case "capture_created":
-      return "Photo read; waiting for the owner to check it";
+      return "Photo read";
     case "forecast_updated":
       return "Cash for the next 30 days worked out again";
     case "inbox_viewed":
@@ -115,7 +110,7 @@ function sentence(e: LogEvent): string {
     case "document_read":
       return `Read a ${d.kind === "invoice" ? "supplier invoice" : "sales book page"}`;
     case "suspicious_text_flagged":
-      return "Ignored instructions written inside a document";
+      return "Ignored hidden instructions in a photo";
     case "capture_confirmed":
       return "Owner saved a photo to the accounts";
     case "reset":
@@ -173,7 +168,6 @@ function who(id: unknown): string {
 export function LiveLog() {
   const { data: chain, mutate: recheck } = useLogVerify();
   const [live, setLive] = useState<LogEvent[]>([]);
-  const [filter, setFilter] = useState<LogEvent["tier"] | "all">("all");
   const listRef = useRef<HTMLOListElement>(null);
 
   useEffect(
@@ -193,8 +187,8 @@ export function LiveLog() {
   const events = useMemo(() => {
     const seen = new Set<string>();
     const all = live.filter((e) => (seen.has(e.id) ? false : (seen.add(e.id), true)));
-    return all.filter((e) => filter === "all" || e.tier === filter);
-  }, [live, filter]);
+    return all.filter((e) => !HIDDEN.has(e.event));
+  }, [live]);
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
@@ -205,47 +199,18 @@ export function LiveLog() {
       <div className="band band-ink">
         <span>History</span>
       </div>
-      {chain && (
-        <p
-          role="status"
-          className={cn(
-            "flex items-center gap-1.5 border-b border-rule px-3 py-1.5 text-xs font-semibold",
-            chain.intact ? "text-stock" : "bg-alert-tint text-alert"
-          )}
-        >
-          {chain.intact ? <ShieldCheck className="size-4 shrink-0" aria-hidden /> : <ShieldAlert className="size-4 shrink-0" aria-hidden />}
-          {chain.intact ? (
-            <span>
-              Checked · <span className="num">{chain.count}</span> entries, none changed
-            </span>
-          ) : (
-            <span>Someone changed this history after it was saved</span>
-          )}
+      {chain && !chain.intact && (
+        <p role="status" className="flex items-center gap-1.5 border-b border-rule bg-alert-tint px-3 py-1.5 text-xs font-semibold text-alert">
+          <ShieldAlert className="size-4 shrink-0" aria-hidden />
+          <span>Someone changed this history after it was saved</span>
         </p>
       )}
-      <div className="flex flex-wrap gap-1.5 border-b border-rule px-3 py-2">
-        {(["all", ...TIERS.map((x) => x.tier)] as const).map((t) => (
-          <button
-            key={t}
-            type="button"
-            aria-pressed={filter === t}
-            onClick={() => setFilter(t)}
-            className={cn(
-              "h-8 rounded-[var(--radius)] px-2.5 text-xs font-bold",
-              filter === t ? "bg-ink text-board" : "bg-muted text-ink-2 hover:text-ink"
-            )}
-          >
-            {t === "all" ? "All" : tierWord(t)}
-          </button>
-        ))}
-      </div>
       <ol ref={listRef} className="min-h-0 flex-1 overflow-y-auto text-sm" aria-live="polite">
-        {events.length === 0 && <li className="p-4 text-ink-2">Nothing yet. What you and LaMP do appears here.</li>}
+        {events.length === 0 && <li className="p-4 text-ink-2">Nothing yet.</li>}
         {events.map((e) => (
           <li key={e.id} className="border-b border-rule px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="num font-board text-ink-2">{timeOfDay(e.ts)}</span>
-              <span className="rounded-[2px] bg-muted px-1.5 text-xs font-bold text-ink">{tierWord(e.tier)}</span>
               <span className="text-xs font-bold text-ink-2">{part(e.component)}</span>
             </div>
             <p className={cn("mt-0.5 font-semibold break-words", isProblem(e) ? "text-alert" : "text-ink")}>{sentence(e)}</p>

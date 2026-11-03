@@ -16,7 +16,7 @@ function planText(c: PatientDue) {
 async function copyLink(code: string) {
   try {
     await navigator.clipboard.writeText(`${window.location.origin}/me/${code}`);
-    toast.success("Card link copied. Send it to the customer.");
+    toast.success("Card link copied.");
   } catch {
     toast.error(`Couldn't copy. The code is ${code}.`);
   }
