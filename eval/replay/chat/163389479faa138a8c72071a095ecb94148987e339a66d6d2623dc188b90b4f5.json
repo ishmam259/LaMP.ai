@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "Within the next 60 days, these batches expire:\n\n- Vitamin B complex, box of 30: 8 boxes, 25 Oct; stock worth BDT 1,200.\n- Oral saline, box of 25: 6 boxes, 28 Oct; stock worth BDT 1,800.\n- Metformin 500 mg, box of 100: 13 boxes, 5 Nov; stock worth BDT 2,600.\n- Amoxicillin 500 mg, box of 50: 6 boxes, 10 Nov; stock worth BDT 3,600.\n- Cetirizine 10 mg, box of 100: 22 boxes, 3 Dec; stock worth BDT 4,400.\n- Omeprazole 20 mg, box of 50: 10 boxes, 10 Dec; stock worth BDT 4,800.\n\nTotal stock worth BDT 18,400. Suppliers will take back BDT 9,200 worth. I suggested asking them to take it back; it is waiting for your approval in Approvals.",
+        "id": "msg_0c5a6fb63933a248006ae9991dd66887d294e5bc11c2efb757",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2544,
+      "cache_write_tokens": 85,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2456,
+      "output_tokens": 230,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-03T08:19:44.349255Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-03T08:19:41Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0c5a6fb63933a248006ae9991d4c9087d29c2a113e6a3c55a9",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

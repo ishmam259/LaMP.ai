@@ -29,7 +29,7 @@ OPTION_WORDS = {
     "return_claims": r"\breturn",
     "supplier_extension": r"\bextension|\bmore days|\bextra days",
     "wallet_loan": r"\bwallet\b|\bmobile-wallet|\bnano",
-    "bank_supplier_credit": r"\bsupplier credit|\bbank pays",
+    "bank_supplier_credit": r"\bsupplier credit|\bbank pays|\bpays your supplier",
     "bank_sme_loan": r"\bsmall-business|\bsme\b|\bbank loan",
     "naive": r"\bnaive|\buntrimmed|\bwithout trimming|\bfull shortfall|\bwhole shortfall|\bfull 19,000",
 }

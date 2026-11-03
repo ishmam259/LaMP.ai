@@ -42,7 +42,7 @@ def get_alerts(db: Session, pid: str) -> list[Alert]:
         i = next(n for n, x in enumerate(fc.days) if x.date == s.date)
         before = fc.days[i - 1].balance if i else fc.start_cash  # payments go out at the start of the day
         add("shortfall", "critical", f"Short {_bdt(s.amount)} on {s.date:%d %b}",
-            f"{s.cause} is due. Forecast cash that day is {_bdt(before)}.")
+            f"{s.cause} is due. You'll have {_bdt(before)} that day.")
 
     batches = list(db.scalars(select(m.StockBatch).where(m.StockBatch.pharmacy_id == pid)))
     expiring = [b for b in batches if 0 <= (b.expiry_date - today).days <= 60]
@@ -51,20 +51,20 @@ def get_alerts(db: Session, pid: str) -> list[Alert]:
               and b.batch_no not in claimed]
     if window:
         add("return_window", "warning", f"Claim returns worth {_bdt(sum(b.qty * b.unit_cost for b in window))}",
-            f"{len(window)} batches can still go back to their suppliers before the return window closes.")
+            f"{len(window)} batches can still go back to their suppliers before the deadline to return them.")
     if expiring:
         past = sum(1 for b in expiring if (b.expiry_date - today).days < b.supplier.return_cutoff_days)
         add("expiry", "warning", f"{_bdt(sum(b.qty * b.unit_cost for b in expiring))} of stock expires within 60 days",
-            f"{len(expiring)} batches. {past} of them are past their return window.")
+            f"{len(expiring)} batches. {past} of them can no longer go back to suppliers.")
 
     old = [d for d in db.scalars(select(m.PatientDue).where(m.PatientDue.pharmacy_id == pid))
            if d.since < today - timedelta(days=30)]
     if old:
-        add("patient_dues", "info", f"{_bdt(sum(d.amount for d in old))} of patient dues is over 30 days old",
+        add("patient_dues", "info", f"Customers have owed {_bdt(sum(d.amount for d in old))} for over a month",
             f"{len(old)} customers owe money from more than a month ago.")
 
     for cap in db.scalars(select(m.Capture).where(m.Capture.pharmacy_id == pid)):
         if cap.extraction.get("suspicious_text"):
-            add("suspicious_document", "critical", "A photo contained instructions",
-                f"Capture {cap.id} had text that looked like instructions. It was ignored; please check the document.")
+            add("suspicious_document", "critical", "A photo had hidden instructions",
+                "LaMP found hidden instructions written on a scanned photo and ignored them. Check that photo.")
     return [Alert.model_validate(a) for a in alerts]

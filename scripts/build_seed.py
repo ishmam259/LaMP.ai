@@ -219,10 +219,10 @@ LENDERS = [
     ]},
     {"id": "partner-bank", "name": "Partner Bank", "kind": "bank",
      "api_key_sha256": hash_key("partner-bank-demo-key"), "products": [
-        {"key": "bank_supplier_credit", "label": "Supplier credit", "apr_pct": None, "fee_pct": 1,
+        {"key": "bank_supplier_credit", "label": "Pays your supplier now", "apr_pct": None, "fee_pct": 1,
          "min_amount": 10_000, "max_amount": 500_000, "tenor_days": 30, "min_history_invoices": 10,
          "min_history_months": 0, "cost_bearer": "pharmacy"},
-        {"key": "bank_sme_loan", "label": "small-business loan", "apr_pct": 13, "fee_pct": None,
+        {"key": "bank_sme_loan", "label": "Small-business loan", "apr_pct": 13, "fee_pct": None,
          "min_amount": 200_000, "max_amount": 5_000_000, "tenor_days": 365, "min_history_invoices": 0,
          "min_history_months": 12, "cost_bearer": "pharmacy"},
     ]},

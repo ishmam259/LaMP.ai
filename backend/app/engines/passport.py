@@ -115,13 +115,13 @@ def get_shelf_life_credit(db: Session, pid: str) -> ShelfLifeCreditOut:
         order = next((o for o in orders if o.due_date >= needed_by), orders[0])
     if order is None:
         return ShelfLifeCreditOut(order_id="", needed_by=needed_by, counterfactual_purpose_blind=0, not_financed=0,
-                                  financeable=0, reason="No planned order to finance.", batches=[])
+                                  financeable=0, reason="There's no upcoming order to lend for.", batches=[])
     trim = get_trim(db, pid, order.id)
     batches = [ShelfLifeBatch(product=l.product, qty_ordered=l.qty, sellable_qty=l.sellable_qty,
                               unsellable_value=r2(l.at_risk_value)) for l in trim.lines]
     not_financed = r2(min(need, sum(b.unsellable_value for b in batches)))
     financeable = r2(max(0.0, need - not_financed))
-    reason = (f"{not_financed:,.0f} of this order won't sell before expiry, so it isn't financed."
+    reason = (f"BDT {not_financed:,.0f} of this order won't sell before it expires, so LaMP won't lend for it."
               if not_financed else "Every line of this order will sell before expiry.")
     return _with_explain(ShelfLifeCreditOut(order_id=order.id, needed_by=needed_by, counterfactual_purpose_blind=r2(need),
                               not_financed=not_financed, financeable=financeable, reason=reason, batches=batches))

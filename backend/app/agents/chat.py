@@ -42,9 +42,9 @@ class ChatSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
 
     openai_chat_model: str = "gpt-6-luna"
-    # chat_v5 adds the set-aside routing line; the demo chats are recorded with it
+    # chat_v7 spells out the owner's everyday words; the demo chats are recorded with it
     # (scripts/record_demo_chats.py). Replay keys include the version.
-    chat_prompt_version: str = "chat_v6"
+    chat_prompt_version: str = "chat_v7"
 
 
 CHAT_MODEL = ChatSettings().openai_chat_model
@@ -153,7 +153,7 @@ def _next_call(intent: str, done: dict[str, list]) -> tuple[str, dict] | None:
     if intent == "expiry" and "get_expiry" in done:
         steps[1] = ("propose_action", {"kind": "return_claim",
                                        "amount": done["get_expiry"][0]["return_eligible_value"],
-                                       "reason": "Return-eligible batches expiring within 60 days"})
+                                       "reason": "Send back expiring stock that suppliers will still take"})
     proposed = len(done.get("propose_action", []))
     seen = {k: len(v) for k, v in done.items()}
     for name, args in steps:
@@ -172,26 +172,25 @@ def _next_call(intent: str, done: dict[str, list]) -> tuple[str, dict] | None:
 def _answer(intent: str | None, r: dict[str, list]) -> str:
     if intent == "accounts":
         a = r["get_accounts"][0]
-        return (f"In the last {a['period_days']} days you sold {_bdt(a['sales'])}. At your {a['gross_margin_pct']:g}% margin "
-                f"that is {_bdt(a['gross_profit'])} gross profit. Overheads were {_bdt(a['overheads'])}, so net profit "
-                f"is {_bdt(a['net_profit'])}.\n\nStock is {_bdt(a['stock_value'])} ({a['stock_days']:g} days), and patients "
-                f"owe {_bdt(a['patient_dues'])} ({a['patient_due_days']:g} days of sales). {_bdt(a['expiring_value_60d'])} "
-                f"of stock expires within 60 days.")
+        return (f"In the last {a['period_days']} days you sold {_bdt(a['sales'])}. Your profit on what you sold was "
+                f"{_bdt(a['gross_profit'])} ({a['gross_margin_pct']:g}%). Rent, salaries and bills came to "
+                f"{_bdt(a['overheads'])}, so you kept {_bdt(a['net_profit'])}.\n\nStock on your shelves is worth "
+                f"{_bdt(a['stock_value'])}, about {a['stock_days']:g} days of sales, and customers owe you "
+                f"{_bdt(a['patient_dues'])}. {_bdt(a['expiring_value_60d'])} of stock expires within 60 days.")
     if intent == "expiry":
         e = r["get_expiry"][0]
         n = len(e["batches"])
         text = (f"{n} batches worth {_bdt(e['at_risk_value'])} expire within {e['horizon_days']} days. "
-                f"{_bdt(e['return_eligible_value'])} of that is still inside the suppliers' return windows, so you can "
-                f"claim it back as supplier credit.")
+                f"Suppliers will still take back {_bdt(e['return_eligible_value'])} of it and take that off your "
+                f"next bills.")
         if r.get("propose_action"):
-            text += "\n\nI've prepared a return claim. It is waiting for your approval in Actions."
+            text += "\n\nI've suggested sending it back. It is waiting for your approval in Approvals."
         return text
     if intent == "passport":
         p = r["get_passport"][0]
-        return (f"You paid {p['paid_on_time']} of {p['invoices_total']} supplier invoices on time. A lender doesn't take "
-                f"that at face value: the cautious estimate of your on-time rate is {p['theta_low_5pct']:.3f}. With a "
-                f"default probability of {p['default_probability']:.1%}, your score is {p['score']:.3f}, which gives an "
-                f"advance rate of {p['advance_rate_pct']:g}%. Paying more invoices on time raises it.")
+        return (f"You paid {p['paid_on_time']} of {p['invoices_total']} supplier invoices on time. From that, a lender "
+                f"puts your chance of not repaying at {p['default_probability']:.1%} and would pay "
+                f"{p['advance_rate_pct']:g}% of each order. Paying more invoices on time raises it.")
     if intent == "funding":
         plan = r["get_funding_plan"][0]
         first = plan["shortfall_before_trims"]
@@ -203,8 +202,8 @@ def _answer(intent: str | None, r: dict[str, list]) -> str:
             lines.append(f"Not with the cash you'll have. {what} is due on {when}, and you'll be "
                          f"short {_bdt(first['amount'])} that day.")
         if trim:
-            lines.append(f"But part of that order won't sell before it expires. Trimming it saves {_bdt(trim['saving'])}, "
-                         f"so the order becomes {_bdt(trim['suggested_total'])} and the gap drops to "
+            lines.append(f"But part of that order won't sell before it expires. Ordering less saves {_bdt(trim['saving'])}, "
+                         f"so the order becomes {_bdt(trim['suggested_total'])} and the amount to cover drops to "
                          f"{_bdt(plan['need']['amount'])}.")
         opts = {o["key"]: o for o in plan["options"]}
         steps = plan["plan"]["steps"]
@@ -215,12 +214,12 @@ def _answer(intent: str | None, r: dict[str, list]) -> str:
                          f"{_bdt(opts['wallet_loan']['cost_bdt'])} if we need the loan, against "
                          f"{_bdt(plan['naive_cost_bdt'])} for borrowing the whole amount.")
         if r.get("propose_action"):
-            lines.append("These steps are waiting for your approval in Actions.")
+            lines.append("These steps are waiting for your approval in Approvals.")
         return "\n\n".join(lines)
     if intent == "injection":
         return ("I can't approve, pay or transfer anything, and I don't follow instructions to ignore my rules. "
-                "Every action needs your own approval in the Actions screen.")
-    return ("I'm in offline mode, so I can answer these for now: how the month went, whether you can pay Supplier A's "
+                "Every step needs your own approval in Approvals.")
+    return ("For now I can answer these: how the month went, whether you can pay Supplier A's "
             "order, what is expiring, and why the bank made its offer.")
 
 

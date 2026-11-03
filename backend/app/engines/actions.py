@@ -89,7 +89,7 @@ def _get(db: Session, pid: str, aid: str) -> m.Action:
     if a is None or a.pharmacy_id != pid:
         raise HTTPException(404, f"Unknown action '{aid}'")
     if a.status != "proposed":
-        raise HTTPException(409, f"Action is already {a.status}")
+        raise HTTPException(409, "This was already declined." if a.status == "rejected" else "This was already approved.")
     return a
 
 
@@ -153,7 +153,7 @@ def _trim_order(db: Session, pid: str, a: m.Action) -> dict:
     order = _order(db, pid, a.payload)
     trim = get_trim(db, pid, order.id)
     if trim.saving <= 0:
-        raise _Failed("nothing_to_trim", f"Every line of order {order.id} already sells before expiry.")
+        raise _Failed("nothing_to_trim", f"Everything on {order.supplier.name}'s order already sells before it expires.")
     # The shelf-life credit is defined on the order as photographed; keep it before the trim changes it.
     credit = get_shelf_life_credit(db, pid).model_dump(mode="json")
     before = order.total
@@ -173,7 +173,7 @@ def _return_claim(db: Session, pid: str, a: m.Action) -> dict:
     claimed = set(db.scalars(select(m.ReturnClaim.batch_no).where(m.ReturnClaim.pharmacy_id == pid)))
     batches = [b for b in batches if b.batch_no not in claimed]
     if not batches:
-        raise _Failed("nothing_to_claim", "No return-eligible batches are left to claim.")
+        raise _Failed("nothing_to_claim", "No stock is left that suppliers will take back.")
     claim_id = _next_id(db, m.ReturnClaim, "CLM-", 4)
     for i, b in enumerate(batches):
         db.add(m.ReturnClaim(id=f"{claim_id}-{i + 1}", pharmacy_id=pid, action_id=a.id, supplier=b.supplier,
@@ -182,7 +182,7 @@ def _return_claim(db: Session, pid: str, a: m.Action) -> dict:
     db.flush()
     log("T2", "EXPIRY", "return_claim_sent", db, claim=claim_id, batches=[b.batch_no for b in batches], amount=credit)
     return {"claim_id": claim_id, "expected_credit": r2(credit), "batches": [b.batch_no for b in batches],
-            "summary": f"Return sent. Suppliers should credit BDT {credit:,.0f}."}
+            "summary": f"Return sent. Suppliers should take BDT {credit:,.0f} off your next bills."}
 
 
 def _extension_request(db: Session, pid: str, a: m.Action) -> dict:
@@ -241,7 +241,7 @@ def _loan_application(db: Session, pid: str, a: m.Action) -> dict:
     product = db.scalar(select(m.LenderProduct).where(m.LenderProduct.lender_id == lender_id,
                                                       m.LenderProduct.key == product_key))
     if product is None:
-        raise _Failed("unknown_product", f"{lender_id} has no product {product_key}.")
+        raise _Failed("unknown_product", "This lender doesn't offer that loan.")
     amount = float(a.payload.get("amount") or 0)
     if not product.min_amount <= amount <= product.max_amount:
         raise _Failed("amount_out_of_range",
@@ -257,7 +257,7 @@ def _loan_application(db: Session, pid: str, a: m.Action) -> dict:
         o = _order(db, pid, a.payload)
         receivables = [(o.supplier_id, o.ref, o.total, o.due_date)]
     if not receivables:
-        raise _Failed("nothing_to_finance", "No invoice or order to finance.")
+        raise _Failed("nothing_to_finance", "There's no bill or order for this loan to pay.")
 
     app_id = _next_id(db, m.Application, "APP-", 4)
     db.add(m.Application(id=app_id, pharmacy_id=pid, action_id=a.id, lender_id=lender_id, product_key=product_key,
@@ -266,7 +266,7 @@ def _loan_application(db: Session, pid: str, a: m.Action) -> dict:
     for supplier_id, ref, total, dt in receivables:
         c = registry.commitment(supplier_id, ref, pid, total, dt)
         if not registry.try_lock(db, c, app_id):
-            raise _Failed("duplicate_financing", f"{ref} is already financed elsewhere, so it can't back this loan.",
+            raise _Failed("duplicate_financing", f"{ref} already has a loan against it, so it can't be used for another.",
                           commitment=c, invoice=ref)
         log("T3", "REGISTRY", "lock_acquired", db, commitment=c, invoice=ref, application=app_id)
     log("T3", "LENDER", "application_submitted", db, application=app_id, lender=lender_id, amount=amount)
@@ -281,7 +281,7 @@ def _set_aside(db: Session, pid: str, a: m.Action) -> dict:
     db.add(m.SetAside(id=sid, pharmacy_id=pid, action_id=a.id, amount=amount, start=start, created_at=_now()))
     db.flush()
     log("T2", "CASH", "set_aside_scheduled", db, schedule=sid, amount=amount)
-    return {"schedule_id": sid, "summary": "Daily set-aside scheduled."}
+    return {"schedule_id": sid, "summary": "LaMP will put money aside each day."}
 
 
 EXECUTORS = {

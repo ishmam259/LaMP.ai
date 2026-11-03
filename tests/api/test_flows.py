@@ -204,7 +204,7 @@ def test_claimed_returns_are_not_offered_again(client):
     assert "return_window" not in [a["kind"] for a in client.get(f"{P}/alerts").json()]
     plan = client.post(f"{P}/funding-plan", json={}).json()
     opt = next(o for o in plan["options"] if o["key"] == "return_claims")
-    assert (opt["amount"], opt["eligible"]) == (0, False) and "Already claimed" in opt["reason"]
+    assert (opt["amount"], opt["eligible"]) == (0, False) and "Already sent" in opt["reason"]
 
 
 def test_a_declined_extension_is_not_offered_again(client):
@@ -212,7 +212,7 @@ def test_a_declined_extension_is_not_offered_again(client):
     client.post("/api/v1/dev/simulate/supplier-reply", json={"action_id": ext["id"], "accepted": False})
     plan = client.post(f"{P}/funding-plan", json={}).json()
     opt = next(o for o in plan["options"] if o["key"] == "supplier_extension")
-    assert not opt["eligible"] and "declined" in opt["reason"]
+    assert not opt["eligible"] and "said no" in opt["reason"]
     assert "extension_request" not in [s["action_kind"] for s in plan["plan"]["steps"]]
 
 

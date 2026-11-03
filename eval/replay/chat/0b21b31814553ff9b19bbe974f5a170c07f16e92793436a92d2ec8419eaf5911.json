@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "The bank offered to pay 75.2% of an order. Your record shows 38 of 41 invoices paid on time, and a 3% chance of not repaying. Paying more invoices on time can raise the share they offer.",
+        "id": "msg_0843a87715e60632006ae99923eea087d2aa01166beb007bbb",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2236,
+      "cache_write_tokens": 0,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2233,
+      "output_tokens": 54,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-03T08:19:50.276349Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-03T08:19:47Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0843a87715e60632006ae999233d2087d2a74f55cf895ad64b",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

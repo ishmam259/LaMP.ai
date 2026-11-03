@@ -19,7 +19,7 @@ def test_matched_eligible_and_reasons(db):
     o = {x.key: x for x in c.options}
     # eligible: pays out in time, within limits, price published
     assert o["wallet_nano_loan"].eligible and o["wallet_nano_loan"].cost_of_gap_bdt == 181.97
-    assert "personally" in o["wallet_nano_loan"].note
+    assert "personal loan" in o["wallet_nano_loan"].note
     assert o["mfi_enterprise_loan"].eligible and o["mfi_enterprise_loan"].to_confirm
     # ineligible, each with its reason
     assert "10" in o["cmsme_refinance_wc"].ineligible_reason       # takes 21 days; needed in 10

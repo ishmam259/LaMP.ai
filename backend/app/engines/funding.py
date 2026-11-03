@@ -124,11 +124,11 @@ def get_funding_plan(db: Session, pid: str, need: FundingNeed | None = None) -> 
         opt("trim_order", f"Order fewer of the slow seller from {supplier.name}", "Your order", saving, 0, None,
             saving > 0, reason, "Now", "certain")
     exp_suppliers = sorted({b.supplier for b in claimable})
-    opt("return_claims", "Claim returns for expiring stock",
+    opt("return_claims", "Send expiring stock back to suppliers",
         "Suppliers " + " and ".join(s.removeprefix("Supplier ") for s in exp_suppliers) if exp_suppliers else "Suppliers",
         returns, 0, None, returns > 0,
-        f"Arrives as supplier credit, not cash, so it doesn't count before {need.needed_by:%d %b}." if returns
-        else "Already claimed: the return claim is with the suppliers." if claimed
+        f"Suppliers take it off your next bills instead of paying cash, so it doesn't help by {need.needed_by:%d %b}." if returns
+        else "Already sent: the return is with the suppliers." if claimed
         else "No expiring stock can go back to a supplier.",
         "1–2 weeks", "uncertain")
     if supplier:
@@ -141,9 +141,9 @@ def get_funding_plan(db: Session, pid: str, need: FundingNeed | None = None) -> 
         opt("supplier_extension", f"Ask {supplier.name} for {EXTENSION_DAYS} more days", supplier.name, amount, 0,
             None, ok, f"The shortfall on {need.needed_by:%d %b} isn't a supplier payment, so more days from a supplier "
             "won't help." if not from_order
-            else f"{supplier.name} already declined or didn't answer an extension request on this order." if declined
+            else f"{supplier.name} already said no, or didn't answer, when asked for more days on this order." if declined
             else f"You paid {passport.paid_on_time} of {passport.invoices_total} invoices on time." if ok
-            else f"Needs a verified supplier and at least {EXTENSION_MIN_ON_TIME:.0%} of invoices paid on time.",
+            else f"Needs a supplier you know well and at least {EXTENSION_MIN_ON_TIME:.0%} of invoices paid on time.",
             "1–3 days", "uncertain", financed=amount, tenor=EXTENSION_DAYS)
 
     w = _product(db, "wallet_loan")
@@ -159,8 +159,8 @@ def get_funding_plan(db: Session, pid: str, need: FundingNeed | None = None) -> 
     opt("bank_supplier_credit", f"Bank pays {supplier.name if supplier else 'the supplier'} now, you repay in 30 days",
         b.lender.name, order_total, order_total * b.fee_pct / 100 * b.tenor_days / 30 if ok else None,
         round(b.fee_pct * 365 / b.tenor_days, 1), ok,
-        f"{b.fee_pct:g}% of the order for {b.tenor_days} days." if ok
-        else f"Needs at least {b.min_history_invoices} paid invoices of history.", "2–3 days", "certain",
+        f"The bank charges {b.fee_pct:g}% of the order for {b.tenor_days} days." if ok
+        else f"Needs at least {b.min_history_invoices} paid invoices on record.", "2–3 days", "certain",
         financed=order_total, tenor=b.tenor_days)  # the bank finances the whole order to cover the gap
 
     sme = _product(db, "bank_sme_loan")
@@ -170,7 +170,7 @@ def get_funding_plan(db: Session, pid: str, need: FundingNeed | None = None) -> 
     ok = amount >= sme.min_amount and months >= sme.min_history_months
     opt("bank_sme_loan", "Bank small-business loan", sme.lender.name, amount,
         _loan_cost(amount, sme.apr_pct, sme.tenor_days) if ok else None, sme.apr_pct if ok else None, ok,
-        "Eligible." if ok else f"Minimum loan is {_bdt(sme.min_amount)}, with {sme.min_history_months} months of history.",
+        "You qualify." if ok else f"The smallest loan is {_bdt(sme.min_amount)}, and the bank wants {sme.min_history_months} months of records.",
         "2–4 weeks", "certain", financed=amount, tenor=sme.tenor_days)
 
     steps, total = [], 0.0

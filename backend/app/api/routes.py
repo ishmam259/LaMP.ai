@@ -218,10 +218,10 @@ async def create_capture(pid: str, file: UploadFile = File(...),
                 model=extraction.get("model"), mode=extraction.get("mode"))
     if suspicious:
         engines.log("T1", "CAPTURE", "suspicious_text_flagged", db, capture=cap.id, count=len(suspicious))
-        logbus.notify("owner", "A photo contained instructions",
+        logbus.notify("owner", "A photo had hidden instructions",
                       f"LaMP ignored {len(suspicious)} line{'s' if len(suspicious) > 1 else ''} in this "
-                      f"{kind.replace('_', ' ')} that gave it orders. Nothing was done. Check the "
-                      f"{kind.replace('_', ' ')} before you save it.", f"/capture?id={cap.id}", db)
+                      f"{'invoice' if kind == 'invoice' else 'sales book page'} that gave it orders. Nothing was done. "
+                      "Check the photo before you save it.", f"/capture?id={cap.id}", db)
     db.commit()
     return _capture_out(cap)
 
@@ -245,7 +245,7 @@ def confirm_capture(pid: str, cid: str, body: CaptureConfirm, db: Session = Depe
     """Save the owner-corrected draft as an invoice (plus stock) or as sales days."""
     cap = _get_capture(db, pid, cid)
     if cap.status == "confirmed":
-        raise HTTPException(409, "Capture is already confirmed")
+        raise HTTPException(409, "This photo is already saved.")
     extraction = dict(cap.extraction)
     if body.invoice:
         extraction["invoice"] = body.invoice.model_dump(mode="json")
@@ -254,7 +254,7 @@ def confirm_capture(pid: str, cid: str, body: CaptureConfirm, db: Session = Depe
     # Save only the part that matches what was photographed.
     extraction["sales_page" if cap.kind == "invoice" else "invoice"] = None
     if not extraction.get(cap.kind):
-        raise HTTPException(422, f"Nothing to save: the {cap.kind.replace('_', ' ')} draft is empty")
+        raise HTTPException(422, "Nothing to save: LaMP found nothing on this photo.")
     apply_extraction(db, pid, extraction, capture_id=cid)
     cap.extraction, cap.status = extraction, "confirmed"
     engines.log("T1", "CAPTURE", "capture_confirmed", db, capture=cid, kind=cap.kind)

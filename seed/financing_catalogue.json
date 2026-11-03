@@ -16,7 +16,7 @@
       "speed_days": 0,
       "permitted_purpose": "personal",
       "requires": [],
-      "terms_note": "Limit raised to Tk 50,000 and tenure to six months (June 2025 report); 9% a year per the launch coverage."
+      "terms_note": "Limit raised to Tk 50,000 and repayment time to six months (June 2025 report); 9% a year, as reported at launch."
     },
     {
       "key": "wallet_pay_later",
@@ -34,13 +34,13 @@
       "interest_free_days": 7,
       "permitted_purpose": "merchant_purchase",
       "requires": ["supplier_is_wallet_merchant"],
-      "terms_note": "Free if repaid within 7 days; otherwise it becomes a three-month loan at 9% a year. For purchases at wallet merchants."
+      "terms_note": "Free if repaid within 7 days; otherwise it becomes a three-month loan at 9% a year."
     },
     {
       "key": "cmsme_refinance_wc",
       "label": "Bank loan from the government small-business fund",
       "provider_type": "Commercial bank",
-      "anchored_on": "Bangladesh Bank Tk 5,000 crore revolving CMSME working-capital refinance fund",
+      "anchored_on": "Bangladesh Bank's Tk 5,000 crore fund for small-business loans",
       "source": "https://en.ittefaq.com.bd/16875/bb-launches-tk-5-000cr-revolving-refinance-fund",
       "source_date": "2026-06-09",
       "apr_pct": 9.0,
@@ -51,13 +51,13 @@
       "speed_days": 21,
       "permitted_purpose": "business",
       "requires": ["trade_licence", "clean_cib"],
-      "terms_note": "Banks may charge end borrowers at most 9%; revolving fund with a three-year tenure and a 3–6 month grace period; borrowers with a bad record at the Bangladesh Bank credit bureau (CIB) cannot get it. Processing time is not stated in the source; 21 days is LaMP's assumption for a bank loan."
+      "terms_note": "Banks may charge at most 9% a year. You repay over up to three years and can start 3–6 months later. Anyone with a bad record in Bangladesh Bank's credit check can't get it. The source doesn't say how long it takes; LaMP assumes 21 days for a bank loan."
     },
     {
       "key": "bank_unsecured_cmsme",
-      "label": "Bank small-business loan, no collateral",
+      "label": "Bank small-business loan, no security needed",
       "provider_type": "Commercial bank",
-      "anchored_on": "BRAC Bank collateral-free CMSME loans",
+      "anchored_on": "BRAC Bank small-business loans without security",
       "source": "https://thefinancialexpress.com.bd/trade/brac-bank-offers-record-low-collateral-free-loans-for-cmsmes",
       "source_date": null,
       "apr_pct": 13.75,
@@ -68,13 +68,13 @@
       "speed_days": 14,
       "permitted_purpose": "business",
       "requires": ["trade_licence"],
-      "terms_note": "Promotional rate 'as low as 13.75%' for August and September 2025. Processing time is not stated in the source; 14 days is LaMP's assumption."
+      "terms_note": "Special rate 'as low as 13.75%' for August and September 2025. The source doesn't say how long it takes; LaMP assumes 14 days."
     },
     {
       "key": "mfi_enterprise_loan",
       "label": "Microfinance business loan",
       "provider_type": "Microfinance institution",
-      "anchored_on": "Microfinance institutions' enterprise lending",
+      "anchored_on": "Microfinance institutions' business loans",
       "source": "https://www.thedailystar.net/business/news/the-question-hounding-banks-how-solve-conundrum-sme-loan-1941157",
       "source_date": null,
       "apr_pct": 20.0,
@@ -85,13 +85,13 @@
       "speed_days": 7,
       "permitted_purpose": "business",
       "requires": ["mfi_membership"],
-      "terms_note": "Source: microfinance institutions charge 'upwards of 20 per cent'; 20% is the lower bound. Membership and weekly instalments are typical."
+      "terms_note": "The source says microfinance institutions charge 'upwards of 20 per cent', so 20% is the lowest. You usually need to be a member and repay every week."
     },
     {
       "key": "retailer_platform_credit",
       "label": "Credit from an online wholesale app",
       "provider_type": "Online wholesale app",
-      "anchored_on": "ShopUp Baki retailer credit",
+      "anchored_on": "ShopUp Baki credit for shops",
       "source": "https://online91.thedailystar.net/business/news/japans-credit-saison-injects-65m-shopup-3677271",
       "source_date": null,
       "apr_pct": null,
@@ -102,7 +102,7 @@
       "speed_days": 1,
       "permitted_purpose": "business",
       "requires": ["supplier_on_platform"],
-      "terms_note": "Credit for retailers buying through the platform; pricing isn't published, so LaMP can't compare its cost."
+      "terms_note": "Credit for shops that buy through the app. Its price isn't published, so LaMP can't compare its cost."
     }
   ]
 }

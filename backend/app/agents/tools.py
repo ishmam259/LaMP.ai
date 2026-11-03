@@ -92,7 +92,7 @@ def get_funding_plan(ctx: RunContext[ChatDeps], amount: float | None = None, nee
 
 
 def get_passport(ctx: RunContext[ChatDeps]) -> dict:
-    """The credit passport: invoices paid on time, the cautious on-time estimate, default probability,
+    """The credit record: invoices paid on time, the cautious on-time estimate, default probability,
     score and the advance rate a lender could offer. Invoice-level evidence is summarised."""
     p = _json(engines.get_passport(ctx.deps.db, ctx.deps.pharmacy_id))
     p["evidence"] = {"invoices": len(p["evidence"]), "late": [e for e in p["evidence"] if not e["on_time"]]}
@@ -109,7 +109,7 @@ def share_plan(ctx: RunContext[ChatDeps], steps: list[str]) -> dict:
 def propose_action(ctx: RunContext[ChatDeps],
                    kind: Literal["return_claim", "extension_request", "trim_order", "set_aside", "loan_application"],
                    amount: float | None = None, order_id: str | None = None, reason: str = "") -> dict:
-    """Propose an action for the owner to approve in the Actions screen. This does NOT do it:
+    """Suggest a step for the owner to approve in Approvals. This does NOT do it:
     nothing happens until the owner approves. Use amounts and order ids from tool results only."""
     if kind not in PROPOSABLE_KINDS:
         raise ValueError(f"Can't propose {kind!r}")
@@ -120,7 +120,7 @@ def propose_action(ctx: RunContext[ChatDeps],
         payload["order_id"] = order_id
     a = engines.propose_action(ctx.deps.db, ctx.deps.pharmacy_id, ActionProposal(kind=kind, payload=payload), "agent")
     return {"action_id": a.id, "kind": a.kind, "status": a.status,
-            "note": "Proposed only. The owner must approve it in Actions."}
+            "note": "Suggested only. The owner must approve it in Approvals."}
 
 
 # Every tool shares the request's database session, so they run one at a time, never in parallel.

@@ -44,7 +44,7 @@ def check_can_propose(db: Session, pid: str, proposed_by: str) -> None:
     if proposed_by in AUTOMATED and get_pause(db, pid).paused:
         log("T1", "POLICY", "proposal_refused_paused", db, by=proposed_by)
         db.commit()
-        raise HTTPException(409, "LaMP is paused by the owner: no new proposals from the copilot")
+        raise HTTPException(409, "LaMP is paused, so it can't suggest anything new.")
 
 
 def check_can_approve(db: Session, pid: str, proposed_by: str) -> None:
@@ -52,7 +52,7 @@ def check_can_approve(db: Session, pid: str, proposed_by: str) -> None:
     if proposed_by in AUTOMATED and get_pause(db, pid).paused:
         log("T1", "POLICY", "approval_refused_paused", db, by=proposed_by)
         db.commit()
-        raise HTTPException(409, "LaMP is paused: resume it before approving what the copilot proposed")
+        raise HTTPException(409, "LaMP is paused. Resume it before approving its suggestions.")
 
 
 # --- Borrowing ceiling (win plan CORE-07) ---------------------------------------------------
@@ -65,11 +65,12 @@ DBR_SOURCE = {
     "title": "Prudential Regulations for Consumer Financing",
     "issuer": "Bangladesh Bank",
     "edition": "First Edition, 2004",
-    "clause": "Unsecured Personal Loan PPG Guideline No. 12 - Debt Burden Ratio (DBR %): "
-              "a maximum of 35% based on Net Monthly Income",
+    # In plain words for the Rules page; the source says "Guideline No. 12 - Debt Burden Ratio
+    # (DBR %): a maximum of 35% based on Net Monthly Income" and "Regulation 3: total instalments
+    # must be commensurate with the borrower's take-home/disposable income and repayment capacity".
+    "clause": "rule No. 12 says loan repayments may take at most 35% of a borrower's monthly income",
     "page": 65,
-    "principle": "Regulation 3: total instalments must be commensurate with the borrower's "
-                 "take-home/disposable income and repayment capacity",
+    "principle": "Repayments must fit what the borrower takes home",
     "file": "seed/sources/bangladesh_bank_prudential_regulations_consumer_financing_2004.pdf",
     "url": "https://www.bb.org.bd/mediaroom/circulars/brpd/pgfcf.pdf",
 }
@@ -151,10 +152,9 @@ def check_borrowing_ceiling(db: Session, pid: str, kind: str, payload: dict) -> 
     owed = (f" plus BDT {r['existing_monthly_repayment']:,.2f} on loans already taken"
             if r["existing_monthly_repayment"] else "")
     raise HTTPException(409, (
-        f"Refused: the monthly repayment of BDT {r['monthly_repayment']:,.2f}{owed} would take {shown} of monthly net "
-        f"cash flow (BDT {r['monthly_net_cash_flow']:,.0f}), above the {DBR_CAP_PCT:g}% cap. The cap follows "
-        f"Bangladesh Bank's published debt-burden-ratio limit for unsecured personal loans ({DBR_SOURCE['title']}, "
-        f"{DBR_SOURCE['edition']}, p. {DBR_SOURCE['page']}), applied to the pharmacy's cash flow."))
+        f"Refused: repaying BDT {r['monthly_repayment']:,.2f} a month{owed} would take {shown} of what you keep "
+        f"each month (BDT {r['monthly_net_cash_flow']:,.0f}). LaMP's limit is {DBR_CAP_PCT:g}%, the same as "
+        f"Bangladesh Bank's limit for personal loans."))
 
 
 def get_policy(db: Session, pid: str):
@@ -167,7 +167,7 @@ def get_policy(db: Session, pid: str):
     credit = get_shelf_life_credit(db, pid)
     first, naive = credit.financeable, credit.counterfactual_purpose_blind
     checks = []
-    for label, amount in (("The plan's backup loan", first), ("A loan for the full shortfall", naive)):
+    for label, amount in (("The plan's backup loan", first), ("A loan for the whole amount short", naive)):
         r = loan_dbr(db, pid, "wallet-lender", "wallet_loan", amount, include_existing=False)  # each on its own
         if r:
             checks.append({"label": label, **r})

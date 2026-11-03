@@ -97,6 +97,24 @@ def _money(x: float) -> str:
     return f"BDT {x:,.0f}" if float(x).is_integer() else f"BDT {x:,.2f}"
 
 
+FIELD_WORDS = {"supplier_name": "supplier name", "invoice_no": "invoice number", "qty": "boxes",
+               "unit_cost": "price per box", "batch_no": "batch number"}
+
+
+def _plain(path: str) -> str:
+    """A field path in the owner's words: "invoice.lines[2].unit_cost" -> "line 3 price per box"."""
+    m = re.fullmatch(r"\w+\.(?:(lines|days)\[(\d+)\]\.)?(\w+)", path)
+    if not m:
+        return path.replace("_", " ")
+    group, i, field = m.groups()
+    name = FIELD_WORDS.get(field, field.replace("_", " "))
+    return f"{'line' if group == 'lines' else 'row'} {int(i) + 1} {name}" if group else name
+
+
+def _day(d: date) -> str:
+    return f"{d:%d %b %Y}"
+
+
 # --- Suspicious text ------------------------------------------------------------------
 
 def _screen(value, path: str, found: list[str], flagged: set[str]):
@@ -188,7 +206,7 @@ def _invoice(raw: dict, today: date):
     problems = []
     lo, hi = today - timedelta(days=730), today + timedelta(days=5 * 365)
     if inv_date and not lo <= inv_date <= today + timedelta(days=1):
-        problems.append(f"invoice date {inv_date} is not within the last 2 years")
+        problems.append(f"invoice date {_day(inv_date)} is not within the last 2 years")
         failed.setdefault("Dates", set()).add("invoice.invoice_date")
     if inv_date and due and due < inv_date:
         problems.append("due date is before the invoice date")
@@ -196,7 +214,7 @@ def _invoice(raw: dict, today: date):
     for i, ln in enumerate(lines):
         exp = ln["expiry_date"]
         if exp and ((inv_date and exp <= inv_date) or not exp <= hi):
-            problems.append(f"line {i + 1} expiry {exp} is not after the invoice date or is over 5 years away")
+            problems.append(f"line {i + 1} expiry {_day(exp)} is not after the invoice date or is over 5 years away")
             failed.setdefault("Dates", set()).add(f"invoice.lines[{i}].expiry_date")
     checks.append(("Dates", not problems,
                    "Expiry dates are after the invoice date, and the due date is not before it."
@@ -253,11 +271,11 @@ def _sales(raw: dict, today: date):
     dated = [(i, d["date"]) for i, d in enumerate(days) if d["date"]]
     for (_, a), (j, b) in zip(dated, dated[1:]):
         if b <= a:
-            problems.append(f"row {j + 1} ({b}) is not after the row before it")
+            problems.append(f"row {j + 1} ({_day(b)}) is not after the row before it")
             failed.setdefault("Dates", set()).add(f"sales_page.days[{j}].date")
     for i, dt in dated:
         if not today - timedelta(days=730) <= dt <= today + timedelta(days=1):
-            problems.append(f"row {i + 1} date {dt} is not within the last 2 years")
+            problems.append(f"row {i + 1} date {_day(dt)} is not within the last 2 years")
             failed.setdefault("Dates", set()).add(f"sales_page.days[{i}].date")
     checks.append(("Dates", not problems, "Dates are in order and recent."
                    if not problems else "; ".join(problems).capitalize() + "."))
@@ -286,10 +304,10 @@ def build_result(raw: dict, kind: Literal["invoice", "sales_page"], model: str,
             d["date"] = d["date"] or today
 
     required = sorted(set(missing))
-    checks.append(("Required fields", not required, "Every required field was read." if not required else
-                   f"Not readable, please fill in: {', '.join(required)}."))
+    checks.append(("Missing", not required, "Every field LaMP needs was read." if not required else
+                   f"Couldn't read these, please fill them in: {', '.join(_plain(p) for p in required)}."))
     if required:
-        failed.setdefault("Required fields", set()).update(required)
+        failed.setdefault("Missing", set()).update(required)
 
     confidence: dict[str, float] = {}
     for path in raw.get("uncertain_fields") or []:

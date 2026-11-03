@@ -66,7 +66,7 @@ def test_no_patient_labels_reach_the_model(client, db):
 
 
 def test_prompt_rules():
-    for rule in ("must come from a tool result", "never estimate", "cannot approve", "patients by name"):
+    for rule in ("must come from a tool result", "never estimate", "cannot approve", "customers by name"):
         assert rule.lower() in chat.PROMPT.lower(), rule
 
 

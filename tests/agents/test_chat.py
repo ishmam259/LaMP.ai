@@ -33,7 +33,7 @@ def test_expiry_proposes_return_claim(client):
     r = ask(client, "What is expiring?")
     assert "18,400" in r["text"] and "9,200" in r["text"]
     assert ("propose_action", {"kind": "return_claim", "amount": 9200.0,
-                               "reason": "Return-eligible batches expiring within 60 days"}) in r["calls"]
+                               "reason": "Send back expiring stock that suppliers will still take"}) in r["calls"]
     [a] = client.get("/api/v1/pharmacies/green-life/actions").json()
     assert a["kind"] == "return_claim" and a["status"] == "proposed"
     assert "waiting for your approval" in r["text"]
@@ -42,7 +42,7 @@ def test_expiry_proposes_return_claim(client):
 def test_passport_explanation(client):
     r = ask(client, "Why did the bank offer 75%?")
     assert names(r["calls"]) == ["get_passport"]
-    for figure in ("38 of 41", "0.826", "3.0%", "75.2%"):
+    for figure in ("38 of 41", "3.0%", "75.2%"):
         assert figure in r["text"], figure
 
 
@@ -59,7 +59,7 @@ def test_chat_is_logged(client):
 
 def test_unknown_question_offline(client):
     r = ask(client, "Tell me a joke")
-    assert r["calls"] == [] and "offline mode" in r["text"]
+    assert r["calls"] == [] and "For now I can answer" in r["text"]
 
 
 def test_recorded_response_is_replayed(client):

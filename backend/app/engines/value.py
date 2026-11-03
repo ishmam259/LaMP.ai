@@ -36,26 +36,26 @@ def get_value(db: Session, pid: str) -> ValueOut:
         if a.kind == "return_claim":
             items.append({"action_id": a.id, "kind": a.kind, "label": "Stock returned to suppliers",
                           "amount": r2(r.get("expected_credit", 0)),
-                          "basis": "Credit expected from suppliers for the stock they take back.",
-                          "counterfactual": "The stock expires on the shelf and is written off."})
+                          "basis": "Suppliers take this off your next bills for the stock they take back.",
+                          "counterfactual": "The stock expires on the shelf and is thrown away."})
         elif a.kind == "trim_order":
             saving = r2(r.get("old_total", 0) - r.get("new_total", 0))
             items.append({"action_id": a.id, "kind": a.kind, "label": "Smaller order",
                           "amount": saving,
                           "basis": f"Order {r.get('old_total', 0):,.0f} → {r.get('new_total', 0):,.0f}: stock that "
-                                   "wouldn't sell before expiry not bought.",
-                          "counterfactual": "Bought, then expired unsold."})
+                                   "wouldn't sell before it expires is no longer bought.",
+                          "counterfactual": "Bought, then expired unsold on the shelf."})
             if saving > 0:
                 cost, apr, tenor = _wallet_cost(db, saving)
                 items.append({"action_id": a.id, "kind": "interest_avoided", "label": "Interest saved by ordering less",
                               "amount": r2(cost),
-                              "basis": f"{saving:,.0f} no longer borrowed: at {apr:g}% a year for {tenor} days.",
-                              "counterfactual": "Borrow the full shortfall with the wallet loan."})
+                              "basis": f"BDT {saving:,.0f} less to borrow, at {apr:g}% a year for {tenor} days.",
+                              "counterfactual": "Borrow the whole amount short with the mobile-wallet loan."})
         elif a.kind == "extension_request" and r.get("status") == "accepted":
             amount = float(a.payload.get("amount") or 0)
             cost, apr, tenor = _wallet_cost(db, amount)
-            items.append({"action_id": a.id, "kind": "interest_avoided", "label": "Supplier extension accepted",
+            items.append({"action_id": a.id, "kind": "interest_avoided", "label": "Supplier gave more days",
                           "amount": r2(cost),
-                          "basis": f"The backup loan of {amount:,.0f} wasn't needed: at {apr:g}% a year for {tenor} days.",
-                          "counterfactual": "Take the backup wallet loan."})
+                          "basis": f"The backup loan of BDT {amount:,.0f} wasn't needed: at {apr:g}% a year for {tenor} days.",
+                          "counterfactual": "Take the backup mobile-wallet loan."})
     return ValueOut(items=items, total=r2(sum(i["amount"] for i in items)))

@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "Over the last 30 days, sales were BDT 412,500. Profit on what you sold was BDT 49,500. Rent, salaries and bills were BDT 36,000, leaving BDT 13,500 as what you kept.\n\nStock worth BDT 210,000 covers 17.4 days of sales. What customers owe you is BDT 38,000. Stock worth BDT 18,400 expires within 60 days.",
+        "id": "msg_0151cdaf888016ca006ae998e14fcc87d2a5df93f690898fd9",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2358,
+      "cache_write_tokens": 361,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 1994,
+      "output_tokens": 101,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-03T08:18:43.064713Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-03T08:18:40Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0151cdaf888016ca006ae998e0536c87d2b88e2f4ce7a11056",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

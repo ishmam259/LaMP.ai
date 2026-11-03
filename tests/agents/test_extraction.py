@@ -85,7 +85,7 @@ def test_missing_values_are_flagged_not_invented():
     raw["due_date"] = None
     raw["lines"][0]["batch_no"] = None
     r = extraction.build_result(raw, "invoice", "m", "replay", TODAY)
-    assert not _checks(r)["Required fields"]
+    assert not _checks(r)["Missing"]
     assert r.field_confidence["invoice.due_date"] == 0.3
     assert r.invoice.lines[0].batch_no == ""
 
@@ -117,7 +117,7 @@ def test_sales_page_checks():
     ], "uncertain_fields": ["sales_page.days[0].cash_sales"], "instruction_like_text": []}
     r = extraction.build_result(raw, "sales_page", "m", "replay", TODAY)
     c = _checks(r)
-    assert not c["Amounts"] and not c["Dates"] and not c["Required fields"]
+    assert not c["Amounts"] and not c["Dates"] and not c["Missing"]
     assert r.field_confidence["sales_page.days[0].cash_sales"] == 0.5
     assert r.field_confidence["sales_page.days[1].cash_sales"] == 0.3
     assert r.sales_page.days[0].cash_sales == 9000

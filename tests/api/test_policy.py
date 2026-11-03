@@ -20,7 +20,7 @@ def test_a_loan_for_the_untrimmed_shortfall_is_refused(client):
     r = _loan(client, 19000)
     assert r.status_code == 409
     detail = r.json()["detail"]
-    assert "6,473.88" in detail and "48.0%" in detail and "35% cap" in detail and "Bangladesh Bank" in detail
+    assert "6,473.88" in detail and "48.0%" in detail and "limit is 35%" in detail and "Bangladesh Bank" in detail
     assert "loan_refused_dbr" in [e["event"] for e in client.get("/api/v1/logs").json()]
     assert [a for a in client.get(f"{P}/actions").json() if a["kind"] == "loan_application"] == []
 

@@ -32,8 +32,8 @@ HORIZON_DAYS = 90
 BLOCKING = {"supplier_is_wallet_merchant": "your supplier may not accept wallet payments",
             "supplier_on_platform": "your supplier may not sell on this app"}
 CONFIRM = {"trade_licence": "a trade licence", "clean_cib": "a clean credit record with Bangladesh Bank",
-           "mfi_membership": "membership of the microfinance institution"}
-PURPOSE_NOTE = {"personal": "A retail loan to the owner personally: check it may be used for a business bill.",
+           "mfi_membership": "being a member of the microfinance institution"}
+PURPOSE_NOTE = {"personal": "A personal loan to the owner: check you may use it for a business bill.",
                 "merchant_purchase": "Only for buying from shops that take wallet payments.",
                 "business": "A business loan."}
 
