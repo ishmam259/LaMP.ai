@@ -4,7 +4,7 @@ Helps neighborhood pharmacies in Bangladesh see their cash for the weeks ahead, 
 
 Built solo by A K M Ishmam Tahmid for **Ostad Presents YUNet AIgnite Buildathon 2026**. Submission checklist: [docs/AIGNITE_SUBMISSION.md](docs/AIGNITE_SUBMISSION.md).
 
-**Live app:** _add the Render link here once it is deployed_ · **Demo owner PIN:** `2468` · **Demo customer card:** `GL-7KQM-4XPA`
+**Live app:** https://lamp-ai-web.onrender.com · **Demo owner PIN:** `2468` · **Demo customer card:** `GL-7KQM-4XPA`
 
 ## What it does
 **For a family that buys on credit** (`/me`): open your card with the code the pharmacy gives you. See what you owe and since when, then pick a way to pay it back (all at once, 2 or 4 weekly parts) and a first date. The pharmacy sees your plan straight away. The card shows amounts only, never your name or what you bought.
