@@ -7,7 +7,7 @@
 |---|---|---|
 | Live web app (mandatory) | Live: https://lamp-ai-web.onrender.com | Render Blueprint from `render.yaml` (steps below) |
 | Deck, max 5 slides (mandatory) | Ready | `deck/LaMP-AIgnite.pdf` (rebuild if the live link changes) |
-| Demo video in English (optional) | Recorded: 1:54, 1080p at 60 fps, English captions | `video/LaMP-AIgnite-demo.mp4` (not in git): upload to YouTube, unlisted is fine. How to re-cut: `video/README.md` |
+| Demo video in English (optional) | Recorded: 1:56, 1080p at 60 fps, English voiceover and captions | `video/LaMP-AIgnite-demo.mp4` (not in git): upload to YouTube, unlisted is fine. How to re-cut: `video/README.md` |
 | GitHub repo (optional) | Ready, private | https://github.com/ishmam259/LaMP.ai (organizers may ask for access) |
 
 Done: official sticker on every page (PIN screen, owner header, customer header), customer cards, plain wording, Farhan's agreement to the solo entry.

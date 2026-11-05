@@ -1,6 +1,6 @@
 # LaMP demo: voiceover script
 
-Matches `video/LaMP-AIgnite-demo.mp4` (1:54). Times are when each scene starts in the film. Speak at an easy pace, about 150 words a minute; every line fits its scene with a little room to spare. Say "taka" for BDT.
+Written for the silent cut (1:54). Times are when each scene starts in that cut; the published film is re-timed to the recorded voice. Speak at an easy pace, about 150 words a minute; every line fits its scene with a little room to spare. Say "taka" for BDT.
 
 | Time | On screen | Voiceover |
 |---|---|---|
