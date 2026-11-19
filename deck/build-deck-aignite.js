@@ -16,7 +16,7 @@ const Fa = require("react-icons/fa");
 const QRCode = require("qrcode");
 
 const LIVE_URL = process.env.LIVE_URL || "https://lamp-ai-web.onrender.com";
-const DEMO_URL = "https://www.youtube.com/watch?v=CfvwyNmanjE";
+const DEMO_URL = "https://www.youtube.com/@ishmamtahmid7936";
 const ME = { name: "A K M Ishmam Tahmid" };
 
 // Colors taken from the template's artwork.
