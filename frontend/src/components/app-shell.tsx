@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import {
   BadgeCheck,
   Camera,
@@ -13,6 +13,8 @@ import {
   LockKeyhole,
   MessageCircle,
   PackageOpen,
+  PanelLeftClose,
+  PanelLeftOpen,
   ScrollText,
   ShieldCheck,
   Store,
@@ -53,6 +55,40 @@ const MORE_NAV = [
   { href: "/log", label: "History", icon: ScrollText },
 ];
 
+/* The desktop side menu can be narrowed to icons. The choice is remembered in this browser only;
+   if storage is blocked it still works until the page is reloaded. */
+const RAIL_KEY = "lamp-rail-collapsed";
+const RAIL_EVENT = "lamp:rail";
+let railMemory = false;
+
+function subscribeRail(onChange: () => void) {
+  window.addEventListener(RAIL_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(RAIL_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+function railCollapsed(): boolean {
+  try {
+    const v = window.localStorage.getItem(RAIL_KEY);
+    return v === null ? railMemory : v === "1";
+  } catch {
+    return railMemory;
+  }
+}
+
+function setRailCollapsed(value: boolean) {
+  railMemory = value;
+  try {
+    window.localStorage.setItem(RAIL_KEY, value ? "1" : "0");
+  } catch {
+    /* private window or blocked storage: keep it in memory only */
+  }
+  window.dispatchEvent(new Event(RAIL_EVENT));
+}
+
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
@@ -78,58 +114,95 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
   const pending = actions?.filter((a) => a.status === "proposed").length ?? 0;
   const isLender = pathname.startsWith("/lender");
   const onLog = pathname.startsWith("/log");
+  const collapsed = useSyncExternalStore(subscribeRail, railCollapsed, () => false);
+  const shop = pharmacy ? `${pharmacy.name}, ${pharmacy.city}` : "";
 
   return (
-    <div className={cn("min-h-dvh lg:grid lg:grid-cols-[232px_1fr]", !onLog && "xl:grid-cols-[232px_1fr_340px]")}>
-      {/* Desktop rail */}
-      <aside className="sticky top-0 hidden h-dvh flex-col border-r border-rule bg-rail text-rail-ink lg:flex">
+    <div
+      className={cn(
+        "min-h-dvh lg:grid lg:transition-[grid-template-columns] lg:duration-200 motion-reduce:transition-none",
+        collapsed ? "lg:grid-cols-[76px_1fr]" : "lg:grid-cols-[232px_1fr]",
+        !onLog && (collapsed ? "xl:grid-cols-[76px_1fr_340px]" : "xl:grid-cols-[232px_1fr_340px]")
+      )}
+    >
+      {/* Desktop rail: fits the screen without scrolling; on short screens it tightens up. */}
+      <aside className="sticky top-0 hidden h-dvh flex-col overflow-hidden border-r border-rule bg-rail text-rail-ink lg:flex">
         <div className="print-strip" />
         {/* Same height as the top bar, so the two rules meet in one line. */}
-        <div className="flex h-16 shrink-0 items-center border-b border-rule px-5">
-          <Link href="/" className="text-[1.875rem] leading-none" aria-label="LaMP, go to Today">
-            <Wordmark onRail />
-          </Link>
+        <div className={cn("flex h-16 shrink-0 items-center border-b border-rule", collapsed ? "justify-center" : "justify-between pr-3 pl-5")}>
+          {!collapsed && (
+            <Link href="/" className="text-[1.875rem] leading-none" aria-label="LaMP, go to Today">
+              <Wordmark onRail />
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={() => setRailCollapsed(!collapsed)}
+            aria-label={collapsed ? "Expand the menu" : "Shrink the menu"}
+            aria-expanded={!collapsed}
+            title={collapsed ? "Expand the menu" : "Shrink the menu"}
+            className="inline-flex size-10 items-center justify-center rounded-xl text-ink-2 hover:bg-muted hover:text-ink"
+          >
+            {collapsed ? <PanelLeftOpen className="size-5" aria-hidden /> : <PanelLeftClose className="size-5" aria-hidden />}
+          </button>
         </div>
-        <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+        <div className={cn("flex shrink-0 items-center gap-3 pt-5 pb-4 short:hidden", collapsed ? "justify-center" : "px-5")} title={collapsed ? shop : undefined}>
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-cash-tint text-cash">
             <Store className="size-5" aria-hidden />
           </span>
-          <span className="min-w-0 leading-tight">
-            <span className="line-clamp-2 block font-semibold text-ink">{pharmacy?.name ?? " "}</span>
-            <span className="block truncate text-sm text-ink-2">{pharmacy?.city ?? " "}</span>
-          </span>
+          {collapsed ? (
+            <span className="sr-only">{shop}</span>
+          ) : (
+            <span className="min-w-0 leading-tight">
+              <span className="line-clamp-2 block font-semibold text-ink">{pharmacy?.name ?? " "}</span>
+              <span className="block truncate text-sm text-ink-2">{pharmacy?.city ?? " "}</span>
+            </span>
+          )}
         </div>
-        <nav aria-label="Main" className="flex flex-1 flex-col overflow-y-auto px-3 pb-3">
+        <nav aria-label="Main" className="flex min-h-0 flex-1 flex-col px-3 pb-3 short:pt-3">
           <div className="flex flex-col gap-0.5">
             {OWNER_NAV.map((item) => (
-              <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} />
+              <RailLink key={item.href} {...item} collapsed={collapsed} active={isActive(pathname, item.href)} />
             ))}
           </div>
-          <div className="mx-3 my-3 h-px shrink-0 bg-rule" aria-hidden />
+          <div className="mx-3 my-3 h-px shrink-0 bg-rule short:my-2" aria-hidden />
           <div className="flex flex-col gap-0.5">
             {MORE_NAV.map((item) => (
-              <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} badge={item.href === "/actions" ? pending : 0} />
+              <RailLink
+                key={item.href}
+                {...item}
+                collapsed={collapsed}
+                active={isActive(pathname, item.href)}
+                badge={item.href === "/actions" ? pending : 0}
+              />
             ))}
           </div>
         </nav>
-        <div className="space-y-0.5 border-t border-rule px-3 py-3">
+        <div className={cn("flex shrink-0 gap-1 border-t border-rule px-3 py-3", collapsed && "flex-col items-center")}>
           {!isLender && (
             <button
               type="button"
               onClick={startGuide}
-              className="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold text-rail-2 hover:bg-muted hover:text-ink"
+              title={collapsed ? "Show me around" : undefined}
+              className={cn(
+                "flex h-11 items-center gap-3 rounded-xl text-[0.9375rem] font-semibold text-rail-2 hover:bg-muted hover:text-ink short:h-10",
+                collapsed ? "w-11 justify-center" : "min-w-0 flex-1 px-3"
+              )}
             >
-              <Compass className="size-5" aria-hidden /> Show me around
+              <Compass className="size-5 shrink-0" aria-hidden />
+              <span className={collapsed ? "sr-only" : "truncate"}>Show me around</span>
             </button>
           )}
-          <ThemeToggle withLabel onRail className="w-full rounded-xl text-[0.9375rem]" />
+          <ThemeToggle onRail className="shrink-0 rounded-xl short:h-10" />
           {!isLender && pharmacy?.asks_pin && (
             <button
               type="button"
               onClick={lock}
-              className="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold text-rail-2 hover:bg-alert-tint hover:text-alert"
+              aria-label="Lock"
+              title="Lock"
+              className="flex size-11 shrink-0 items-center justify-center rounded-xl text-rail-2 hover:bg-alert-tint hover:text-alert short:h-10"
             >
-              <LockKeyhole className="size-5" aria-hidden /> Lock
+              <LockKeyhole className="size-5" aria-hidden />
             </button>
           )}
         </div>
@@ -264,12 +337,14 @@ function RailLink({
   label,
   icon: Icon,
   active,
+  collapsed,
   badge = 0,
 }: {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   active: boolean;
+  collapsed: boolean;
   badge?: number;
 }) {
   return (
@@ -277,14 +352,26 @@ function RailLink({
       href={href}
       data-guide={GUIDE_SPOT[href]}
       aria-current={active ? "page" : undefined}
+      title={collapsed ? label : undefined}
       className={cn(
-        "flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold transition-colors",
+        "relative flex h-11 shrink-0 items-center gap-3 rounded-xl text-[0.9375rem] font-semibold transition-colors short:h-9",
+        collapsed ? "mx-auto w-11 justify-center" : "px-3",
         active ? "bg-cash-tint text-cash" : "text-rail-2 hover:bg-muted hover:text-ink"
       )}
     >
-      <Icon className="size-5" aria-hidden />
-      <span className="flex-1">{label}</span>
-      {badge > 0 && <span className="num rounded-full bg-alert-band px-2 text-xs leading-5 font-bold text-white">{badge}</span>}
+      <Icon className="size-5 shrink-0" aria-hidden />
+      <span className={collapsed ? "sr-only" : "flex-1 truncate"}>{label}</span>
+      {badge > 0 && (
+        <span
+          className={cn(
+            "num rounded-full bg-alert-band text-xs leading-5 font-bold text-white",
+            collapsed ? "absolute -top-1 -right-1 min-w-5 px-1 text-center" : "px-2"
+          )}
+        >
+          {badge}
+          {collapsed && <span className="sr-only"> waiting</span>}
+        </span>
+      )}
     </Link>
   );
 }

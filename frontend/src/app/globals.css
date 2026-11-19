@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+/* Short laptop screens: the side menu tightens up so it never has to scroll. */
+@custom-variant short (@media (max-height: 760px));
 
 /* LaMP · soft cards
    A near-white page with a faint green glow, white rounded cards with soft shadows,
