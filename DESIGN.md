@@ -1,308 +1,240 @@
 ---
 name: LaMP
-description: A pharmacy owner's finance officer, read like a railway departures board.
+description: Soft white cards on a pale green shelf. One big number per screen says what the money does next.
 colors:
-  rail-green: "#0f4d3a"
-  rail-green-pale: "#cfe3d9"
-  board-green: "#123d30"
-  board-sub: "#d5e6dd"
-  signal-yellow: "#ffd400"
-  signal-ink: "#111111"
-  cash-green: "#0f6b4f"
-  cash-tint: "#e3f1eb"
-  good-green: "#1e7a4f"
-  good-tint: "#e6f3ec"
-  problem-red: "#c4301e"
-  problem-tint: "#fbeae7"
-  needs-you-amber: "#9a5800"
-  needs-you-tint: "#fdf1de"
-  shelf: "#eef1f3"
-  panel-white: "#ffffff"
-  ink: "#1f2328"
-  ink-quiet: "#4a535c"
-  rule: "#dde2e6"
-  field-edge: "#c9d0d6"
-  muted: "#e9edf0"
-  secondary: "#e4e8eb"
+  shelf: "#f5f8f6"
+  board: "#ffffff"
+  ink: "#14201b"
+  ink-2: "#55625c"
+  rule: "#e2e8e5"
+  cash: "#0f6b4f"
+  cash-tint: "#e5f2ec"
+  stock: "#1e7a4f"
+  stock-tint: "#e6f3ec"
+  warn: "#9a5800"
+  warn-tint: "#fdf1de"
+  alert: "#c4301e"
+  alert-tint: "#fbeae7"
+  muted: "#eef3f0"
+  input: "#cfd8d3"
+  dark-shelf: "#0a110e"
+  dark-board: "#111b17"
+  dark-ink: "#e8efeb"
+  dark-ink-2: "#a3b2ab"
+  dark-cash: "#86d4b0"
+  dark-brand: "#17805e"
+  dark-alert: "#ff8f80"
+  dark-warn: "#f2b45c"
+  dark-stock: "#7fd3a6"
 typography:
   display:
-    fontFamily: "Barlow Semi Condensed, Barlow, sans-serif"
-    fontSize: "2.25rem"
+    fontFamily: "Barlow Semi Condensed"
     fontWeight: 700
+    fontSize: "2.75rem"
     lineHeight: 1.05
-  board-time:
-    fontFamily: "Barlow Semi Condensed, Barlow, sans-serif"
-    fontSize: "1.25rem"
+    letterSpacing: "-0.01em"
+  page-title:
+    fontFamily: "Barlow Semi Condensed"
     fontWeight: 700
-    lineHeight: 1.05
-  headline:
-    fontFamily: "Barlow, sans-serif"
-    fontSize: "1.75rem"
-    fontWeight: 700
-    lineHeight: 1.25
-  figure:
-    fontFamily: "Barlow, sans-serif"
-    fontSize: "1.75rem"
-    fontWeight: 700
-    lineHeight: 1.25
-    fontFeature: "\"tnum\" 1, \"lnum\" 1"
-  title:
-    fontFamily: "Barlow, sans-serif"
-    fontSize: "0.9375rem"
+    fontSize: "2.5rem"
+    lineHeight: 1
+    letterSpacing: "-0.01em"
+  card-title:
+    fontFamily: "Barlow"
     fontWeight: 600
-    lineHeight: 1.45
-  body:
-    fontFamily: "Barlow, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.45
-  label:
-    fontFamily: "Barlow Semi Condensed, Barlow, sans-serif"
     fontSize: "0.8125rem"
-    fontWeight: 700
+    lineHeight: 1.3
+    letterSpacing: "0.07em"
+  body:
+    fontFamily: "Barlow"
+    fontWeight: 400
+    fontSize: "1rem"
+    lineHeight: 1.5
+  label:
+    fontFamily: "Barlow"
+    fontWeight: 600
+    fontSize: "0.75rem"
     lineHeight: 1.35
-    letterSpacing: "0.05em"
+    letterSpacing: "0.06em"
 rounded:
-  chip: "2px"
-  stamp: "3px"
-  control: "4px"
-  panel: "8px"
+  sm: "6px"
+  md: "8px"
+  lg: "12px"
+  xl: "16px"
+  card: "20px"
+  hero: "24px"
+  pill: "999px"
 spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "12px"
-  lg: "16px"
-  xl: "20px"
-  2xl: "24px"
-  touch: "44px"
+  gutter: "16px"
+  card-pad: "20px"
+  grid-gap: "20px"
+  target: "44px"
+  rail: "232px"
+  rail-collapsed: "76px"
+  side-panel: "340px"
 components:
   button-primary:
-    backgroundColor: "{colors.rail-green}"
-    textColor: "{colors.panel-white}"
-    typography: "{typography.title}"
-    rounded: "{rounded.control}"
-    padding: "0 16px"
+    backgroundColor: "{colors.cash}"
+    textColor: "#ffffff"
+    rounded: "{rounded.pill}"
     height: "44px"
-  button-primary-hover:
-    backgroundColor: "#0d4433"
-  button-primary-lg:
-    backgroundColor: "{colors.rail-green}"
-    textColor: "{colors.panel-white}"
-    rounded: "{rounded.control}"
     padding: "0 20px"
-    height: "48px"
   button-outline:
-    backgroundColor: "{colors.shelf}"
+    backgroundColor: "{colors.board}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "0 16px"
+    rounded: "{rounded.pill}"
     height: "44px"
-  button-outline-hover:
-    backgroundColor: "{colors.muted}"
-  station-board:
-    backgroundColor: "{colors.board-green}"
-    textColor: "{colors.panel-white}"
-    typography: "{typography.display}"
-    rounded: "{rounded.panel}"
-    padding: "16px 18px 18px"
-  carton:
-    backgroundColor: "{colors.panel-white}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.panel}"
-    padding: "8px 16px 16px"
+    padding: "0 20px"
+  card:
+    backgroundColor: "{colors.board}"
+    rounded: "{rounded.card}"
+    padding: "20px"
+  hero-card:
+    backgroundColor: "{colors.board}"
+    rounded: "{rounded.hero}"
+    padding: "24px 28px"
   stamp:
     backgroundColor: "{colors.muted}"
-    textColor: "{colors.ink-quiet}"
+    textColor: "{colors.ink-2}"
     typography: "{typography.label}"
-    rounded: "{rounded.stamp}"
-    padding: "1.6px 7.2px"
-  stamp-problem:
-    backgroundColor: "{colors.problem-tint}"
-    textColor: "{colors.problem-red}"
-  stamp-needs-you:
-    backgroundColor: "{colors.needs-you-tint}"
-    textColor: "{colors.needs-you-amber}"
-  stamp-good:
-    backgroundColor: "{colors.good-tint}"
-    textColor: "{colors.good-green}"
-  input-field:
-    backgroundColor: "{colors.panel-white}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "0 10px"
+    rounded: "{rounded.pill}"
+    padding: "3px 10px"
+  rail-link-active:
+    backgroundColor: "{colors.cash-tint}"
+    textColor: "{colors.cash}"
+    rounded: "{rounded.lg}"
     height: "44px"
-  tier-chip:
-    backgroundColor: "{colors.muted}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.chip}"
-    padding: "0 6px"
-  tab-bar-item:
-    backgroundColor: "{colors.panel-white}"
-    textColor: "{colors.ink-quiet}"
-    height: "64px"
-  tab-bar-item-active:
-    textColor: "{colors.cash-green}"
 ---
 
-# Design System: LaMP
+# LaMP design system
 
 ## Overview
 
-**Creative North Star: "The Station Board"**
+**North star: the counter ledger.** A pharmacy owner looks at LaMP between customers, on a cheap Android phone in bright light. Every screen answers one question first: what happens to my cash next, and when? That answer is one big number on one hero card. Everything else is a calm stack of white cards that the owner can scan and ignore.
 
-The next 30 days of money read like a railway departures board. One dark-green board at the top of a screen says what happens next and when; everything below it is a calm timetable of white panels on a light neutral ground, framed by a railway-green shell (header on phones, left rail on desktop). The owner reads it at a pharmacy counter on a cheap Android phone in bright light, between customers, so the system is high-contrast, large-targeted and sparing with colour.
+The world is a clean shop counter, not a bank. It uses a pale green-white shelf, white cards with soft shadows that lift a little, rounded pill buttons in LaMP green, and a condensed display face for the numbers that matter. Colour carries meaning, not decoration. Red is a problem, amber needs you, and green is good or the way forward.
 
-Colour is a signal, not decoration. The neutral ground carries about 60% of a screen, railway green about 30% (shell, primary buttons, the "go" state), and signal yellow under 10%: it appears only in the board's time cell and in the M of the wordmark. Red, amber and green mark state and nothing else. Depth is flat: panels are separated by hairline rules, not shadows.
+This is an Operate product: scanning, consistency and big touch targets come before expression. The brand lives in a few details: the italic green accent inside the hero number, the soft green glow behind the hero card, and the official AIgnite sticker in every header.
 
-The system rejects the grey-card, single-accent fintech dashboard, and it rejects a full-yellow board (the owner saw one in an earlier build and asked for the dark green that shipped).
-
-**Key Characteristics:**
-- One dark-green departures board per screen, at most, for the single most important message.
-- Railway-green shell; white working panels on a cool light-grey shelf.
-- Colour carries state only: red = problem, amber = needs you, green = go / good.
-- Barlow for the interface, Barlow Semi Condensed for the board and timetable dates.
-- Money in tabular figures, right-aligned, exactly as the engine returned it.
-- Flat surfaces, hairline rules, 8px panel corners, 44px minimum touch targets.
-- Light and dark mode; "Match device" by default.
+**Key characteristics**
+- One hero card per screen with one big number. Never two heroes side by side.
+- White cards on a pale shelf, separated by soft shadow rather than heavy borders.
+- Pill-shaped buttons; the primary one is LaMP green with a green glow under it.
+- Card titles are small, tracked, uppercase labels. Page titles use the condensed display face.
+- Tabular numbers everywhere money appears, so amounts line up like a price list.
+- Plain English only. No finance, AI or developer words (see CLAUDE.md).
 
 ## Colors
 
-A cool neutral timetable framed in railway green, with one signal yellow and three state colours.
+The palette is about 60% neutral (shelf and white cards), 30% LaMP green (actions, active menu items, accents) and 10% state colour (red and amber, only when something is wrong or waiting).
 
-### Primary
-- **Railway Green** (rail-green): the shell (phone header, desktop rail), primary buttons, the browser theme colour. Text on it is white; quiet text on it is Pale Rail Green (rail-green-pale).
-- **Board Green** (board-green): the departures board background only. Its headline is white; its supporting line is Board Sub (board-sub), a pale green.
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--shelf` | `#f5f8f6` | `#0a110e` | Page background, with a faint green glow at the top |
+| `--board` | `#ffffff` | `#111b17` | Cards, side menu, phone tab bar |
+| `--ink` | `#14201b` | `#e8efeb` | Main text and numbers |
+| `--ink-2` | `#55625c` | `#a3b2ab` | Secondary text, card titles, asides |
+| `--rule` | `#e2e8e5` | white at 9% | Hairlines, card edges, dividers |
+| `--cash` / `--brand` | `#0f6b4f` | `#86d4b0` / `#17805e` | LaMP green: primary buttons, links, active menu item, italic accent |
+| `--cash-tint` | `#e5f2ec` | `#12302a` | Active menu background, icon circles |
+| `--stock` | `#1e7a4f` | `#7fd3a6` | Good news: money coming in, "You kept", cash holds |
+| `--warn` | `#9a5800` | `#f2b45c` | Needs you: approvals waiting, loan pending |
+| `--alert` | `#c4301e` | `#ff8f80` | Problem: cash short, a suspicious document |
+| `*-tint` | pale washes | deep washes | Behind a stamp or a highlighted row of the same state |
 
-### Secondary
-- **Signal Yellow** (signal-yellow): the board's time cell ("Mon 26 Oct · in 10 days") and the M of the wordmark on the green shell. Nowhere else. Signal Ink (signal-ink) is reserved for any text placed on yellow.
-- **Cash Green** (cash-green): links, the active tab, the focus ring and caret, the cash-route track while cash holds. Cash Tint (cash-tint) is the accent hover wash.
-
-### Tertiary (state)
-- **Problem Red** (problem-red) with **Problem Tint** (problem-tint): shortfalls, overdue dues, suspicious documents, the short stop and dashed track on the cash route, short rows in the timetable.
-- **Needs-You Amber** (needs-you-amber) with **Needs-You Tint** (needs-you-tint): items waiting for the owner's approval, due-soon stamps, uncertain OCR fields.
-- **Good Green** (good-green) with **Good Tint** (good-tint): money coming in, "You kept", approved items, recoverable stock.
-
-### Neutral
-- **Shelf** (shelf): the app ground behind panels.
-- **Panel White** (panel-white): panels, the phone tab bar, the desktop audit-log column, input fields.
-- **Ink** (ink): primary text and figures. **Ink Quiet** (ink-quiet): secondary text, panel titles in neutral panels, inactive tabs.
-- **Rule** (rule): hairline borders and list dividers. **Field Edge** (field-edge): input borders.
-- **Muted** (muted) and **Secondary** (secondary): stamp and chip fills, skeletons, secondary buttons.
-
-Dark mode is the same world after closing time: ground #101417, panels #191f24, ink #e9edf0, rules #2b333a, rail #0d3f30, board #0f3328, signal #f5cc00. State colours lighten for text (red #ff8f80, amber #f2b45c, green #7fd3a6, cash #86d4b0) and their tints darken; anything on a coloured band keeps white text.
-
-### Named Rules
-**The One Signal Rule.** Signal yellow appears in exactly two places: the time cell on the departures board and the M of the wordmark. Never as a button, highlight, badge or chart colour.
-
-**The State-Only Rule.** Red means a problem, amber means the owner must act, green means go or good. A colour never labels a topic or a section. The audit log's tier chips are neutral grey for that reason.
-
-**The 60 / 30 / 10 Rule.** Neutral ground about 60%, railway green about 30%, signal under 10%.
+**Rules**
+- Colour is state only. A card's title turns red, amber or green only when its content means that, and an icon comes with it, so colour is never the only signal.
+- Green is the single action colour. There is no second accent.
+- Highlighted rows (a short day in "Coming up") use the matching tint background, never a coloured side bar.
+- Every text and background pair meets WCAG AA (4.5:1) in both themes. The dark theme lightens the state colours instead of reusing the light hexes.
 
 ## Typography
 
-**Display Font:** Barlow Semi Condensed (with Barlow, sans-serif)
-**Body Font:** Barlow (with sans-serif)
-**Label/Mono Font:** Barlow Semi Condensed, used as the `--font-board` and `font-mono` family for dates, times and stamps
+- **Barlow** (400–800) for all interface text: body, labels, buttons, menu.
+- **Barlow Semi Condensed** (600–800, with italic) for page titles, the hero number and the big figures inside cards. Condensed letters keep long amounts like "BDT 1,19,000" on one line on a phone.
 
-**Character:** Barlow is plain and legible, closer to signage than to a bank; its semi-condensed cut is the departures-board voice, used where a line has to hold a lot in a narrow column.
+| Role | Face | Size | Weight | Notes |
+|---|---|---|---|---|
+| Hero number (`.sb-head`) | Semi Condensed | 2.375rem phone / 2.75rem from 640px | 700 | Line height 1.05; the amount part is italic in the state colour |
+| Page title (`.display`) | Semi Condensed | 2rem phone / 2.5rem desktop | 600–700 | One per page, never with a label above it |
+| Card figure | Semi Condensed | 1.5–2.25rem | 700 | Always `.num` |
+| Card title | Barlow | 0.8125rem | 600 | Uppercase, 0.07em tracking, `--ink-2` or state colour |
+| Body | Barlow | 1rem (1.0625rem under the hero) | 400–500 | Line height 1.5 |
+| Stamp / label | Barlow | 0.75rem | 600 | Uppercase, 0.06em tracking |
 
-### Hierarchy
-- **Display** (700, 2.25rem, 1.05): the board headline ("Short BDT 19,000"). Semi-condensed. One per screen.
-- **Board time** (700, 1.25rem): the signal-yellow time cell beside or below the board headline.
-- **Headline** (700, 1.75rem, 2rem on desktop, 1.25): page titles.
-- **Figure** (700, 1.75rem, tabular lining figures): the headline money figure inside a panel. Smaller figures use the same tabular setting at 1rem to 1.25rem.
-- **Title** (600, 0.9375rem): panel titles, in Ink Quiet, or in the state colour with its icon when the panel carries a state.
-- **Body** (400, 1rem, 1.45): all running text; 0.875rem for secondary lines.
-- **Label** (700, 0.8125rem, 0.05em, uppercase): stamps only (dates, batch codes, due marks), set like a timetable column.
-
-### Named Rules
-**The Tabular Money Rule.** Every money figure and count uses tabular lining figures and sits right-aligned in its column, so amounts line up like a price list.
-
-**The No-Kicker Rule.** No small tracked-uppercase line above a heading. The heading carries itself; dates and context go in a stamp or in the board's time cell, which sits inside the headline row.
+- `.num` turns on `tabular-nums lining-nums` for every amount, count and date.
+- Headings use `text-wrap: balance`. Nothing on screen goes below 12px; body text never goes below 16px.
 
 ## Layout
 
-Mobile-first from 360px. On phones: a sticky railway-green header (wordmark, theme switch, passport, actions with a count, a white Ask button), a single content column with 16px gutters, and a fixed white bottom tab bar of five 64px tabs (Today, Cash, Capture, Stock, Funding). Content leaves 112px at the bottom so the tab bar never covers it.
-
-From 1024px the header becomes a 232px railway-green left rail and content moves into a 12-column grid (typically 7 + 5) inside a 1080px column with 32px gutters. From 1280px a 340px white audit-log column docks on the right.
-
-Spacing runs on a 4px base: 8px inside tight groups, 12px between list items and row cells, 16px panel padding and stacking gap on phones, 20px grid gap on desktop, 24px below page titles on desktop. Lists name the date span they show in the panel header.
-
-The cash route is drawn on a true day scale: each day is the same width, so stops sit where they fall in time. Stops less than 2 days apart merge into one stop (today, the last day and the first short day always keep their own), and the merged stop's tooltip lists everything it covers.
-
-### Named Rules
-**The 44px Rule.** Every touch target is at least 44px tall: default buttons, icon buttons, header links, rail links, inputs, theme switch. Large buttons are 48px; tabs are 64px.
+- **Phone first.** 16px side gutters and a single column. The floating tab bar holds Today, Cash, Scan, Stock and Plan. Today ends with a "More" list (Customers, Credit record, Wallet, Rules, History, Show me around) in one card.
+- **Phone header:** sticky, frosted (white at 80% with blur), showing the wordmark, the sticker and the shop name.
+- **Phone tab bar:** floats 12px above the safe area, `rounded-2xl`, frosted white, `shadow-lift`, at most 420px wide, five equal cells, each at least 44px tall.
+- **Desktop (from 1024px):** a grid of side menu + main column, plus a 340px right panel (the chat and live log) from 1280px.
+  - **Side menu:** white, 232px wide, and collapsible to 76px of icons. The choice is remembered in this browser. Its 64px header (wordmark + shrink button) lines up with the 64px top bar, so their bottom rules meet in one line. It never scrolls. On screens under 760px tall (`short:` variant) the shop block hides and the links tighten from 44px to 36px.
+  - **Top bar:** 64px, sticky, frosted shelf colour. Holds the sticker, Pause and notifications.
+- **Today on desktop:** a 12-column grid. The hero card and "Coming up" take 7 columns; "Waiting for you", "Expiring stock" and "Last 30 days" take the other 5. "Waiting for you" sits right under the hero on phones and at the top of the right column on desktop.
+- **Spacing:** 16px between stacked cards on phones, 20px grid gaps on desktop, 20px inside cards, and 24–28px inside the hero.
 
 ## Elevation & Depth
 
-Flat. Panels sit on the shelf with a 1px rule border and no shadow; depth comes from the white-on-grey tonal step and from hairline dividers. The only box-shadow in the system is the departures board's signage frame, a 1px inner white line at 16% plus a 1px outer ring in the board's own colour, which reads as a sign edge, not lift. The desktop top bar uses a slight backdrop blur over 90% shelf so content scrolls under it cleanly.
+Depth is soft and wide, never hard. There are three shadow tokens:
 
-### Shadow Vocabulary
-- **Signage frame** (`box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16), 0 0 0 1px var(--board-bg)`): the departures board only.
+| Token | Value (light) | Used on |
+|---|---|---|
+| `--card-shadow` | inset 1px white highlight + `0 20px 60px -30px` ink at 25% | Cards, hero card |
+| `--lift-shadow` | same, deeper: `0 28px 70px -30px` at 32% | Card hover (lifts 2px), phone tab bar |
+| `--button-glow` | `0 18px 40px -18px` LaMP green at 55% | Primary button only |
 
-### Named Rules
-**The No-Nesting Rule.** No filled box inside a panel. Inside a white panel, group with hairline dividers, a 2px ink rule above totals, or a full-bleed row tint for a state (the red short row), never a second filled card.
+- In the dark theme the shadows go to near-black and the inset highlight drops to 4–5% white, so cards separate by the `--board` / `--shelf` step instead.
+- The hero card has a soft radial green glow (`--glow`) behind its top-right corner. It is the only decorative light in the app.
+- Frosted surfaces (phone header, tab bar, desktop top bar) use `backdrop-blur-md` over a semi-transparent fill.
+- The hover lift only applies on devices that can hover, and it respects `prefers-reduced-motion`.
 
 ## Shapes
 
-Small, practical corners. Panels and the board use 8px; buttons, inputs, header links and alert lines use 4px; stamps use 3px; audit-log tier chips use 2px. Pills appear only for count badges and thin bar-chart tracks. Borders are 1px hairlines; totals get a 2px ink top rule. The cash route is a 5px rounded line with circular stops: a 7px hollow green stop for today, 5.5px hollow stops for events, a 9px filled red stop ringed in ink for the first short day, and a dashed red track after it.
+- Hero card: 24px radius. Cards: 20px. Inputs, menu links and small buttons: 12px (`--radius`). The phone tab bar: 16px.
+- Buttons, stamps, the hero's date pill and the "Waiting" badge are full pills (999px).
+- Icon circles (the shop icon, "More" list icons) are full circles in `--cash-tint` with a green icon.
+- Edges are 1px `--rule` hairlines. No border is ever thicker than 1px, and no card has a coloured side stripe.
 
 ## Components
 
-### Buttons
-Solid, plain and large: built for a thumb at a counter.
-- **Shape:** gently squared (4px).
-- **Primary:** railway green with white 0.9375rem semibold text, 44px tall, 16px side padding; large is 48px tall with 20px padding and a 1rem label. One primary per screen region; on Today it is "See the fix".
-- **Hover / Focus:** hover darkens the green by mixing in 12% black; focus shows a 3px cash-green ring at 50%; press nudges 1px down.
-- **Outline:** shelf background, rule border, ink text; hover fills with muted grey. Used for secondary actions inside panels ("Review and approve", "Recover BDT ...").
-- **Text link:** cash-green semibold with a trailing arrow, 44px tall when standalone ("Cash, day by day").
+**Hero card (`.station-board`).** White, 24px radius, a green glow at the top right. It holds one message: either "Short BDT 19,000" with the amount in italic red, or "Cash holds for 30 days" in green. A date pill in the state tint (`.sb-time`) sits beside it, with a line below saying why. Its actions sit inside the card: a large primary "See the plan" button and a text link "Cash, day by day". It's used once per screen and has no label above the number.
 
-### Chips
-- **Stamp:** semi-condensed 0.8125rem bold uppercase with 0.05em tracking, muted fill, quiet ink, 3px corners. Tones follow state: problem (overdue), needs-you (due soon), good (approved). Used for dates, batch codes and due marks.
-- **Tier chip (audit log):** 2px corners, muted fill, ink bold xs text. Always neutral; tiers are categories, not states.
-- **Count badge:** a pill in problem red with white tabular figures, on Actions only.
+**Card (`Carton`, `.carton`).** White, 20px radius, soft shadow, with a 2px lift on hover. The head row holds a small uppercase title on the left (with a state icon when the tone is alert, warn or stock) and a quiet aside on the right (a date range, "Next 60 days"). The body has 20px padding. Lists inside it use `divide-rule` hairlines.
 
-### Cards / Containers
-- **Corner Style:** 8px.
-- **Background:** panel white on the shelf.
-- **Shadow Strategy:** none (see Elevation & Depth).
-- **Border:** 1px rule.
-- **Internal Padding:** 14px top, 16px sides for the head; 8px top and 16px elsewhere for the body.
-- **Title:** semibold 0.9375rem in Ink Quiet with an optional right-aligned aside (date span, count). When the panel carries a state, the title takes that state colour and its icon (alert circle, hand, check circle). The state never becomes a coloured fill or band.
+**Buttons.**
+- **Primary:** a LaMP green pill, 44px tall (48px for `lg`), white text and a green glow. One per area.
+- **Outline:** a white pill with a hairline border and a tiny shadow, for secondary actions such as "Review and approve".
+- **Text links:** green, 44px tall hit area, with an arrow icon.
+- All buttons press down 1px when tapped and show a 3px green focus ring.
 
-### Inputs / Fields
-- **Style:** 44px tall, white field, 1px field-edge border, 4px corners, semibold 1rem tabular figures for amounts; label above in xs semibold quiet ink.
-- **Focus:** 2px cash-green outline at a 2px offset; caret in cash green.
-- **Uncertain:** amber border and amber tint, with "· check" in amber beside the label.
+**Stamp (`.stamp`).** A small uppercase pill for dates, batches and counts. It's neutral by default; `stamp-alert`, `stamp-warn`, `stamp-stock` and `stamp-cash` use the matching tint and ink.
 
-### Navigation
-- **Phone header:** railway green, wordmark (white with a yellow M), 44px icon links with a 10% white hover and 15% white for the current page, white Ask button with green text.
-- **Phone tab bar:** white, five equal tabs, 24px icons over xs semibold labels; inactive in quiet ink, active in cash green with a 3px cash-green bar along the top edge.
-- **Desktop rail:** railway green, 44px links in pale rail green; hover 10% white, current page 15% white with white text.
+**Side menu link (`RailLink`).** 44px tall, 12px radius, icon plus label. Active: `--cash-tint` background with green text, and no side bar. Collapsed: an icon only, a tooltip with the label, the label kept for screen readers, and the "waiting" count as a red badge on the corner.
 
-### Departures Board (signature)
-Board green, 8px corners, the signage frame, 16px top and 18px side and bottom padding. The headline is semi-condensed white at 2.25rem; the time cell sits in the same heading row in signal yellow at 1.25rem (below the figure on phones, on the right from 640px); the supporting line is pale board-sub green at 1.0625rem medium. Used at most once per screen (Today and Funding carry one) for the single message that matters most. When there is no shortfall it says so plainly ("Cash holds for 30 days").
+**Coming up row.** A three-column grid: date with weekday, what happens, and the signed amount. Money in is green. A short day gets an `--alert-tint` rounded background and a red "Short …" line.
 
-### Cash Route and Timetable (signature)
-The cash route sits at the top of the "Upcoming money" panel (see Layout for scale and merging). Under it, timetable rows run date (semi-condensed bold, weekday below), what (named from the forecast's `items`), and a signed right-aligned tabular amount; incoming money is good green, outgoing is ink. A short day's row takes a full-bleed problem tint and a red "Short ..." line under the amount.
+**Phone tab bar.** A floating frosted bar with five cells, icon over label. The active cell is green on `--cash-tint`.
+
+**Sticker.** The official AIgnite sticker sits near the top of every page: the owner header, the customer header and the PIN screen. Never remove or hide it.
 
 ## Do's and Don'ts
 
-### Do:
-- **Do** use one departures board per screen at most, in board green with a white headline, for the single most important message.
-- **Do** keep signal yellow to the board's time cell and the wordmark's M.
-- **Do** use colour for state only: problem red, needs-you amber, go or good green. Keep audit-log tier chips neutral.
-- **Do** set every money figure in tabular lining figures, right-aligned.
-- **Do** show every money figure exactly as the engine returned it and label rows from the forecast's `items`; the frontend never adds, subtracts or derives money.
-- **Do** draw the cash route on a true day scale and merge stops less than 2 days apart.
-- **Do** make every touch target at least 44px.
-- **Do** support light and dark mode through next-themes with the class strategy, defaulting to "Match device".
-- **Do** delete `frontend/.next` and restart the dev server after editing `globals.css` on Windows; the stale cache otherwise serves old tokens.
+**Do**
+- Lead every screen with the one number that matters, in the display face.
+- Use `.num` on every amount, and write money as `BDT 19,000` or the shared `bdt()` and `num()` helpers.
+- Keep touch targets at least 44 × 44px, with at least 8px between them.
+- Use state colour only with an icon or words that say the same thing.
+- Test both themes. Dark mode has its own state hexes; don't reuse the light ones.
+- Keep the desktop side menu free of scrolling. Tighten it with the `short:` variant instead.
 
-### Don't:
-- **Don't** put a tracked uppercase kicker or eyebrow above a heading.
-- **Don't** nest a filled box inside a panel; use dividers, rules or a full-bleed row tint.
-- **Don't** use yellow for buttons, highlights, badges or charts, and don't make the board yellow.
-- **Don't** colour a panel, chip or band by topic.
-- **Don't** add shadows to panels or buttons.
-- **Don't** compute, round or re-total money in the frontend.
+**Don't**
+- Don't put a small label or "kicker" above a heading or the hero number.
+- Don't add coloured left or right borders thicker than 1px, or coloured side stripes on cards or menu items.
+- Don't introduce a second accent colour, gradients on text, or decorative illustrations.
+- Don't show two hero cards on one screen, or put the hero's actions outside its card.
+- Don't use jargon in labels ("shortfall", "funding", "audit", "model", setting names). Say "Short", "the plan", "History".
+- Don't show medicine names or real names on customer cards (`/me/<code>`). Show amounts only.
+- Don't swap Barlow for another font, or copy another product's type.
