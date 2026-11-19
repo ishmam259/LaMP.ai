@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { ThemeProvider as NextThemes, useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { cn } from "cn";
+
+const noSubscribe = () => () => {};
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -23,10 +25,8 @@ const META = {
 /** Cycles automatic → light → dark. */
 export function ThemeToggle({ className, withLabel = false, onRail = false }: { className?: string; withLabel?: boolean; onRail?: boolean }) {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // false while rendering on the server, true in the browser: the saved theme is known only there
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
   const current = (mounted && (theme as (typeof ORDER)[number])) || "system";
   const { icon: Icon, label } = META[current];
   const next = ORDER[(ORDER.indexOf(current) + 1) % ORDER.length];
