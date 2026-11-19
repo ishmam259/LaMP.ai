@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   devIndicators: false,
   partialPrefetching: true,
+  // Owner pages load their figures in the browser after the session opens, so the dev
+  // server's instant-navigation check has nothing to render and reports them as "dropped".
+  // Check only the pages that opt in with `export const instant = true`.
+  experimental: {
+    instantInsights: {
+      validationLevel: "manual-warning",
+    },
+  },
   turbopack: {
     rules: {
       "*.css": {
