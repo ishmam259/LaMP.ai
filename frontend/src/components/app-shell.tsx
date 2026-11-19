@@ -15,6 +15,7 @@ import {
   PackageOpen,
   ScrollText,
   ShieldCheck,
+  Store,
   Sun,
   Users,
   Wallet,
@@ -81,35 +82,52 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
   return (
     <div className={cn("min-h-dvh lg:grid lg:grid-cols-[232px_1fr]", !onLog && "xl:grid-cols-[232px_1fr_340px]")}>
       {/* Desktop rail */}
-      <aside className="sticky top-0 hidden h-dvh flex-col border-r border-rule bg-rail/85 text-rail-ink backdrop-blur-md lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col border-r border-rule bg-rail text-rail-ink lg:flex">
         <div className="print-strip" />
-        <div className="px-6 pt-6 pb-5">
-          <Link href="/" className="text-[2rem] leading-none">
+        {/* Same height as the top bar, so the two rules meet in one line. */}
+        <div className="flex h-16 shrink-0 items-center border-b border-rule px-5">
+          <Link href="/" className="text-[1.875rem] leading-none" aria-label="LaMP, go to Today">
             <Wordmark onRail />
           </Link>
-          <p className="mt-2 text-sm text-rail-2">{pharmacy ? `${pharmacy.name}, ${pharmacy.city}` : " "}</p>
         </div>
-        <nav aria-label="Main" className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
-          {[...OWNER_NAV, ...MORE_NAV].map((item) => (
-            <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} badge={item.href === "/actions" ? pending : 0} />
-          ))}
+        <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-cash-tint text-cash">
+            <Store className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0 leading-tight">
+            <span className="line-clamp-2 block font-semibold text-ink">{pharmacy?.name ?? " "}</span>
+            <span className="block truncate text-sm text-ink-2">{pharmacy?.city ?? " "}</span>
+          </span>
+        </div>
+        <nav aria-label="Main" className="flex flex-1 flex-col overflow-y-auto px-3 pb-3">
+          <div className="flex flex-col gap-0.5">
+            {OWNER_NAV.map((item) => (
+              <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} />
+            ))}
+          </div>
+          <div className="mx-3 my-3 h-px shrink-0 bg-rule" aria-hidden />
+          <div className="flex flex-col gap-0.5">
+            {MORE_NAV.map((item) => (
+              <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} badge={item.href === "/actions" ? pending : 0} />
+            ))}
+          </div>
         </nav>
-        <div className="space-y-1 border-t border-rule p-4">
+        <div className="space-y-0.5 border-t border-rule px-3 py-3">
           {!isLender && (
             <button
               type="button"
               onClick={startGuide}
-              className="flex h-10 w-full items-center gap-3 rounded-full px-3 text-sm font-semibold text-rail-2 hover:bg-cash-tint hover:text-cash"
+              className="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold text-rail-2 hover:bg-muted hover:text-ink"
             >
               <Compass className="size-5" aria-hidden /> Show me around
             </button>
           )}
-          <ThemeToggle withLabel onRail className="w-full" />
+          <ThemeToggle withLabel onRail className="w-full rounded-xl text-[0.9375rem]" />
           {!isLender && pharmacy?.asks_pin && (
             <button
               type="button"
               onClick={lock}
-              className="flex h-10 w-full items-center gap-3 rounded-full border border-rule px-3 text-sm font-semibold text-rail-2 hover:bg-alert-tint hover:text-alert"
+              className="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold text-rail-2 hover:bg-alert-tint hover:text-alert"
             >
               <LockKeyhole className="size-5" aria-hidden /> Lock
             </button>
@@ -168,7 +186,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Desktop top bar */}
-        <div className="sticky top-0 z-30 hidden items-center justify-end gap-3 border-b border-rule bg-shelf/75 px-8 py-3 backdrop-blur-md lg:flex">
+        <div className="sticky top-0 z-30 hidden h-16 items-center justify-end gap-3 border-b border-rule bg-shelf/75 px-8 backdrop-blur-md lg:flex">
           <BuildathonSticker className="mr-auto h-10" />
           {isLender ? (
             <span className="text-sm font-semibold text-ink-2">Lender portal</span>
@@ -260,10 +278,8 @@ function RailLink({
       data-guide={GUIDE_SPOT[href]}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "relative flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold",
-        active
-          ? "bg-cash-tint text-cash before:absolute before:inset-y-2.5 before:left-0 before:w-[3px] before:rounded-full before:bg-cash"
-          : "text-rail-2 hover:bg-muted hover:text-ink"
+        "flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold transition-colors",
+        active ? "bg-cash-tint text-cash" : "text-rail-2 hover:bg-muted hover:text-ink"
       )}
     >
       <Icon className="size-5" aria-hidden />

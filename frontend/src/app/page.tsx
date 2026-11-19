@@ -32,9 +32,30 @@ export default function TodayPage() {
   const moreCount = moves.length - shown.length;
   const balanceBefore = short && forecast ? forecast.days[forecast.days.findIndex((d) => d.date === short.date) - 1]?.balance : undefined;
 
+  // Shown right under the cash card on phones, and at the top of the side column on desktop.
+  const waitingCard = (className: string) =>
+    pending.length > 0 && (
+      <Carton tone="warn" title="Waiting for you" aside={`${pending.length} to approve`} className={className}>
+        <ul className="divide-y divide-rule">
+          {pending.slice(0, 3).map((a) => (
+            <li key={a.id} className="py-2 text-ink first:pt-0">
+              <span className="block font-semibold">{String(a.payload.summary ?? (a.payload as Record<string, unknown>).reason ?? ACTION_LABEL[a.kind])}</span>
+              <span className="text-sm text-ink-2">{a.proposed_by === "owner" ? "Suggested by you" : a.proposed_by === "lamp-scheduler" ? "LaMP follow-up" : "Suggested by LaMP"}</span>
+            </li>
+          ))}
+        </ul>
+        <Link href="/actions" className={buttonVariants({ variant: "outline", className: "mt-3 w-full" })}>
+          Review and approve <ArrowRight className="size-4" aria-hidden />
+        </Link>
+      </Carton>
+    );
+
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
-      <h1 className="sr-only">Today</h1>
+      <header className="flex items-center justify-between gap-3 lg:col-span-12">
+        <h1 className="display text-[2rem] leading-none font-bold text-ink lg:text-[2.5rem]">Today</h1>
+        {asOf && <Stamp className="text-[0.8125rem]">{dayDate(asOf)}</Stamp>}
+      </header>
 
       {suspicious && (
         <p role="alert" className="rounded-2xl border border-alert/30 bg-alert-tint p-4 font-semibold text-alert lg:col-span-12">
@@ -49,7 +70,6 @@ export default function TodayPage() {
         {forecast && (
           <>
             <section aria-labelledby="board-head" className="station-board" data-guide="today">
-              <p className="sb-label mb-3">Your cash, next 30 days</p>
               {short ? (
                 <>
                   {waiting.covered && (
@@ -59,7 +79,7 @@ export default function TodayPage() {
                   )}
                   <h2 id="board-head" className="sb-head">
                     <span className="num text-alert">
-                      Short <span className="display-accent text-alert">{bdt(short.amount)}</span>
+                      <span className="sr-only">Cash: </span>Short <span className="display-accent text-alert">{bdt(short.amount)}</span>
                     </span>
                     <span className="sb-time">
                       {dayDate(short.date)}
@@ -78,22 +98,23 @@ export default function TodayPage() {
                   </span>
                 </h2>
               )}
+              <div className="mt-5 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+                {short && (
+                  <Link href="/funding" className={buttonVariants({ size: "lg", className: "w-full sm:w-auto" })}>
+                    See the plan <ArrowRight className="size-5" aria-hidden />
+                  </Link>
+                )}
+                <Link href="/cash" className="inline-flex h-11 items-center justify-center gap-1 rounded-full px-3 font-semibold text-cash hover:bg-cash-tint">
+                  Cash, day by day <ArrowRight className="size-4" aria-hidden />
+                </Link>
+                {waiting.loan && (
+                  <Link href="/funding" className="inline-flex h-11 items-center justify-center text-sm font-semibold text-warn hover:underline">
+                    Loan applied, waiting for the lender
+                  </Link>
+                )}
+              </div>
             </section>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              {short && (
-                <Link href="/funding" className={buttonVariants({ size: "lg", className: "w-full sm:w-auto" })}>
-                  See the plan <ArrowRight className="size-5" aria-hidden />
-                </Link>
-              )}
-              {waiting.loan && (
-                <Link href="/funding" className="text-sm font-semibold text-warn hover:underline sm:px-2">
-                  Loan applied, waiting for the lender
-                </Link>
-              )}
-              <Link href="/cash" className="inline-flex h-11 items-center justify-center gap-1 font-semibold text-cash hover:underline sm:px-2">
-                Cash, day by day <ArrowRight className="size-4" aria-hidden />
-              </Link>
-            </div>
+            {waitingCard("lg:hidden")}
             <Carton
               tone="ink"
               title="Coming up"
@@ -141,22 +162,7 @@ export default function TodayPage() {
       </div>
 
       <div className="space-y-4 lg:col-span-5">
-        {/* Waiting for the owner */}
-        {pending.length > 0 && (
-          <Carton tone="warn" title="Waiting for you" aside={`${pending.length} to approve`}>
-            <ul className="space-y-2">
-              {pending.slice(0, 3).map((a) => (
-                <li key={a.id} className="text-ink">
-                  <span className="font-semibold">{String(a.payload.summary ?? (a.payload as Record<string, unknown>).reason ?? ACTION_LABEL[a.kind])}</span>
-                  <span className="text-sm text-ink-2"> · {a.proposed_by === "owner" ? "suggested by you" : a.proposed_by === "lamp-scheduler" ? "LaMP follow-up" : "suggested by LaMP"}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/actions" className={buttonVariants({ variant: "outline", className: "mt-3 w-full" })}>
-              Review and approve
-            </Link>
-          </Carton>
-        )}
+        {waitingCard("hidden lg:block")}
 
         {/* Expiring stock */}
         <Carton tone="ink" title="Expiring stock" aside="Next 60 days">
@@ -177,10 +183,8 @@ export default function TodayPage() {
             </>
           )}
         </Carton>
-      </div>
 
-      {/* This month */}
-      <div className="lg:col-span-12">
+        {/* This month */}
         <Carton tone="ink" title="Last 30 days">
           {!accounts ? (
             <Skel className="h-16" />
@@ -188,19 +192,19 @@ export default function TodayPage() {
             <dl className="grid grid-cols-3 gap-3">
               <div>
                 <dt className="text-sm text-ink-2">Sales</dt>
-                <dd className="num display text-2xl font-bold text-ink lg:text-[1.75rem]">{num(accounts.sales)}</dd>
+                <dd className="num display text-2xl font-bold text-ink">{num(accounts.sales)}</dd>
               </div>
               <div>
                 <dt className="text-sm text-ink-2">Costs</dt>
-                <dd className="num display text-2xl font-bold text-ink lg:text-[1.75rem]">{num(accounts.sales - accounts.net_profit)}</dd>
+                <dd className="num display text-2xl font-bold text-ink">{num(accounts.sales - accounts.net_profit)}</dd>
               </div>
               <div>
                 <dt className="text-sm text-ink-2">You kept</dt>
-                <dd className="num display text-2xl font-bold text-stock lg:text-[1.75rem]">{num(accounts.net_profit)}</dd>
+                <dd className="num display text-2xl font-bold text-stock">{num(accounts.net_profit)}</dd>
               </div>
             </dl>
           )}
-          <Link href="/cash#accounts" className="mt-3 inline-flex items-center gap-1 font-semibold text-cash hover:underline">
+          <Link href="/cash#accounts" className="mt-3 inline-flex h-11 items-center gap-1 font-semibold text-cash hover:underline">
             Full accounts <ArrowRight className="size-4" aria-hidden />
           </Link>
         </Carton>
