@@ -10,7 +10,7 @@ LaMP is a solo entry by @ishmam259 for **Ostad Presents YUNet AIgnite Buildathon
 
 ## Buildathon requirements
 - A public live web app judges can test (Render, `render.yaml`).
-- The official sticker visible near the top of every page: `frontend/public/aignite-sticker.png`, shown by `frontend/src/components/sticker.tsx`. Don't remove it from the PIN screen, the owner header or the customer header.
+- The official sticker visible near the top of every page: `frontend/public/aignite-sticker.png`, shown by `frontend/src/components/sticker.tsx`. Don't remove it from the owner header, the customer header or the PIN screen (shown only with `ASK_OWNER_PIN=true`).
 - A deck of at most 5 slides: `deck/build-deck-aignite.js`. Any demo video must be in English.
 - Deadline: 5 Nov 2026, 23:59 Bangladesh time, submitted on Devpost only.
 

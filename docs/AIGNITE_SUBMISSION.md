@@ -16,7 +16,7 @@ Done: official sticker on every page (PIN screen, owner header, customer header)
 1. Render → New → Blueprint → connect the `ishmam259/LaMP.ai` repo → apply. It creates `lamp-ai-db`, `lamp-ai-api` and `lamp-ai-web`, all on free plans. When it asks for `OPENAI_API_KEY`, paste your OpenAI key (it stays in Render; never put it in the repo). Leave the Brevo and alert-email values empty.
 2. When `lamp-ai-api` is live, copy its URL (for example `https://lamp-ai-api.onrender.com`).
 3. On `lamp-ai-web` → Environment, set `BACKEND_URL` to that URL, then Manual Deploy → Clear build cache & deploy (the URL is baked in at build time).
-4. Open the `lamp-ai-web` URL in a private window: PIN 2468 works, and "Check what you owe" opens card `GL-7KQM-4XPA`.
+4. Open the `lamp-ai-web` URL in a private window: it opens straight into Today, and `/me` with card `GL-7KQM-4XPA` opens the customer card.
 5. If the web URL isn't `https://lamp-ai-web.onrender.com`, rebuild the deck: `cd deck && LIVE_URL=<url> node build-deck-aignite.js`, then export the PDF again.
 
 Free plans: each service sleeps after 15 minutes without visitors, and the first visit after that takes about a minute. Open the link yourself a minute before you expect judges. The free database expires 30 days after it is created (Render then gives 14 days to upgrade before deleting it), so a database made now lasts through judging. Render allows one free database per account.
@@ -24,7 +24,7 @@ Free plans: each service sleeps after 15 minutes without visitors, and the first
 OpenAI: new photos and new chat questions use your key with no daily limit (`LLM_DAILY_BUDGET_USD=0`). Demo photos and the suggested questions stay free.
 
 ## Demo video story (as recorded)
-1. Title card with the sticker, then the owner unlocks with the PIN.
+1. Title card with the sticker, then the owner opens LaMP.
 2. Today: short BDT 19,000 on 26 Oct.
 3. Scan: AI reads a supplier invoice photo; the owner checks it.
 4. Plan: order fewer slow sellers, ask for more days, borrow only what's left. BDT 0, or BDT 181.97 instead of 421.64.
@@ -38,8 +38,8 @@ LaMP started as a team prototype for FinTechathon 2026 (with Farhan Tahsin Khan,
 
 ## Devpost "how to try it" text (draft)
 The app shows no test logins, so judges need these from Devpost, the deck or the video's end card:
-- Owner: open the live link and enter PIN **2468** (Green Life Pharmacy, Bogura).
-- Customer: on the PIN screen tap "Bought medicine on credit? Check what you owe" and enter card **GL-7KQM-4XPA**.
+- Owner: open the live link. It opens straight into Green Life Pharmacy, Bogura.
+- Customer: add `/me` to the live link and enter card **GL-7KQM-4XPA**.
 - Ask LaMP anything about the shop, or scan your own supplier invoice.
 - If the site has been idle, the first visit takes about a minute.
 - The shared data resets itself every hour.

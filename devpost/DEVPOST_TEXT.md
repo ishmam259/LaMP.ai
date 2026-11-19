@@ -39,7 +39,7 @@ For the owner:
 - **Stock:** BDT 18,400 of stock expires within 60 days, and BDT 9,200 of it can still go back to suppliers.
 - **Plan:** the cheapest money first. Order fewer of the slow seller (saves BDT 10,800), ask the supplier for 20 more days, and borrow only if they say no. The plan costs BDT 0, or BDT 181.97 with the backup loan. Borrowing the full amount would cost BDT 421.64.
 - **Ask LaMP:** a chat that answers from the shop's own figures and suggests steps.
-- **Approvals:** nothing happens until the owner approves it. Loans need the PIN again. In the demo, two approvals save BDT 11,039.67.
+- **Approvals:** nothing happens until the owner approves it. In the demo, two approvals save BDT 11,039.67.
 - **History:** every step by the owner, LaMP or a customer is saved in a history no one can secretly change.
 
 For families who buy on credit:
@@ -75,8 +75,8 @@ In the demo, the lenders, their decisions and payouts, and the suppliers' replie
 LaMP started as a team prototype for FinTechathon 2026 with Farhan Tahsin Khan, who agreed to this solo entry. For AIgnite I added the customer card and the Customers page, rewrote the app in plain language, deployed it for judges and rebuilt the pitch.
 
 ## Try it
-- **Owner:** open the live link and enter PIN **2468** (Green Life Pharmacy, Bogura).
-- **Customer:** on the PIN screen, tap "Bought medicine on credit? Check what you owe" and enter card **GL-7KQM-4XPA**.
+- **Owner:** open the live link. It opens straight into Green Life Pharmacy, Bogura.
+- **Customer:** add `/me` to the live link and enter card **GL-7KQM-4XPA**.
 - **Try your own:** scan a supplier invoice or a sales-book page, and ask LaMP anything about the shop.
 - If the site has been idle, the first visit takes about a minute to wake it.
 - The demo data resets itself every hour.

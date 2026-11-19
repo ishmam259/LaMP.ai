@@ -4,7 +4,7 @@ Helps neighborhood pharmacies in Bangladesh see their cash for the weeks ahead, 
 
 Built solo by A K M Ishmam Tahmid for **Ostad Presents YUNet AIgnite Buildathon 2026**. Submission checklist: [docs/AIGNITE_SUBMISSION.md](docs/AIGNITE_SUBMISSION.md).
 
-**Live app:** https://lamp-ai-web.onrender.com · **Demo owner PIN:** `2468` · **Demo customer card:** `GL-7KQM-4XPA`
+**Live app:** https://lamp-ai-web.onrender.com (opens straight into the owner side) · **Customer card:** https://lamp-ai-web.onrender.com/me, card `GL-7KQM-4XPA`
 
 ## What it does
 **For a family that buys on credit** (`/me`): open your card with the code the pharmacy gives you. See what you owe and since when, then pick a way to pay it back (all at once, 2 or 4 weekly parts) and a first date. The pharmacy sees your plan straight away. The card shows amounts only, never your name or what you bought.
@@ -15,7 +15,7 @@ Built solo by A K M Ishmam Tahmid for **Ostad Presents YUNet AIgnite Buildathon 
 - **Expiring stock.** Batches expiring in 60 days, which ones can still go back to the supplier, and how much of the next order won't sell in time.
 - **Cheapest money first.** Order less, ask the supplier for more days, and only then borrow the gap, with every loan's real cost side by side. In the demo this turns a BDT 421.64 loan into BDT 0 (or BDT 181.97 if the supplier says no).
 - **Customers.** Everyone who owes the shop, their payment plans, and a link to send each one their card.
-- **Ask LaMP.** A chat that answers from the shop's own figures. It can only read and suggest; the owner approves every action, and loans need the PIN again.
+- **Ask LaMP.** A chat that answers from the shop's own figures. It can only read and suggest; the owner approves every action.
 - **History.** Every change is recorded in a history that shows if anyone edits it later.
 
 All money math is plain Python in `backend/app/engines/`. The AI reads photos and explains; it never calculates money or moves it.
@@ -40,7 +40,7 @@ You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) runni
 cp -n .env.example .env   # -n keeps an .env you already filled in
 docker compose up -d --build
 ```
-On first start the API loads the demo pharmacy, Green Life Pharmacy in Bogura. The first build takes a few minutes. The copied `.env` has `DEV_MODE=true`, which turns on the demo controls (Reset, the supplier-reply simulator) and a dev registry key; nothing else needs filling in. The owner PIN is `2468`.
+On first start the API loads the demo pharmacy, Green Life Pharmacy in Bogura. The first build takes a few minutes. The copied `.env` has `DEV_MODE=true`, which turns on the demo controls (Reset, the supplier-reply simulator) and a dev registry key; nothing else needs filling in. The owner side opens without a PIN. To ask for one, set `ASK_OWNER_PIN=true`: the PIN is then `2468`, and loan approvals ask for it again.
 
 | What | Where |
 |---|---|
