@@ -19,7 +19,7 @@ from .common import ExplainRow, ISODate, Model, Timestamp
 
 
 class SessionIn(Model):
-    pin: str
+    pin: str | None = None  # not needed while ASK_OWNER_PIN is off
 
 
 class SessionOut(Model):

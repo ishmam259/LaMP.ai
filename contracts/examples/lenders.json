@@ -21,7 +21,7 @@
     "products": [
       {
         "key": "bank_supplier_credit",
-        "label": "Supplier credit",
+        "label": "Pays your supplier now",
         "apr_pct": null,
         "fee_pct": 1.0,
         "min_amount": 10000.0,
@@ -29,7 +29,7 @@
       },
       {
         "key": "bank_sme_loan",
-        "label": "small-business loan",
+        "label": "Small-business loan",
         "apr_pct": 13.0,
         "fee_pct": null,
         "min_amount": 200000.0,

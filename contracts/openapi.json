@@ -59,7 +59,7 @@
       },
       "post": {
         "summary": "Create Session",
-        "description": "The owner's PIN unlocks the app: sets the HttpOnly session cookie.",
+        "description": "Opens the owner's side: sets the HttpOnly session cookie. With ASK_OWNER_PIN on, only\nthe right PIN opens it.",
         "operationId": "create_session_api_v1_pharmacies__pid__session_post",
         "parameters": [
           {
@@ -4286,6 +4286,11 @@
           },
           "settings": {
             "$ref": "#/components/schemas/PharmacySettings"
+          },
+          "asks_pin": {
+            "type": "boolean",
+            "title": "Asks Pin",
+            "default": false
           }
         },
         "additionalProperties": false,
@@ -4519,15 +4524,19 @@
       "SessionIn": {
         "properties": {
           "pin": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Pin"
           }
         },
         "additionalProperties": false,
         "type": "object",
-        "required": [
-          "pin"
-        ],
         "title": "SessionIn"
       },
       "SessionOut": {

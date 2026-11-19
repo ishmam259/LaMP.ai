@@ -13,3 +13,4 @@ class PharmacyOut(Model):
     name: str
     city: str
     settings: PharmacySettings
+    asks_pin: bool = False  # the app asks the owner PIN (ASK_OWNER_PIN)

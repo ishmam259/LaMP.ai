@@ -4,7 +4,7 @@
   "counterfactual_purpose_blind": 10800.0,
   "not_financed": 10800.0,
   "financeable": 0.0,
-  "reason": "10,800 of this order won't sell before expiry, so it isn't financed.",
+  "reason": "BDT 10,800 of this order won't sell before it expires, so LaMP won't lend for it.",
   "batches": [
     {
       "product": "Montelukast 10 mg, box of 30",

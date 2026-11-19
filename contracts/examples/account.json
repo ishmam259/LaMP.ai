@@ -128,7 +128,7 @@
       "status": "unmatched",
       "invoice_no": null,
       "supplier": null,
-      "note": "No bill in the books matches this payment."
+      "note": "No bill matches this payment."
     },
     {
       "ref": "TRX-W-3137",
@@ -148,17 +148,17 @@
       "status": "missing_from_statement",
       "invoice_no": "T-3134",
       "supplier": "Supplier T",
-      "note": "Recorded as paid, but no such payment is on the statement."
+      "note": "Marked paid, but this payment isn't in your wallet."
     },
     {
       "ref": "SANDBOX-WALLET-LENDER-20261016-0001",
       "date": "2026-10-16",
       "amount": 8200.0,
-      "payee": "Loan payout",
+      "payee": "Loan",
       "status": "matched",
       "invoice_no": null,
       "supplier": null,
-      "note": "Sandbox loan payout credited to the wallet."
+      "note": "Loan money arrived in your wallet."
     }
   ],
   "counts": {
@@ -168,8 +168,8 @@
     "missing_from_statement": 1
   },
   "recommendations": [
-    "Ask Supplier Q to refund or credit BDT 8,600 paid twice for Q-3130.",
-    "Check the BDT 4,500 payment to MERCHANT 01712XXXXXX on 04 Oct: add the bill if it was a business expense.",
-    "T-3134 (Supplier T) is marked paid but the money never left: confirm with the supplier before they chase it."
+    "Q-3130 paid twice: ask Supplier Q for BDT 8,600 back",
+    "BDT 4,500 to MERCHANT 01712XXXXXX on 04 Oct has no bill",
+    "T-3134 is marked paid but isn't in your wallet: check with Supplier T"
   ]
 }

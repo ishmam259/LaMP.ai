@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.schemas import PauseOut
 
 from .common import get_pharmacy
@@ -172,6 +173,6 @@ def get_policy(db: Session, pid: str):
         if r:
             checks.append({"label": label, **r})
     pause = get_pause(db, pid)
-    return PolicyOut(paused=pause.paused, pin_required_for=["loan_application"], dbr_cap_pct=DBR_CAP_PCT,
+    return PolicyOut(paused=pause.paused, pin_required_for=["loan_application"] if settings.ask_owner_pin else [], dbr_cap_pct=DBR_CAP_PCT,
                      monthly_net_cash_flow=round(monthly_net_cash_flow(db, pid), 2), source=DBR_SOURCE,
                      examples=checks)

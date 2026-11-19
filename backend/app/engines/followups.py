@@ -19,6 +19,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.db import models as m
 from app.schemas import ActionProposal, FollowUpOut
 
@@ -117,7 +118,8 @@ def fire(db: Session, pid: str, f: m.FollowUp) -> None:
                  if o.key == f.fallback_payload.get("product_key")), None)
     who = "didn't reply" if f.trigger == "no_reply" else "declined"
     body = (f"Backup plan ready: BDT {f.amount:,.0f} mobile-wallet loan"
-            + (f", cost BDT {cost:,.2f}" if cost is not None else "") + ". Approve it with your PIN.")
+            + (f", cost BDT {cost:,.2f}" if cost is not None else "")
+            + (". Approve it with your PIN." if settings.ask_owner_pin else ". Approve it on the Approvals page."))
     notify("owner", "Supplier said no to more days" if who == "declined" else "Supplier didn't reply",
            body, "/actions", db)
 

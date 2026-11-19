@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     # DEMO_AUTO_RESET_MINUTES > 0 (and DEV_MODE) the demo resets itself on that interval.
     demo_reset_with_captures: bool = False
     demo_auto_reset_minutes: int = 0
+    # Off: the owner's side opens straight away and loan approvals don't ask for a PIN.
+    # On: the owner PIN unlocks the app and is asked again at loan approval.
+    ask_owner_pin: bool = False
     llm_mode: str = "replay"
     openai_api_key: str = ""
     openai_extract_model: str = "gpt-6-luna"

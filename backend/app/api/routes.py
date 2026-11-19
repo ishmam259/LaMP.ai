@@ -136,8 +136,18 @@ def _refuse_if_locked(ph) -> None:
 
 @router.post("/pharmacies/{pid}/session", response_model=SessionOut)
 def create_session(pid: str, body: SessionIn, response: Response, db: Session = Depends(get_db)):
-    """The owner's PIN unlocks the app: sets the HttpOnly session cookie."""
+    """Opens the owner's side: sets the HttpOnly session cookie. With ASK_OWNER_PIN on, only
+    the right PIN opens it."""
     ph = engines.get_pharmacy(db, pid)
+    if not settings.ask_owner_pin:
+        s = auth.create_session(db, pid)
+        engines.log("T1", "AUTH", "owner_opened", db, pharmacy=pid)
+        db.commit()
+        response.set_cookie(auth.SESSION_COOKIE, s.token, max_age=auth.SESSION_HOURS * 3600,
+                            httponly=True, samesite="lax", path="/")
+        return {"pharmacy_id": pid, "role": "owner", "expires_at": s.expires_at}
+    if not body.pin:  # the app asking whether it needs a PIN: not a wrong try
+        raise HTTPException(401, "Enter your PIN.")
     _refuse_if_locked(ph)
     if not auth.check_pin(db, ph, body.pin):
         engines.log("T1", "AUTH", "unlock_failed", db, pharmacy=pid)
@@ -180,7 +190,7 @@ def get_pharmacy(pid: str, db: Session = Depends(get_db)):
     ph = engines.get_pharmacy(db, pid)
     # Only the public fields: settings also holds the PIN hash, the PIN lockout and the Pause state.
     public = {k: v for k, v in (ph.settings or {}).items() if k in PharmacySettings.model_fields}
-    return {"id": ph.id, "name": ph.name, "city": ph.city, "settings": public}
+    return {"id": ph.id, "name": ph.name, "city": ph.city, "settings": public, "asks_pin": settings.ask_owner_pin}
 
 
 # --- Captures -------------------------------------------------------------------------

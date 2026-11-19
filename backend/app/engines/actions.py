@@ -13,6 +13,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.db import models as m
 from app.schemas import ActionOut, ActionProposal
 
@@ -41,7 +42,7 @@ PIN_KINDS = {"loan_application"}  # Tier 3: money from a lender
 
 def requires_pin(kind: str) -> bool:
     """True if approving this kind of action must re-enter the owner PIN."""
-    return kind in PIN_KINDS
+    return settings.ask_owner_pin and kind in PIN_KINDS
 
 
 def list_actions(db: Session, pid: str) -> list[ActionOut]:

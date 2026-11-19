@@ -7,8 +7,8 @@
     "amount": 9200
   },
   "proposed_by": "owner",
-  "created_at": "2026-11-03T05:51:35.895591Z",
-  "decided_at": "2026-11-03T05:51:35.913072Z",
+  "created_at": "2026-11-19T14:21:03.013802Z",
+  "decided_at": "2026-11-19T14:21:03.025797Z",
   "result": {
     "claim_id": "CLM-0001",
     "expected_credit": 9200.0,
@@ -16,7 +16,7 @@
       "OM2409",
       "CT2411"
     ],
-    "summary": "Return sent. Suppliers should credit BDT 9,200."
+    "summary": "Return sent. Your next bills should be BDT 9,200 lower."
   },
   "requires_pin": false
 }
