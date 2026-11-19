@@ -10,7 +10,7 @@ import type { LogEvent } from "@/lib/types";
 // Bookkeeping entries the owner doesn't need to read: each one repeats another entry or is LaMP's own housekeeping.
 const HIDDEN = new Set([
   "reset", "demo_auto_reset", "forecast_updated", "document_read", "action_executed",
-  "followup_scheduled", "notify", "lock_acquired",
+  "followup_scheduled", "notify", "lock_acquired", "owner_opened",
 ]);
 
 /** The part of LaMP that wrote the event, in the owner's words. */

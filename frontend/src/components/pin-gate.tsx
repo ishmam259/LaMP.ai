@@ -12,8 +12,9 @@ import { ApiError, LOCKED_EVENT, PID, UNLOCKED_EVENT, apiGet, errorDetail, unloc
 const PIN_LENGTH = 4;
 
 /**
- * Owner screens need a session (an HttpOnly cookie set after the PIN). Shows the PIN screen
- * on first load and whenever any call returns 401. The lender view uses lender keys instead.
+ * Owner screens need a session (an HttpOnly cookie). When a call returns 401 it opens one
+ * without a PIN; only if the app asks for a PIN does it show the PIN screen. The lender view
+ * uses lender keys instead.
  */
 export function PinGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,10 +24,24 @@ export function PinGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let alive = true;
+    // No session: open one without a PIN; the PIN screen shows only if the app asks for a PIN.
+    // Several calls can fail at once on first load; they all share one attempt.
+    let opening: Promise<void> | null = null;
+    const reopen = () =>
+      (opening ??= unlock()
+        .then(() => {
+          if (alive) setState("open");
+        })
+        .catch((e) => {
+          if (alive) setState(e instanceof ApiError && e.status === 401 ? "locked" : "open");
+        })
+        .finally(() => {
+          opening = null;
+        }));
     apiGet(`/pharmacies/${PID}/pause`)
       .then(() => alive && setState("open"))
-      .catch((e) => alive && setState(e instanceof ApiError && e.status === 401 ? "locked" : "open"));
-    const lock = () => setState("locked");
+      .catch((e) => (e instanceof ApiError && e.status === 401 ? reopen() : alive && setState("open")));
+    const lock = () => void reopen();
     const open = () => setState("open");
     window.addEventListener(LOCKED_EVENT, lock);
     window.addEventListener(UNLOCKED_EVENT, open);

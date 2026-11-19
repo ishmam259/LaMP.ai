@@ -13,6 +13,8 @@ export interface Pharmacy {
     expiry_buffer_days: number;
     as_of_date: ISODate;
   };
+  /** The app asks the owner PIN. When false the owner's side opens straight away. */
+  asks_pin?: boolean;
 }
 
 export interface AccountsOut {

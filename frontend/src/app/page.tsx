@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Check, ChevronRight, CreditCard, ScrollText, ShieldCheck } from "lucide-react";
+import { ArrowRight, BadgeCheck, Check, ChevronRight, Compass, CreditCard, ScrollText, ShieldCheck, Users } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Carton, LoadError, Skel, Stamp } from "@/components/carton";
 import { CashLine } from "@/components/cash-line";
+import { startGuide } from "@/components/guide";
 import { dayAmount, dayLabel, isNamedMove } from "@/lib/forecast";
 import { useAccount, useAccounts, useActions, useAlerts, useDues, useExpiry, useForecast, usePharmacy } from "@/lib/api";
 import { ACTION_LABEL, bdt, dayDate, daysBetween, inDays, num, shortDate, signed, stampDate, weekday } from "@/lib/format";
@@ -47,7 +48,7 @@ export default function TodayPage() {
         {fErr && <LoadError what="your cash" />}
         {forecast && (
           <>
-            <section aria-labelledby="board-head" className="station-board">
+            <section aria-labelledby="board-head" className="station-board" data-guide="today">
               {short ? (
                 <>
                   {waiting.covered && (
@@ -204,19 +205,27 @@ export default function TodayPage() {
       <nav aria-label="More" className="carton lg:hidden">
         <ul className="divide-y divide-rule">
           {[
+          { href: "/customers", label: "Customers", icon: Users, guide: "customers" },
           { href: "/passport", label: "Credit record", icon: BadgeCheck },
           { href: "/wallet", label: "Wallet", icon: CreditCard },
           { href: "/rules", label: "Rules", icon: ShieldCheck },
           { href: "/log", label: "History", icon: ScrollText },
-          ].map(({ href, label, icon: Icon }) => (
+          ].map(({ href, label, icon: Icon, guide }) => (
             <li key={href}>
-              <Link href={href} className="flex min-h-12 items-center gap-3 px-4 py-2 text-ink hover:bg-muted">
+              <Link href={href} data-guide={guide} className="flex min-h-12 items-center gap-3 px-4 py-2 text-ink hover:bg-muted">
                 <Icon className="size-5 shrink-0 text-ink-2" aria-hidden />
                 <span className="min-w-0 flex-1 font-semibold">{label}</span>
                 <ChevronRight className="size-5 shrink-0 text-ink-2" aria-hidden />
               </Link>
             </li>
           ))}
+          <li>
+            <button type="button" onClick={startGuide} className="flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left text-ink hover:bg-muted">
+              <Compass className="size-5 shrink-0 text-ink-2" aria-hidden />
+              <span className="min-w-0 flex-1 font-semibold">Show me around</span>
+              <ChevronRight className="size-5 shrink-0 text-ink-2" aria-hidden />
+            </button>
+          </li>
         </ul>
       </nav>
     </div>

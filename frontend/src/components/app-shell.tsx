@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   BadgeCheck,
   Camera,
+  Compass,
   CreditCard,
   HandCoins,
   Inbox,
@@ -29,6 +30,10 @@ import { PausedBanner, PauseToggle } from "@/components/pause";
 import { NotificationBridge } from "@/components/notifications";
 import { BuildathonSticker } from "@/components/sticker";
 import { CustomerShell, isCustomerPath } from "@/components/customer-shell";
+import { Guide, startGuide } from "@/components/guide";
+
+/** The spots the first-visit guide points at (components/guide.tsx). */
+const GUIDE_SPOT: Record<string, string> = { "/capture": "scan", "/actions": "approvals", "/customers": "customers" };
 
 const OWNER_NAV = [
   { href: "/", label: "Today", icon: Sun },
@@ -90,8 +95,17 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="space-y-2 border-t border-white/15 p-4">
-          <ThemeToggle withLabel onRail className="-ml-3" />
           {!isLender && (
+            <button
+              type="button"
+              onClick={startGuide}
+              className="-ml-3 flex h-10 w-full items-center gap-3 rounded-[var(--radius)] px-3 font-semibold text-rail-2 hover:bg-white/10 hover:text-rail-ink"
+            >
+              <Compass className="size-5" aria-hidden /> Show me around
+            </button>
+          )}
+          <ThemeToggle withLabel onRail className="-ml-3" />
+          {!isLender && pharmacy?.asks_pin && (
             <button
               type="button"
               onClick={lock}
@@ -125,6 +139,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             </Link>
             <Link
               href="/actions"
+              data-guide="approvals"
               aria-label={`Approvals, ${pending} waiting for you`}
               className="relative inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-rail-ink hover:bg-white/10"
             >
@@ -139,6 +154,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={() => setChatOpen(true)}
+                data-guide="ask"
                 className="ml-1 inline-flex h-10 items-center gap-1.5 rounded-[var(--radius)] bg-white px-3 font-semibold text-rail"
               >
                 <MessageCircle className="size-5" aria-hidden /> Ask
@@ -162,6 +178,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => setChatOpen(true)}
+              data-guide="ask"
               className="inline-flex h-10 items-center gap-2 rounded-[var(--radius)] bg-primary px-4 font-semibold text-primary-foreground hover:bg-[color-mix(in_srgb,var(--primary),black_12%)]"
             >
               <MessageCircle className="size-5" aria-hidden /> Ask LaMP
@@ -186,6 +203,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               <Link
                 key={href}
                 href={href}
+                data-guide={GUIDE_SPOT[href]}
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "relative flex h-16 flex-col items-center justify-center gap-1 text-xs font-semibold",
@@ -218,6 +236,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
       </Sheet>
 
       {!isLender && <NotificationBridge />}
+      {!isLender && <Guide />}
       <Toaster position="top-center" richColors closeButton />
     </div>
   );
@@ -239,6 +258,7 @@ function RailLink({
   return (
     <Link
       href={href}
+      data-guide={GUIDE_SPOT[href]}
       aria-current={active ? "page" : undefined}
       className={cn(
         "flex h-11 items-center gap-3 rounded-[var(--radius)] px-3 font-semibold",

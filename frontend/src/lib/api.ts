@@ -100,13 +100,14 @@ export function errorDetail(e: unknown, fallback: string): string {
   }
 }
 
-/** Unlock with the owner PIN. The API sets an HttpOnly session cookie. Throws ApiError(401) on a wrong PIN, 429 while locked out. */
-export async function unlock(pin: string) {
+/** Open the owner's side. The API sets an HttpOnly session cookie. Without a PIN it opens only
+ * when the app doesn't ask for one. Throws ApiError(401) on a wrong or missing PIN, 429 while locked out. */
+export async function unlock(pin?: string) {
   const res = await fetch(`${BASE}/pharmacies/${PID}/session`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pin }),
+    body: JSON.stringify(pin ? { pin } : {}),
   });
   if (!res.ok) throw new ApiError(res.status, await res.text().catch(() => "Couldn't reach LaMP. Try again."));
   window.dispatchEvent(new Event(UNLOCKED_EVENT));
