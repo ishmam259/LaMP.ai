@@ -37,7 +37,7 @@ export default function TodayPage() {
       <h1 className="sr-only">Today</h1>
 
       {suspicious && (
-        <p role="alert" className="rounded-[var(--radius)] border border-alert/40 bg-alert-tint p-3 font-semibold text-alert lg:col-span-12">
+        <p role="alert" className="rounded-2xl border border-alert/30 bg-alert-tint p-4 font-semibold text-alert lg:col-span-12">
           {suspicious.title}
         </p>
       )}
@@ -49,28 +49,33 @@ export default function TodayPage() {
         {forecast && (
           <>
             <section aria-labelledby="board-head" className="station-board" data-guide="today">
+              <p className="sb-label mb-3">Your cash, next 30 days</p>
               {short ? (
                 <>
                   {waiting.covered && (
-                    <p className="sb-sub mb-1.5 flex items-center gap-1.5 text-sm font-semibold">
+                    <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-stock">
                       <Check className="size-4" aria-hidden /> You covered the first shortage. Next one:
                     </p>
                   )}
                   <h2 id="board-head" className="sb-head">
-                    <span className="num">Short {bdt(short.amount)}</span>
+                    <span className="num text-alert">
+                      Short <span className="display-accent text-alert">{bdt(short.amount)}</span>
+                    </span>
                     <span className="sb-time">
                       {dayDate(short.date)}
                       {asOf ? ` · ${inDays(daysBetween(asOf, short.date))}` : ""}
                     </span>
                   </h2>
-                  <p className="sb-sub mt-1.5 text-[1.0625rem] font-medium">
+                  <p className="sb-sub mt-3 text-[1.0625rem] font-medium">
                     {short.cause}
                     {balanceBefore !== undefined && <> · you&apos;ll have {bdt(balanceBefore)}</>}
                   </p>
                 </>
               ) : (
                 <h2 id="board-head" className="sb-head">
-                  <span>Cash holds for 30 days</span>
+                  <span className="text-stock">
+                    Cash <span className="display-accent text-stock">holds</span> for 30 days
+                  </span>
                 </h2>
               )}
             </section>
@@ -102,8 +107,8 @@ export default function TodayPage() {
                   const neg = !!gap || d.balance < 0;
                   const amount = dayAmount(d);
                   return (
-                    <li key={d.date} className={`grid grid-cols-[64px_1fr_auto] items-center gap-3 py-2.5 ${neg ? "-mx-4 bg-alert-tint px-4" : ""}`}>
-                      <span className="font-board leading-tight font-bold text-ink">
+                    <li key={d.date} className={`grid grid-cols-[64px_1fr_auto] items-center gap-3 py-2.5 ${neg ? "-mx-3 rounded-xl bg-alert-tint px-3" : ""}`}>
+                      <span className="leading-tight font-bold text-ink">
                         {shortDate(d.date)}
                         <span className="block text-xs font-semibold text-ink-2">{weekday(d.date)}</span>
                       </span>
@@ -159,7 +164,7 @@ export default function TodayPage() {
             <Skel className="h-24" />
           ) : (
             <>
-              <p className="num text-[1.75rem] font-bold text-ink">{bdt(expiry.at_risk_value)}</p>
+              <p className="num display text-[2.25rem] leading-tight font-bold text-ink">{bdt(expiry.at_risk_value)}</p>
               <p className="mt-1 text-ink">
                 {expiry.batches.length} batches · <span className="num font-bold text-stock">{bdt(expiry.return_eligible_value)}</span> can go back
               </p>
@@ -183,15 +188,15 @@ export default function TodayPage() {
             <dl className="grid grid-cols-3 gap-3">
               <div>
                 <dt className="text-sm text-ink-2">Sales</dt>
-                <dd className="num text-xl font-bold text-ink">{num(accounts.sales)}</dd>
+                <dd className="num display text-2xl font-bold text-ink lg:text-[1.75rem]">{num(accounts.sales)}</dd>
               </div>
               <div>
                 <dt className="text-sm text-ink-2">Costs</dt>
-                <dd className="num text-xl font-bold text-ink">{num(accounts.sales - accounts.net_profit)}</dd>
+                <dd className="num display text-2xl font-bold text-ink lg:text-[1.75rem]">{num(accounts.sales - accounts.net_profit)}</dd>
               </div>
               <div>
                 <dt className="text-sm text-ink-2">You kept</dt>
-                <dd className="num text-xl font-bold text-stock">{num(accounts.net_profit)}</dd>
+                <dd className="num display text-2xl font-bold text-stock lg:text-[1.75rem]">{num(accounts.net_profit)}</dd>
               </div>
             </dl>
           )}
@@ -212,16 +217,16 @@ export default function TodayPage() {
           { href: "/log", label: "History", icon: ScrollText },
           ].map(({ href, label, icon: Icon, guide }) => (
             <li key={href}>
-              <Link href={href} data-guide={guide} className="flex min-h-12 items-center gap-3 px-4 py-2 text-ink hover:bg-muted">
-                <Icon className="size-5 shrink-0 text-ink-2" aria-hidden />
+              <Link href={href} data-guide={guide} className="flex min-h-13 items-center gap-3 px-5 py-2 text-ink hover:bg-muted">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-cash-tint text-cash"><Icon className="size-[18px]" aria-hidden /></span>
                 <span className="min-w-0 flex-1 font-semibold">{label}</span>
                 <ChevronRight className="size-5 shrink-0 text-ink-2" aria-hidden />
               </Link>
             </li>
           ))}
           <li>
-            <button type="button" onClick={startGuide} className="flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left text-ink hover:bg-muted">
-              <Compass className="size-5 shrink-0 text-ink-2" aria-hidden />
+            <button type="button" onClick={startGuide} className="flex min-h-13 w-full items-center gap-3 px-5 py-2 text-left text-ink hover:bg-muted">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-cash-tint text-cash"><Compass className="size-[18px]" aria-hidden /></span>
               <span className="min-w-0 flex-1 font-semibold">Show me around</span>
               <ChevronRight className="size-5 shrink-0 text-ink-2" aria-hidden />
             </button>

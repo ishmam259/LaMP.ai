@@ -43,11 +43,11 @@ export default function StockPage() {
               <>
                 <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
                   <p>
-                    <span className="num text-[1.75rem] font-bold text-ink">{bdt(expiry.at_risk_value)}</span>
+                    <span className="num display text-[2rem] leading-tight font-bold text-ink">{bdt(expiry.at_risk_value)}</span>
                     <span className="ml-2 text-ink-2">at risk</span>
                   </p>
                   <p>
-                    <span className="num text-[1.5rem] font-bold text-stock">{bdt(expiry.return_eligible_value)}</span>
+                    <span className="num display text-[1.625rem] leading-tight font-bold text-stock">{bdt(expiry.return_eligible_value)}</span>
                     <span className="ml-2 text-ink-2">can go back</span>
                   </p>
                 </div>
@@ -105,7 +105,7 @@ export default function StockPage() {
                   {trim.lines.map((l) => {
                     const cut = l.suggested_qty < l.qty && !trimDone;
                     return (
-                      <li key={l.product} className={`py-2.5 ${cut ? "-mx-4 bg-warn-tint px-4" : ""}`}>
+                      <li key={l.product} className={`py-2.5 ${cut ? "-mx-3 rounded-xl bg-warn-tint px-3" : ""}`}>
                         <div className="flex items-start justify-between gap-3">
                           <p className="font-semibold text-ink">{l.product}</p>
                           <p className="num text-right font-bold whitespace-nowrap text-ink">

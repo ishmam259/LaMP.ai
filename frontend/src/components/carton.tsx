@@ -32,13 +32,13 @@ export function Carton({
   return (
     <Tag className={cn("carton", className)}>
       <div className="carton-head">
-        <H className={cn("inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold", titleColour)}>
+        <H className={cn("inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold tracking-[0.07em] uppercase", titleColour)}>
           {Icon && <Icon className="size-4 shrink-0" aria-hidden />}
           {title}
         </H>
         {aside && <div className="text-sm text-ink-2">{aside}</div>}
       </div>
-      <div className={cn("p-4 pt-2", bodyClassName)}>{children}</div>
+      <div className={cn("p-5 pt-3", bodyClassName)}>{children}</div>
     </Tag>
   );
 }
@@ -60,8 +60,8 @@ export function Stamp({
 
 export function PageTitle({ title, sub }: { title: string; sub?: React.ReactNode }) {
   return (
-    <div className="mb-4 lg:mb-6">
-      <h1 className="text-[1.75rem] leading-tight font-bold text-ink lg:text-[2rem]">{title}</h1>
+    <div className="mb-5 lg:mb-7">
+      <h1 className="display text-[2rem] leading-tight font-semibold text-ink lg:text-[2.5rem]">{title}</h1>
       {sub && <p className="mt-1 text-ink-2">{sub}</p>}
     </div>
   );

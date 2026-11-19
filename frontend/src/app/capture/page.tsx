@@ -131,7 +131,7 @@ function SuspiciousBanner({ capture }: { capture: CaptureOut }) {
   const suspicious = capture.extraction.suspicious_text;
   if (suspicious.length === 0) return null;
   return (
-    <div role="alert" className="flex gap-3 rounded-[8px] border border-alert/40 bg-alert-tint p-4 text-ink">
+    <div role="alert" className="flex gap-3 rounded-2xl border border-alert/40 bg-alert-tint p-4 text-ink">
       <ShieldAlert className="mt-0.5 size-5 shrink-0 text-alert" aria-hidden />
       <div>
         <p className="font-semibold text-alert">This photo had hidden instructions written in it. LaMP ignored them.</p>

@@ -46,7 +46,7 @@ export default function PassportPage() {
           <div className="space-y-4 lg:col-span-7">
             <Carton tone="stock" title="Your record" aside="Last 3 months">
               <p className="text-ink">
-                You paid <span className="num text-[1.75rem] font-bold">{passport.paid_on_time}</span>
+                You paid <span className="num display text-[2rem] leading-tight font-bold">{passport.paid_on_time}</span>
                 <span className="text-ink-2"> of </span>
                 <span className="num font-bold">{passport.invoices_total}</span> supplier invoices on time.
               </p>
@@ -67,12 +67,12 @@ export default function PassportPage() {
               <dl className="grid grid-cols-2 divide-x divide-rule">
                 <div className="pr-4">
                   <dt className="text-sm text-ink-2">A lender would pay</dt>
-                  <dd className="num text-[1.75rem] font-bold text-ink">{num(passport.advance_rate_pct, 1)}%</dd>
+                  <dd className="num display text-[2rem] leading-tight font-bold text-ink">{num(passport.advance_rate_pct, 1)}%</dd>
                   <dd className="text-sm text-ink-2">of each order</dd>
                 </div>
                 <div className="pl-4">
                   <dt className="text-sm text-ink-2">Chance of not repaying</dt>
-                  <dd className="num text-[1.75rem] font-bold text-ink">{num(passport.default_probability * 100, 1)}%</dd>
+                  <dd className="num display text-[2rem] leading-tight font-bold text-ink">{num(passport.default_probability * 100, 1)}%</dd>
                 </div>
               </dl>
             </Carton>

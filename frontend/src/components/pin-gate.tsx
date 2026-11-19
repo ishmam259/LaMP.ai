@@ -83,18 +83,18 @@ function PinScreen() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-rail px-4 text-rail-ink">
+    <main className="flex min-h-dvh items-center justify-center px-4 text-ink">
       <div className="w-full max-w-sm text-center">
         <BuildathonSticker className="mx-auto mb-6 h-14" />
-        <p className="font-board text-[2.5rem] leading-none font-extrabold tracking-tight">
-          La<span className="text-signal">M</span>P
+        <p className="display text-[2.75rem] leading-none font-bold tracking-tight">
+          La<span className="display-accent">M</span>P
         </p>
-        <p className="mt-3 text-sm text-rail-2">
+        <p className="mt-3 text-sm text-ink-2">
           Cash, stock and credit for your pharmacy.
         </p>
-        <div className="mt-8 rounded-[8px] bg-shelf p-6 text-ink">
+        <div className="carton mt-8 p-6 text-ink">
           <LockKeyhole className="mx-auto size-7 text-cash" aria-hidden />
-          <h1 className="mt-3 text-xl font-bold">Enter your PIN</h1>
+          <h1 className="display mt-3 text-2xl font-semibold">Enter your PIN</h1>
           <form
             className="mt-5 flex justify-center"
             onSubmit={(e) => {
@@ -130,7 +130,7 @@ function PinScreen() {
         </div>
         <Link
           href="/me"
-          className="mt-4 flex items-center justify-center gap-2 rounded-[8px] border border-white/25 px-4 py-3 font-semibold text-rail-ink hover:bg-white/10"
+          className="mt-4 flex items-center justify-center gap-2 rounded-full border border-rule bg-board px-5 py-3 text-sm font-semibold text-ink hover:bg-muted"
         >
           Bought medicine on credit? Check what you owe <ArrowRight className="size-4" aria-hidden />
         </Link>

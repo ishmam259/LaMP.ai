@@ -38,8 +38,8 @@ export function ThemeToggle({ className, withLabel = false, onRail = false }: { 
       aria-label={`${label}. Switch to ${META[next].label.toLowerCase()}`}
       title={label}
       className={cn(
-        "inline-flex h-11 items-center gap-2 rounded-[var(--radius)]",
-        onRail ? "text-rail-2 hover:bg-white/10 hover:text-rail-ink" : "text-ink-2 hover:bg-muted hover:text-ink",
+        "inline-flex h-11 items-center gap-2 rounded-full",
+        onRail ? "text-ink-2 hover:bg-cash-tint hover:text-cash" : "text-ink-2 hover:bg-muted hover:text-ink",
         withLabel ? "px-3 text-sm font-semibold" : "w-11 justify-center",
         className
       )}

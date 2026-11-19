@@ -11,12 +11,14 @@ export default function CustomerHome() {
 
   return (
     <div>
-      <h1 className="font-board text-3xl font-extrabold tracking-tight text-ink">Check what you owe your pharmacy</h1>
+      <h1 className="display text-[2rem] leading-tight font-semibold text-ink">
+        Check what you <span className="display-accent">owe</span> your pharmacy
+      </h1>
       <p className="mt-2 text-ink-2">
         Enter the code on your slip from the pharmacy.
       </p>
       <form
-        className="carton mt-5 p-4"
+        className="carton mt-5 p-5"
         onSubmit={(e) => {
           e.preventDefault();
           open(code);
@@ -36,7 +38,7 @@ export default function CustomerHome() {
             spellCheck={false}
             className="num h-11 min-w-0 flex-1 rounded-[var(--radius)] border border-rule bg-board px-3 text-lg tracking-wider text-ink uppercase"
           />
-          <button type="submit" className="h-11 rounded-[var(--radius)] bg-primary px-4 font-semibold text-primary-foreground">
+          <button type="submit" className="h-11 rounded-full bg-primary shadow-glow px-4 font-semibold text-primary-foreground">
             Open
           </button>
         </div>

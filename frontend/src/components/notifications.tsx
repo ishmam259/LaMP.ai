@@ -80,7 +80,7 @@ export function NotificationBridge() {
 
   if (!ask) return null;
   return (
-    <div role="dialog" aria-label="Desktop alerts" className="fixed right-4 bottom-20 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-[8px] border border-rule bg-board p-4 shadow-lg lg:bottom-4">
+    <div role="dialog" aria-label="Desktop alerts" className="fixed right-4 bottom-24 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-rule bg-board p-4 shadow-lg lg:bottom-4">
       <div className="flex items-start gap-3">
         <BellRing className="mt-0.5 size-5 shrink-0 text-cash" aria-hidden />
         <div className="min-w-0 flex-1">
@@ -92,7 +92,7 @@ export function NotificationBridge() {
                 await Notification.requestPermission().catch(() => "denied");
                 remember();
               }}
-              className="h-9 rounded-[var(--radius)] bg-primary px-3 text-sm font-semibold text-primary-foreground"
+              className="h-9 rounded-full bg-primary shadow-glow px-3 text-sm font-semibold text-primary-foreground"
             >
               Turn on
             </button>

@@ -4,17 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* LaMP · Station Board
-   Railway-green shell, white working panels, one dark-green departures board for the
-   message that matters most. Colour carries state only: red = problem,
+/* LaMP · soft cards
+   A near-white page with a faint green glow, white rounded cards with soft shadows,
+   pill buttons, and a serif face for page titles and the numbers that matter.
+   One accent (LaMP green). Colour carries state only: red = problem,
    amber = needs you, green = go / good. Text contrast checked at >= 4.5:1. */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-barlow);
-  --font-mono: var(--font-board);
-  --font-heading: var(--font-barlow);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-playfair);
 
   --color-shelf: var(--shelf);
   --color-board: var(--board);
@@ -39,7 +39,8 @@
   --color-rail-2: var(--rail-2);
   --color-signal: var(--signal);
   --color-signal-ink: var(--signal-ink);
-  --font-board: var(--font-board);
+  --font-board: var(--font-playfair);
+  --font-display: var(--font-playfair);
 
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -57,26 +58,29 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: 2px;
-  --radius-md: 3px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
   --radius-lg: var(--radius);
-  --radius-xl: 6px;
-  --radius-2xl: 8px;
-  --radius-3xl: 10px;
-  --radius-4xl: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-4xl: 999px;
+  --shadow-card: var(--card-shadow);
+  --shadow-lift: var(--lift-shadow);
+  --shadow-glow: var(--button-glow);
 }
 
 :root {
   /* world */
-  --shelf: #eef1f3;
+  --shelf: #f5f8f6;
   --board: #ffffff;
-  --ink: #1f2328;
-  --ink-2: #4a535c;
-  --rule: #dde2e6;
+  --ink: #14201b;
+  --ink-2: #55625c;
+  --rule: #e2e8e5;
   --alert: #c4301e;
   --alert-tint: #fbeae7;
   --cash: #0f6b4f;
-  --cash-tint: #e3f1eb;
+  --cash-tint: #e5f2ec;
   --stock: #1e7a4f;
   --stock-tint: #e6f3ec;
   --warn: #9a5800;
@@ -84,12 +88,17 @@
   /* band backgrounds always carry white text */
   --alert-band: #c4301e;
   --cash-band: #0f4d3a;
-  --rail: #0f4d3a;
-  --rail-ink: #ffffff;
-  --rail-2: #cfe3d9;
-  --signal: #ffd400;
-  --signal-ink: #111111;
-  --board-bg: #123d30;
+  /* the frame (sidebar, headers) is light; LaMP green is the one accent */
+  --rail: #ffffff;
+  --rail-ink: var(--ink);
+  --rail-2: var(--ink-2);
+  --signal: #0f6b4f;
+  --signal-ink: #ffffff;
+  --brand: #0f6b4f;
+  --glow: rgb(15 107 79 / 0.1);
+  --card-shadow: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 20px 60px -30px rgb(20 32 27 / 0.25);
+  --lift-shadow: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 28px 70px -30px rgb(20 32 27 / 0.32);
+  --button-glow: 0 18px 40px -18px rgb(15 107 79 / 0.55);
   --stock-band: #1e7a4f;
   --warn-band: #9a5800;
   --ink-band: #1f2328;
@@ -101,46 +110,50 @@
   --card-foreground: var(--ink);
   --popover: var(--board);
   --popover-foreground: var(--ink);
-  --primary: var(--rail);
+  --primary: var(--brand);
   --primary-foreground: #ffffff;
-  --secondary: #e4e8eb;
+  --secondary: #edf2ef;
   --secondary-foreground: var(--ink);
-  --muted: #e9edf0;
+  --muted: #eef3f0;
   --muted-foreground: var(--ink-2);
   --accent: var(--cash-tint);
   --accent-foreground: var(--ink);
   --destructive: var(--alert);
   --border: var(--rule);
-  --input: #c9d0d6;
+  --input: #cfd8d3;
   --ring: var(--cash);
-  --radius: 4px;
+  --radius: 12px;
 }
 
 
-/* Dark: the same carton world after closing time. Bands keep white text;
-   coloured text lightens so it stays readable on the dark board. */
+/* Dark: a deep green-black page, slightly lighter cards, translucent edges.
+   Coloured text lightens so it stays readable. */
 .dark {
-  --shelf: #101417;
-  --board: #191f24;
-  --ink: #e9edf0;
-  --ink-2: #a9b3bb;
-  --rule: #2b333a;
+  --shelf: #0a110e;
+  --board: #111b17;
+  --ink: #e8efeb;
+  --ink-2: #a3b2ab;
+  --rule: rgb(255 255 255 / 0.09);
   --alert: #ff8f80;
   --alert-tint: #3a1d19;
   --cash: #86d4b0;
-  --cash-tint: #15302a;
+  --cash-tint: #12302a;
   --stock: #7fd3a6;
   --stock-tint: #16301f;
   --warn: #f2b45c;
   --warn-tint: #352710;
   --alert-band: #b42d1c;
   --cash-band: #0d3f30;
-  --rail: #0d3f30;
-  --rail-ink: #ffffff;
-  --rail-2: #a9cbbb;
-  --signal: #f5cc00;
-  --signal-ink: #111111;
-  --board-bg: #0f3328;
+  --rail: #111b17;
+  --rail-ink: var(--ink);
+  --rail-2: var(--ink-2);
+  --signal: #5fc79b;
+  --signal-ink: #06130e;
+  --brand: #17805e;
+  --glow: rgb(95 199 155 / 0.07);
+  --card-shadow: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 20px 60px -30px rgb(0 0 0 / 0.7);
+  --lift-shadow: 0 1px 0 0 rgb(255 255 255 / 0.05) inset, 0 28px 70px -30px rgb(0 0 0 / 0.8);
+  --button-glow: 0 18px 40px -18px rgb(23 128 94 / 0.7);
   --stock-band: #1b6e47;
   --warn-band: #8a4f00;
   --ink-band: #000000;
@@ -151,17 +164,17 @@
   --card-foreground: var(--ink);
   --popover: var(--board);
   --popover-foreground: var(--ink);
-  --primary: #17694f;
+  --primary: var(--brand);
   --primary-foreground: #ffffff;
-  --secondary: #252d33;
+  --secondary: #1a2622;
   --secondary-foreground: var(--ink);
-  --muted: #232a30;
+  --muted: #18241f;
   --muted-foreground: var(--ink-2);
   --accent: var(--cash-tint);
   --accent-foreground: var(--ink);
   --destructive: var(--alert-band);
   --border: var(--rule);
-  --input: #3a444c;
+  --input: rgb(255 255 255 / 0.16);
   --ring: var(--cash);
   color-scheme: dark;
 }
@@ -173,10 +186,15 @@
   html {
     @apply font-sans;
     -webkit-text-size-adjust: 100%;
-    scrollbar-color: #b9c2c9 transparent;
+    scrollbar-color: #bccac3 transparent;
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(42rem 28rem at 8% -6%, var(--glow), transparent 70%),
+      radial-gradient(36rem 26rem at 100% 0%, var(--glow), transparent 70%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     font-size: 1rem;
     line-height: 1.45;
     text-rendering: optimizeLegibility;
@@ -205,12 +223,12 @@
     height: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: #b9c2c9;
+    background: #bccac3;
     border-radius: 10px;
     border: 3px solid var(--shelf);
   }
   .dark ::-webkit-scrollbar-thumb {
-    background: #3a444c;
+    background: #2c3b35;
   }
   h1,
   h2,
@@ -225,18 +243,17 @@
     font-variant-numeric: tabular-nums lining-nums;
   }
 
-  /* Timetable label for dates, batches and dues (condensed caps, like a departures column). */
+  /* Small tinted pill for dates, batches and dues. */
   .stamp {
-    font-family: var(--font-board);
-    font-weight: 700;
-    font-size: 0.8125rem;
-    letter-spacing: 0.05em;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     gap: 0.35em;
-    padding: 0.1rem 0.45rem;
-    border-radius: 3px;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
     background: var(--muted);
     color: var(--ink-2);
     line-height: 1.35;
@@ -260,56 +277,102 @@
     color: var(--warn);
   }
 
-  /* Signature move: the departures board. Dark railway green inside a thin
-     signage frame, white headline, signal yellow only for the time cell.
+  /* The hero card: the one message that matters most on a screen, in a big serif number.
      Used once per screen. */
   .station-board {
-    background: var(--board-bg);
-    color: #ffffff;
-    border-radius: 8px;
-    padding: 1rem 1.125rem 1.125rem;
-    box-shadow:
-      inset 0 0 0 1px rgb(255 255 255 / 0.16),
-      0 0 0 1px var(--board-bg);
+    background: var(--board);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 24px;
+    padding: 1.25rem 1.25rem 1.375rem;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .station-board::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -10rem;
+    right: -8rem;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 999px;
+    background: radial-gradient(closest-side, var(--glow), transparent);
+    pointer-events: none;
   }
   .station-board .sb-head {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    font-family: var(--font-board);
+    gap: 0.625rem;
+    font-family: var(--font-playfair), Georgia, serif;
     font-weight: 700;
-    font-size: 2.25rem;
+    font-size: 2.375rem;
     line-height: 1.05;
+    letter-spacing: -0.01em;
   }
   .station-board .sb-head > :first-child {
     white-space: nowrap;
   }
+  .station-board .sb-time {
+    align-self: flex-start;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    background: var(--alert-tint);
+    color: var(--alert);
+    white-space: nowrap;
+  }
   @media (min-width: 40rem) {
+    .station-board {
+      padding: 1.5rem 1.75rem 1.625rem;
+    }
     .station-board .sb-head {
       flex-direction: row;
       flex-wrap: wrap;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
       column-gap: 1rem;
+      font-size: 2.75rem;
+    }
+    .station-board .sb-time {
+      align-self: center;
     }
   }
-  .station-board .sb-time {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--signal);
-    white-space: nowrap;
-  }
   .station-board .sb-sub {
-    color: #d5e6dd;
+    color: var(--ink-2);
+  }
+  .station-board .sb-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
 
-  /* Carton: a white panel. Colour appears only as a thin top edge, and only
-     when it means something: alert = problem, warn = needs you, stock = good. */
+  /* Carton: a white rounded card with a soft shadow. Colour appears only in the title,
+     and only when it means something: alert = problem, warn = needs you, stock = good. */
   .carton {
     background: var(--board);
     border: 1px solid var(--rule);
-    border-radius: 8px;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
     overflow: hidden;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  @media (hover: hover) {
+    .carton:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--lift-shadow);
+    }
   }
   .carton-head {
     display: flex;
@@ -317,7 +380,7 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 0.125rem 0.75rem;
-    padding: 0.875rem 1rem 0;
+    padding: 1.125rem 1.25rem 0;
   }
   /* The title keeps its line; a long aside drops below it instead of squeezing it. */
   .carton-head > :first-child {
@@ -341,6 +404,16 @@
   .band-stock,
   .band-warn {
     background: var(--board);
+  }
+
+  /* Serif display face for page titles and the numbers that matter. */
+  .display {
+    font-family: var(--font-playfair), Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+  .display-accent {
+    font-style: italic;
+    color: var(--cash);
   }
 
   /* Reserved hairline above the header; currently zero height. */

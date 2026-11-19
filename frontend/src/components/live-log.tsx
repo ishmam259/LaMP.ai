@@ -210,7 +210,7 @@ export function LiveLog() {
         {events.map((e) => (
           <li key={e.id} className="border-b border-rule px-3 py-2">
             <div className="flex items-center gap-2">
-              <span className="num font-board text-ink-2">{timeOfDay(e.ts)}</span>
+              <span className="num text-ink-2">{timeOfDay(e.ts)}</span>
               <span className="text-xs font-bold text-ink-2">{part(e.component)}</span>
             </div>
             <p className={cn("mt-0.5 font-semibold break-words", isProblem(e) ? "text-alert" : "text-ink")}>{sentence(e)}</p>

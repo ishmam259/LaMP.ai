@@ -26,8 +26,8 @@ export function Explain({ rows, title, onBoard = false }: { rows?: ExplainRow[];
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`inline-flex items-center gap-1 rounded-[var(--radius)] px-1.5 py-0.5 text-sm font-semibold hover:underline ${
-          onBoard ? "sb-sub" : "text-cash"
+        className={`inline-flex items-center gap-1 rounded-full text-sm font-semibold text-cash hover:bg-cash-tint ${
+          onBoard ? "mt-3 border border-rule px-3 py-1.5" : "px-2 py-0.5"
         }`}
       >
         <Calculator className="size-4" aria-hidden /> How?

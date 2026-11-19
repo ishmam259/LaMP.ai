@@ -23,7 +23,7 @@ export default function CustomerCard() {
   if (error) {
     const missing = error instanceof ApiError && error.status === 404;
     return (
-      <div className="carton p-4">
+      <div className="carton p-5">
         <h1 className="text-xl font-bold text-ink">{missing ? "We couldn't find that card" : "Couldn't load your card"}</h1>
         <p className="mt-2 text-ink-2">
           {missing ? "Check the code on your slip from the pharmacy and try again." : "Check your connection and try again."}
@@ -44,7 +44,7 @@ export default function CustomerCard() {
         </p>
         <h1 id="owe" className="mt-1 text-ink">
           <span className="block text-lg font-semibold">You owe</span>
-          <span className="num block font-board text-5xl font-extrabold tracking-tight">{bdt(card.amount)}</span>
+          <span className="num display block text-[3.25rem] leading-tight font-bold">{bdt(card.amount)}</span>
         </h1>
         <p className="mt-1 text-ink-2">
           Since {shortDate(card.since)}, {card.days_outstanding} days ago
@@ -137,7 +137,7 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
         <button
           type="submit"
           disabled={busy}
-          className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-[var(--radius)] bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-60"
+          className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary shadow-glow px-4 font-semibold text-primary-foreground disabled:opacity-60"
         >
           <CalendarCheck className="size-5" aria-hidden /> {busy ? "Saving…" : "Promise this plan"}
         </button>

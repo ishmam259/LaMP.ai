@@ -35,12 +35,12 @@ export function PauseToggle({ onRail = false }: { onRail?: boolean }) {
       disabled={busy}
       onClick={toggle}
       className={cn(
-        "inline-flex h-10 items-center gap-1.5 rounded-[var(--radius)] px-3 font-semibold disabled:opacity-60",
+        "inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-[0.9375rem] font-semibold disabled:opacity-60",
         paused
           ? "bg-warn-band text-white"
           : onRail
-            ? "text-rail-ink hover:bg-white/10"
-            : "border border-rule bg-board text-ink hover:bg-muted"
+            ? "px-3 text-ink-2 hover:bg-muted hover:text-ink"
+            : "border border-rule bg-board text-ink shadow-[0_1px_2px_rgb(20_32_27/0.05)] hover:bg-muted"
       )}
     >
       <Icon className="size-5" aria-hidden />

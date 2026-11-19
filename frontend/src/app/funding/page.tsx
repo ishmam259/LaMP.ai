@@ -69,8 +69,11 @@ export default function FundingPage() {
       {plan && (
         <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
           <section aria-labelledby="need-head" className="station-board lg:col-span-12">
+            <p className="sb-label mb-3">What you need</p>
             <h2 id="need-head" className="sb-head">
-              <span className="num">{bdt(plan.need.amount)} to cover</span>
+              <span className="num">
+                <span className="display-accent">{bdt(plan.need.amount)}</span> to cover
+              </span>
               <span className="sb-time">by {dayDate(plan.need.needed_by)}</span>
             </h2>
             <Explain rows={plan.need.explain} title={`${bdt(plan.need.amount)} to cover`} onBoard />

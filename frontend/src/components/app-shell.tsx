@@ -58,8 +58,8 @@ function isActive(pathname: string, href: string) {
 
 export function Wordmark({ className, onRail = false }: { className?: string; onRail?: boolean }) {
   return (
-    <span className={cn("font-board font-extrabold tracking-tight", onRail ? "text-rail-ink" : "text-ink", className)}>
-      La<span className={onRail ? "text-signal" : "text-cash"}>M</span>P
+    <span className={cn("display font-bold tracking-tight", onRail ? "text-rail-ink" : "text-ink", className)}>
+      La<span className="display-accent">M</span>P
     </span>
   );
 }
@@ -81,35 +81,35 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
   return (
     <div className={cn("min-h-dvh lg:grid lg:grid-cols-[232px_1fr]", !onLog && "xl:grid-cols-[232px_1fr_340px]")}>
       {/* Desktop rail */}
-      <aside className="sticky top-0 hidden h-dvh flex-col bg-rail text-rail-ink lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col border-r border-rule bg-rail/85 text-rail-ink backdrop-blur-md lg:flex">
         <div className="print-strip" />
-        <div className="px-5 pt-5 pb-4">
-          <Link href="/" className="text-[1.75rem] leading-none">
+        <div className="px-6 pt-6 pb-5">
+          <Link href="/" className="text-[2rem] leading-none">
             <Wordmark onRail />
           </Link>
-          <p className="mt-1.5 text-sm text-rail-2">{pharmacy ? `${pharmacy.name}, ${pharmacy.city}` : " "}</p>
+          <p className="mt-2 text-sm text-rail-2">{pharmacy ? `${pharmacy.name}, ${pharmacy.city}` : " "}</p>
         </div>
-        <nav aria-label="Main" className="flex flex-1 flex-col gap-0.5 px-3">
+        <nav aria-label="Main" className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
           {[...OWNER_NAV, ...MORE_NAV].map((item) => (
             <RailLink key={item.href} {...item} active={isActive(pathname, item.href)} badge={item.href === "/actions" ? pending : 0} />
           ))}
         </nav>
-        <div className="space-y-2 border-t border-white/15 p-4">
+        <div className="space-y-1 border-t border-rule p-4">
           {!isLender && (
             <button
               type="button"
               onClick={startGuide}
-              className="-ml-3 flex h-10 w-full items-center gap-3 rounded-[var(--radius)] px-3 font-semibold text-rail-2 hover:bg-white/10 hover:text-rail-ink"
+              className="flex h-10 w-full items-center gap-3 rounded-full px-3 text-sm font-semibold text-rail-2 hover:bg-cash-tint hover:text-cash"
             >
               <Compass className="size-5" aria-hidden /> Show me around
             </button>
           )}
-          <ThemeToggle withLabel onRail className="-ml-3" />
+          <ThemeToggle withLabel onRail className="w-full" />
           {!isLender && pharmacy?.asks_pin && (
             <button
               type="button"
               onClick={lock}
-              className="-ml-3 flex h-10 w-full items-center gap-3 rounded-[var(--radius)] px-3 font-semibold text-rail-2 hover:bg-white/10 hover:text-rail-ink"
+              className="flex h-10 w-full items-center gap-3 rounded-full border border-rule px-3 text-sm font-semibold text-rail-2 hover:bg-alert-tint hover:text-alert"
             >
               <LockKeyhole className="size-5" aria-hidden /> Lock
             </button>
@@ -119,10 +119,10 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
 
       {/* Main column */}
       <div className="flex min-h-dvh min-w-0 flex-col">
-        <header className="sticky top-0 z-30 bg-rail text-rail-ink lg:hidden">
+        <header className="sticky top-0 z-30 border-b border-rule bg-rail/80 text-rail-ink backdrop-blur-md lg:hidden">
           <div className="print-strip" />
           <div className="flex items-center gap-1 px-4 py-2">
-            <Link href="/" className="text-[1.75rem] leading-none">
+            <Link href="/" className="text-[1.875rem] leading-none">
               <Wordmark onRail />
             </Link>
             <BuildathonSticker className="ml-2 hidden h-8 sm:block" />
@@ -133,7 +133,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               href="/passport"
               aria-label="Credit record"
               aria-current={isActive(pathname, "/passport") ? "page" : undefined}
-              className="inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-rail-ink hover:bg-white/10 aria-[current=page]:bg-white/15"
+              className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-muted hover:text-ink aria-[current=page]:bg-cash-tint aria-[current=page]:text-cash"
             >
               <BadgeCheck className="size-5" aria-hidden />
             </Link>
@@ -141,7 +141,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               href="/actions"
               data-guide="approvals"
               aria-label={`Approvals, ${pending} waiting for you`}
-              className="relative inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-rail-ink hover:bg-white/10"
+              className="relative inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-muted hover:text-ink"
             >
               <Inbox className="size-5" aria-hidden />
               {pending > 0 && (
@@ -155,7 +155,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
                 type="button"
                 onClick={() => setChatOpen(true)}
                 data-guide="ask"
-                className="ml-1 inline-flex h-10 items-center gap-1.5 rounded-[var(--radius)] bg-white px-3 font-semibold text-rail"
+                className="ml-1 inline-flex h-10 items-center gap-1.5 rounded-full bg-primary px-4 font-semibold text-primary-foreground shadow-glow"
               >
                 <MessageCircle className="size-5" aria-hidden /> Ask
               </button>
@@ -168,7 +168,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Desktop top bar */}
-        <div className="sticky top-0 z-30 hidden items-center justify-end gap-3 border-b border-rule bg-shelf/90 px-8 py-3 backdrop-blur-sm lg:flex">
+        <div className="sticky top-0 z-30 hidden items-center justify-end gap-3 border-b border-rule bg-shelf/75 px-8 py-3 backdrop-blur-md lg:flex">
           <BuildathonSticker className="mr-auto h-10" />
           {isLender ? (
             <span className="text-sm font-semibold text-ink-2">Lender portal</span>
@@ -179,7 +179,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={() => setChatOpen(true)}
               data-guide="ask"
-              className="inline-flex h-10 items-center gap-2 rounded-[var(--radius)] bg-primary px-4 font-semibold text-primary-foreground hover:bg-[color-mix(in_srgb,var(--primary),black_12%)]"
+              className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 font-semibold text-primary-foreground shadow-glow hover:bg-[color-mix(in_srgb,var(--primary),black_12%)]"
             >
               <MessageCircle className="size-5" aria-hidden /> Ask LaMP
             </button>
@@ -187,7 +187,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
           )}
         </div>
 
-        <main className="mx-auto w-full max-w-[1080px] flex-1 px-4 pt-4 pb-28 lg:px-8 lg:pt-6 lg:pb-12">
+        <main className="mx-auto w-full max-w-[1080px] flex-1 px-4 pt-5 pb-32 lg:px-8 lg:pt-8 lg:pb-12">
           {!isLender && <PausedBanner />}
           {children}
         </main>
@@ -195,7 +195,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         {/* Phone tab bar */}
         <nav
           aria-label="Main"
-          className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-rule bg-board pb-[env(safe-area-inset-bottom)] lg:hidden"
+          className="fixed bottom-[calc(12px+env(safe-area-inset-bottom))] left-1/2 z-30 grid w-[calc(100%-32px)] max-w-[420px] -translate-x-1/2 grid-cols-5 rounded-2xl border border-rule bg-board/85 p-1 shadow-lift backdrop-blur-md lg:hidden"
         >
           {OWNER_NAV.map(({ href, label, icon: Icon }) => {
             const active = isActive(pathname, href);
@@ -206,12 +206,11 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
                 data-guide={GUIDE_SPOT[href]}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex h-16 flex-col items-center justify-center gap-1 text-xs font-semibold",
-                  active ? "text-cash" : "text-ink-2"
+                  "flex h-14 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold",
+                  active ? "bg-cash-tint text-cash" : "text-ink-2 hover:text-ink"
                 )}
               >
-                {active && <span className="absolute inset-x-4 top-0 h-[3px] bg-cash" aria-hidden />}
-                <Icon className="size-6" aria-hidden />
+                <Icon className="size-[22px]" aria-hidden />
                 {label}
               </Link>
             );
@@ -221,7 +220,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
 
       {/* Desktop history column (the History page shows it full width instead) */}
       {!onLog && (
-        <aside className="sticky top-0 hidden h-dvh flex-col border-l border-rule bg-board xl:flex">
+        <aside className="sticky top-0 hidden h-dvh flex-col border-l border-rule bg-board/70 backdrop-blur-md xl:flex">
           <LiveLog />
         </aside>
       )}
@@ -261,8 +260,10 @@ function RailLink({
       data-guide={GUIDE_SPOT[href]}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex h-11 items-center gap-3 rounded-[var(--radius)] px-3 font-semibold",
-        active ? "bg-white/15 text-rail-ink" : "text-rail-2 hover:bg-white/10 hover:text-rail-ink"
+        "relative flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-[0.9375rem] font-semibold",
+        active
+          ? "bg-cash-tint text-cash before:absolute before:inset-y-2.5 before:left-0 before:w-[3px] before:rounded-full before:bg-cash"
+          : "text-rail-2 hover:bg-muted hover:text-ink"
       )}
     >
       <Icon className="size-5" aria-hidden />

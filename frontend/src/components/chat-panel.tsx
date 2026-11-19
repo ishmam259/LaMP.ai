@@ -139,7 +139,7 @@ function ChatFrame({
             type="submit"
             disabled={busy || !draft.trim()}
             aria-label="Send"
-            className="inline-flex size-11 items-center justify-center rounded-[var(--radius)] bg-primary text-primary-foreground disabled:opacity-50"
+            className="inline-flex size-11 items-center justify-center rounded-full bg-primary shadow-glow text-primary-foreground disabled:opacity-50"
           >
             <ArrowUp className="size-5" aria-hidden />
           </button>

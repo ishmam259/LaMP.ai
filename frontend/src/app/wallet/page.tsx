@@ -35,7 +35,7 @@ function Wallet({ a }: { a: AccountOut }) {
     <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
       <div className="space-y-4 lg:col-span-5">
         <Carton tone="cash" title="Balance">
-          <p className="num text-[2rem] leading-tight font-bold text-ink">{bdt(a.balance)}</p>
+          <p className="num display text-[2.5rem] leading-tight font-bold text-ink">{bdt(a.balance)}</p>
           <p className="text-sm text-ink-2">
             Starting balance <span className="num">{bdt(a.opening_balance)}</span>
           </p>
