@@ -6,15 +6,15 @@
 
 /* LaMP · soft cards
    A near-white page with a faint green glow, white rounded cards with soft shadows,
-   pill buttons, and a serif face for page titles and the numbers that matter.
+   pill buttons, and LaMP's condensed face for page titles and the numbers that matter.
    One accent (LaMP green). Colour carries state only: red = problem,
    amber = needs you, green = go / good. Text contrast checked at >= 4.5:1. */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-playfair);
+  --font-sans: var(--font-barlow);
+  --font-heading: var(--font-display-face);
 
   --color-shelf: var(--shelf);
   --color-board: var(--board);
@@ -39,8 +39,8 @@
   --color-rail-2: var(--rail-2);
   --color-signal: var(--signal);
   --color-signal-ink: var(--signal-ink);
-  --font-board: var(--font-playfair);
-  --font-display: var(--font-playfair);
+  --font-board: var(--font-display-face);
+  --font-display: var(--font-display-face);
 
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -277,7 +277,7 @@
     color: var(--warn);
   }
 
-  /* The hero card: the one message that matters most on a screen, in a big serif number.
+  /* The hero card: the one message that matters most on a screen, in a big number.
      Used once per screen. */
   .station-board {
     background: var(--board);
@@ -306,7 +306,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
-    font-family: var(--font-playfair), Georgia, serif;
+    font-family: var(--font-display-face), var(--font-barlow), sans-serif;
     font-weight: 700;
     font-size: 2.375rem;
     line-height: 1.05;
@@ -317,7 +317,7 @@
   }
   .station-board .sb-time {
     align-self: flex-start;
-    font-family: var(--font-inter), system-ui, sans-serif;
+    font-family: var(--font-barlow), system-ui, sans-serif;
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -406,9 +406,9 @@
     background: var(--board);
   }
 
-  /* Serif display face for page titles and the numbers that matter. */
+  /* Display face for page titles and the numbers that matter. */
   .display {
-    font-family: var(--font-playfair), Georgia, serif;
+    font-family: var(--font-display-face), var(--font-barlow), sans-serif;
     letter-spacing: -0.01em;
   }
   .display-accent {
