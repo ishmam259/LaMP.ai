@@ -334,13 +334,17 @@ def build_result(raw: dict, kind: Literal["invoice", "sales_page"], model: str,
     })
 
 
-def task_text(kind: str) -> str:
-    """The user message sent with the photo (part of the replay key)."""
+def task_text(kind: str, pages: int = 1) -> str:
+    """The user message sent with the photo (part of the replay key). A PDF of several pages
+    goes as one image per page."""
     label = "a supplier invoice" if kind == "invoice" else "a page of the pharmacy's sales book"
+    if pages > 1:
+        return (f"These {pages} images are the pages, in order, of one document: {label}. "
+                "Copy it into the schema.")
     return f"This photo is {label}. Copy it into the schema."
 
 
-async def extract(image: bytes, kind: Literal["invoice", "sales_page"], db=None,
+async def extract(image: bytes | list[bytes], kind: Literal["invoice", "sales_page"], db=None,
                   today: date | None = None) -> ExtractionResult:
     """Read one photo. In replay mode an unrecorded photo returns the stored example draft
     (prompt_version "fallback") so the capture screen never breaks during a demo.
@@ -350,7 +354,7 @@ async def extract(image: bytes, kind: Literal["invoice", "sales_page"], db=None,
     try:
         out = await llm.structured_call(
             component="extraction", prompt_version=PROMPT_VERSION, instructions=PROMPT,
-            text=task_text(kind),
+            text=task_text(kind, 1 if isinstance(image, bytes) else len(image)),
             schema_name=kind, schema=INVOICE_SCHEMA if kind == "invoice" else SALES_SCHEMA,
             image=image, effort="medium",
         )

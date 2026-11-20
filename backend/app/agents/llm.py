@@ -35,6 +35,7 @@ PRICE_IN, PRICE_OUT = 0.10, 0.50
 
 MAX_SIDE = 1600
 JPEG_QUALITY = 85
+MAX_PDF_PAGES = 3  # a supplier bill or a sales-book page is one to three pages
 
 
 class ReplayMissing(RuntimeError):
@@ -102,11 +103,53 @@ def preprocess_image(image: bytes) -> bytes:
     return out.getvalue()
 
 
+class BadDocument(ValueError):
+    """The upload is a PDF LaMP can't open (broken, locked with a password, or empty)."""
+
+
+def is_pdf(data: bytes) -> bool:
+    return data[:1024].lstrip().startswith(b"%PDF")
+
+
+def pdf_pages(data: bytes, max_pages: int = MAX_PDF_PAGES) -> list[bytes]:
+    """Render the first pages of a PDF to JPEGs whose long side is MAX_SIDE px, so a PDF goes to
+    the model exactly like a photo. Raises BadDocument for a PDF that can't be opened."""
+    import pypdfium2 as pdfium
+
+    try:
+        pdf = pdfium.PdfDocument(data)
+    except Exception as e:  # broken file or a password
+        raise BadDocument(str(e)) from e
+    try:
+        if len(pdf) == 0:
+            raise BadDocument("no pages")
+        pages = []
+        for i in range(min(len(pdf), max_pages)):
+            page = pdf[i]
+            w, h = page.get_size()
+            im = page.render(scale=MAX_SIDE / max(w, h, 1)).to_pil()
+            if im.mode != "RGB":
+                im = im.convert("RGB")
+            out = io.BytesIO()
+            im.save(out, format="JPEG", quality=JPEG_QUALITY, optimize=True)
+            pages.append(out.getvalue())
+        return pages
+    finally:
+        pdf.close()
+
+
+def _as_list(image: bytes | list[bytes] | None) -> list[bytes]:
+    if not image:
+        return []
+    return [image] if isinstance(image, bytes) else list(image)
+
+
 # --- Replay ---------------------------------------------------------------------------
 
-def cache_key(model: str, prompt_version: str, text: str, image: bytes | None = None) -> str:
-    """sha256 of model, prompt version, input text and the raw image's sha256."""
-    image_sha = hashlib.sha256(image).hexdigest() if image else ""
+def cache_key(model: str, prompt_version: str, text: str, image: bytes | list[bytes] | None = None) -> str:
+    """sha256 of model, prompt version, input text and the raw image's sha256 (for several
+    pages, their sha256s joined by commas)."""
+    image_sha = ",".join(hashlib.sha256(i).hexdigest() for i in _as_list(image))
     raw = json.dumps([model, prompt_version, text, image_sha])
     return hashlib.sha256(raw.encode()).hexdigest()
 
@@ -134,11 +177,11 @@ def _client():
     return AsyncOpenAI(api_key=settings.openai_api_key)
 
 
-async def _call_openai(model: str, instructions: str, text: str, image: bytes | None,
+async def _call_openai(model: str, instructions: str, text: str, image: bytes | list[bytes] | None,
                        schema_name: str, schema: dict, effort: str) -> tuple[dict, int, int]:
     content = [{"type": "input_text", "text": text}]
-    if image:
-        b64 = base64.b64encode(preprocess_image(image)).decode()
+    for img in _as_list(image):
+        b64 = base64.b64encode(preprocess_image(img)).decode()
         content.append({"type": "input_image", "image_url": f"data:image/jpeg;base64,{b64}", "detail": "high"})
     response = await _client().responses.create(
         model=model,
@@ -153,7 +196,7 @@ async def _call_openai(model: str, instructions: str, text: str, image: bytes | 
 
 
 async def structured_call(*, component: str, prompt_version: str, instructions: str, text: str,
-                          schema_name: str, schema: dict, image: bytes | None = None,
+                          schema_name: str, schema: dict, image: bytes | list[bytes] | None = None,
                           model: str | None = None, effort: str = "medium",
                           mode: str | None = None) -> LLMResult:
     """One structured-output call, honouring LLM_MODE. Returns the parsed JSON.

@@ -195,7 +195,7 @@ def get_pharmacy(pid: str, db: Session = Depends(get_db)):
 
 # --- Captures -------------------------------------------------------------------------
 
-async def _extract(image: bytes, kind: str, db: Session, today=None) -> dict:
+async def _extract(image: bytes | list[bytes], kind: str, db: Session, today=None) -> dict:
     """Read the photo with the extractor (it falls back to the example draft for an
     unrecorded photo in replay mode). A refused live call is a 503."""
     try:
@@ -218,7 +218,16 @@ def _capture_out(cap: m.Capture) -> dict:
 async def create_capture(pid: str, file: UploadFile = File(...),
                          kind: Literal["invoice", "sales_page"] = Form(...), db: Session = Depends(get_db)):
     ph = engines.get_pharmacy(db, pid)
-    extraction = await _extract(await file.read(), kind, db, today=as_of(ph))
+    from app.agents import llm
+
+    data: bytes | list[bytes] = await file.read()
+    if llm.is_pdf(data):  # a PDF goes in as one image per page (the first three pages)
+        try:
+            pages = llm.pdf_pages(data)
+        except llm.BadDocument:
+            raise HTTPException(400, "LaMP couldn't open this PDF. If it has a password, remove it and try again.")
+        data = pages[0] if len(pages) == 1 else pages
+    extraction = await _extract(data, kind, db, today=as_of(ph))
     n = (db.scalar(select(func.count()).select_from(m.Capture)) or 0) + 1
     cap = m.Capture(id=f"cap-{n}", pharmacy_id=pid, kind=kind, status="needs_review",
                     extraction=extraction, created_at=datetime.now(timezone.utc))

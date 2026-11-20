@@ -28,8 +28,9 @@ export default function CapturePage() {
     try {
       setCapture(await uploadCapture(kind, file));
     } catch (e) {
-      const fallback = "LaMP couldn't read that photo. Try again in better light.";
-      toast.error(e instanceof ApiError && e.status === 503 ? errorDetail(e, fallback) : fallback);
+      const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      const fallback = isPdf ? "LaMP couldn't read that PDF. Try a photo of the page instead." : "LaMP couldn't read that photo. Try again in better light.";
+      toast.error(e instanceof ApiError && (e.status === 503 || e.status === 400) ? errorDetail(e, fallback) : fallback);
     } finally {
       setReading(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -37,11 +38,11 @@ export default function CapturePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageTitle title="Scan" />
 
       {!capture && (
-        <Carton tone="ink" title="What are you photographing?">
+        <Carton tone="ink" title="What are you scanning?">
           <div role="radiogroup" aria-label="Document type" className="grid grid-cols-2 gap-2">
             {(
               [
@@ -68,14 +69,13 @@ export default function CapturePage() {
             ref={fileRef}
             id="photo"
             type="file"
-            accept="image/*"
-            capture="environment"
+            accept="image/*,application/pdf"
             className="sr-only"
             onChange={(e) => onFile(e.target.files?.[0])}
           />
           <Button size="lg" className="mt-4 w-full" disabled={reading} onClick={() => fileRef.current?.click()}>
             <Camera className="size-5" aria-hidden />
-            {reading ? "Reading the photo…" : "Take or choose a photo"}
+            {reading ? "Reading…" : "Take a photo or choose a PDF"}
           </Button>
         </Carton>
       )}
@@ -134,7 +134,7 @@ function SuspiciousBanner({ capture }: { capture: CaptureOut }) {
     <div role="alert" className="flex gap-3 rounded-2xl border border-alert/40 bg-alert-tint p-4 text-ink">
       <ShieldAlert className="mt-0.5 size-5 shrink-0 text-alert" aria-hidden />
       <div>
-        <p className="font-semibold text-alert">This photo had hidden instructions written in it. LaMP ignored them.</p>
+        <p className="font-semibold text-alert">This page had hidden instructions written in it. LaMP ignored them.</p>
         <p className="mt-1 text-sm">
           Found: <q>{suspicious[0]}</q>
         </p>
@@ -236,7 +236,7 @@ function Review({
               Save to accounts
             </Button>
             <Button size="lg" variant="ghost" onClick={onAnother}>
-              Retake photo
+              Scan again
             </Button>
           </div>
         ) : (
@@ -310,7 +310,7 @@ function SalesReview({
               Save to accounts
             </Button>
             <Button size="lg" variant="ghost" onClick={onAnother}>
-              Retake photo
+              Scan again
             </Button>
           </div>
         ) : (
