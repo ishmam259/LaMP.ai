@@ -29,3 +29,10 @@ The published film carries a voiceover read from `VOICEOVER.md` in one take.
    python video/make_voiced.py video/takes video/takes/voice_clean.wav video/LaMP-AIgnite-demo.mp4 lamp-ai-web.onrender.com
    ```
    `LINES` in `make_voiced.py` holds where each line is spoken in the recording. Re-measure them for a new recording with `ffmpeg -i video/takes/voice_clean.wav -af silencedetect=noise=-32dB:d=0.35 -f null -`.
+
+## Feature demo (no intro)
+A silent walk through every page with no title or end card: Today, Cash, Scan, Stock, Plan, Ask LaMP, Credit record, Approvals, the customer's card on a phone, Customers, Wallet, Rules, History and the lender's page. Same setup as above (API in replay mode, production build on port 3000), then:
+```bash
+python video/record_features.py video/takes_features
+python video/make_features.py video/takes_features video/LaMP-features-demo.mp4
+```

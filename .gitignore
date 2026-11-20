@@ -51,3 +51,4 @@ video/*.wav
 
 # Raw demo takes (re-cut with make_aignite.py)
 video/takes/
+video/takes_features/
