@@ -7,15 +7,16 @@ import { Button } from "@/components/ui/button";
 import { usePharmacy } from "@/lib/api";
 
 /**
- * A short first-visit guide. It shows once per browser on Today, points at the real buttons
- * (whichever copy is on screen: phone tab bar or desktop rail), and can be replayed with
- * "Show me around". Spots are marked with data-guide="<key>".
+ * A short first-visit guide. It opens by itself only once per browser, on the first visit to
+ * Today: it counts as seen as soon as it opens, so a reload or leaving halfway never brings it
+ * back. It points at the real buttons (whichever copy is on screen: phone tab bar or desktop
+ * rail) and can be replayed with "Quick tour". Spots are marked with data-guide="<key>".
  */
 
 export const GUIDE_EVENT = "lamp:guide";
 const SEEN_KEY = "lamp-guide-seen";
 
-/** Start the guide (from a "Show me around" button). */
+/** Start the guide (from a "Quick tour" button). */
 export function startGuide() {
   window.dispatchEvent(new Event(GUIDE_EVENT));
 }
@@ -109,11 +110,14 @@ export function Guide() {
   // First visit: start on Today once the page has settled.
   useEffect(() => {
     if (pathname !== "/" || seen()) return;
-    const t = window.setTimeout(() => setStep((s) => s ?? 0), 700);
+    const t = window.setTimeout(() => {
+      markSeen();
+      setStep((s) => s ?? 0);
+    }, 700);
     return () => window.clearTimeout(t);
   }, [pathname]);
 
-  // "Show me around": go to Today first, since the first spots are there.
+  // "Quick tour": go to Today first, since the first spots are there.
   useEffect(() => {
     const start = () => {
       if (window.location.pathname !== "/") router.push("/");

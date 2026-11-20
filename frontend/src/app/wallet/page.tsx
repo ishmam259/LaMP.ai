@@ -2,7 +2,7 @@
 
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { useAccount } from "@/lib/api";
-import { bdt, signed, stampDate } from "@/lib/format";
+import { bdt, dayDate, signed, stampDate } from "@/lib/format";
 import type { AccountOut, MatchStatus } from "@/lib/types";
 
 const STATUS: Record<MatchStatus, { label: string; tone?: "alert" | "warn" | "stock" }> = {
@@ -96,9 +96,9 @@ function Wallet({ a }: { a: AccountOut }) {
               <tbody className="divide-y divide-rule">
                 {rows.map((m) => (
                   <tr key={m.ref} className={m.status === "matched" ? "" : "bg-warn-tint/40"}>
-                    <td className="hidden px-4 py-2 whitespace-nowrap text-ink sm:table-cell">{stampDate(m.date)}</td>
+                    <td className="hidden px-4 py-2 whitespace-nowrap text-ink sm:table-cell">{dayDate(m.date)}</td>
                     <td className="py-2 pr-2 pl-4 text-ink sm:pl-2">
-                      <span className="block text-xs text-ink-2 sm:hidden">{stampDate(m.date)}</span>
+                      <span className="block text-xs text-ink-2 sm:hidden">{dayDate(m.date)}</span>
                       {m.supplier ?? m.payee}
                       {m.invoice_no && <span className="whitespace-nowrap text-ink-2"> · {m.invoice_no}</span>}
                     </td>

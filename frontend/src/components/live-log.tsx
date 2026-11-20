@@ -10,7 +10,7 @@ import type { LogEvent } from "@/lib/types";
 // Bookkeeping entries the owner doesn't need to read: each one repeats another entry or is LaMP's own housekeeping.
 const HIDDEN = new Set([
   "reset", "demo_auto_reset", "forecast_updated", "document_read", "action_executed",
-  "followup_scheduled", "notify", "lock_acquired", "owner_opened",
+  "followup_scheduled", "notify", "lock_acquired", "owner_opened", "replay_missing_fallback_draft",
 ]);
 
 /** The part of LaMP that wrote the event, in the owner's words. */
@@ -165,7 +165,7 @@ function who(id: unknown): string {
   return String(id).split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
-export function LiveLog() {
+export function LiveLog({ heading = true }: { heading?: boolean }) {
   const { data: chain, mutate: recheck } = useLogVerify();
   const [live, setLive] = useState<LogEvent[]>([]);
   const listRef = useRef<HTMLOListElement>(null);
@@ -196,9 +196,11 @@ export function LiveLog() {
 
   return (
     <section aria-label="History" className="flex h-full min-h-0 flex-col">
-      <div className="band band-ink">
-        <span>History</span>
-      </div>
+      {heading && (
+        <div className="band band-ink">
+          <span>History</span>
+        </div>
+      )}
       {chain && !chain.intact && (
         <p role="status" className="flex items-center gap-1.5 border-b border-rule bg-alert-tint px-3 py-1.5 text-xs font-semibold text-alert">
           <ShieldAlert className="size-4 shrink-0" aria-hidden />

@@ -29,7 +29,7 @@ export default function CustomersPage() {
   const planned = data?.filter((c) => c.plan).length ?? 0;
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageTitle title="Customers" />
       {error && <LoadError what="your customers" />}
       {!data && !error && <Skel className="h-80" />}

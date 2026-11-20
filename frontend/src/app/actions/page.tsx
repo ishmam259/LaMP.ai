@@ -59,7 +59,7 @@ export default function ActionsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageTitle title="Approvals" />
       {error && <LoadError what="your approvals" />}
       {!actions && !error && <Skel className="h-64" />}

@@ -167,7 +167,7 @@ The palette is about 60% neutral (shelf and white cards), 30% LaMP green (action
 
 ## Layout
 
-- **Phone first.** 16px side gutters and a single column. The floating tab bar holds Today, Cash, Scan, Stock and Plan. Today ends with a "More" list (Customers, Credit record, Wallet, Rules, History, Show me around) in one card.
+- **Phone first.** 16px side gutters and a single column. The floating tab bar holds Today, Cash, Scan, Stock and Plan. Today ends with a "More" list (Customers, Credit record, Wallet, Rules, History, Quick tour) in one card.
 - **Phone header:** sticky, frosted (white at 80% with blur), showing the wordmark, the sticker and the shop name.
 - **Phone tab bar:** floats 12px above the safe area, `rounded-2xl`, frosted white, `shadow-lift`, at most 420px wide, five equal cells, each at least 44px tall.
 - **Desktop (from 1024px):** a grid of side menu + main column, plus a 340px right panel (the chat and live log) from 1280px.

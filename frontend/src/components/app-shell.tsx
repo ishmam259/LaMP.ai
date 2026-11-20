@@ -183,14 +183,14 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={startGuide}
-              title={collapsed ? "Show me around" : undefined}
+              title={collapsed ? "Quick tour" : undefined}
               className={cn(
                 "flex h-11 items-center gap-3 rounded-xl text-[0.9375rem] font-semibold text-rail-2 hover:bg-muted hover:text-ink short:h-10",
                 collapsed ? "w-11 justify-center" : "min-w-0 flex-1 px-3"
               )}
             >
               <Compass className="size-5 shrink-0" aria-hidden />
-              <span className={collapsed ? "sr-only" : "truncate"}>Show me around</span>
+              <span className={collapsed ? "sr-only" : "truncate"}>Quick tour</span>
             </button>
           )}
           <ThemeToggle onRail className="shrink-0 rounded-xl short:h-10" />

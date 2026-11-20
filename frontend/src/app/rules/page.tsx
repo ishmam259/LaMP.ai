@@ -19,7 +19,7 @@ const KIND: Record<ActionKind, string> = {
 export default function RulesPage() {
   const { data: p, error } = usePolicy();
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageTitle title="Rules" />
       {error && <LoadError what="the rules" />}
       {!p && !error && <Skel className="h-96" />}

@@ -79,7 +79,7 @@ export default function PassportPage() {
           </div>
 
           <div className="lg:col-span-5">
-            <Carton tone="warn" title="Who can see it">
+            <Carton tone="ink" title="Who can see it">
               <ul className="divide-y divide-rule">
                 {lenders?.map((l) => {
                   const on = !!consents?.some((c) => c.lender_id === l.id);
@@ -102,17 +102,17 @@ export default function PassportPage() {
               </ul>
               <fieldset className="mt-3 border-t border-rule pt-3">
                 <legend className="float-left w-full text-sm font-semibold text-ink">What a lender sees</legend>
-                <div className="clear-left grid gap-2 pt-2 sm:grid-cols-2">
+                <div className="clear-left grid grid-cols-2 gap-2 pt-2">
                   {[
                     { v: false, label: "Summary only" },
                     { v: true, label: "Summary and invoices" },
                   ].map((o) => (
                     <label
                       key={o.label}
-                      className={`cursor-pointer rounded-[var(--radius)] border p-2.5 text-sm ${withEvidence === o.v ? "border-cash bg-muted" : "border-rule"}`}
+                      className={`flex min-h-14 cursor-pointer items-center justify-center rounded-[var(--radius)] border-2 px-3 py-2 text-center font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring ${withEvidence === o.v ? "border-cash bg-cash-tint text-cash" : "border-rule text-ink hover:border-ink-2"}`}
                     >
                       <input type="radio" name="scope" className="sr-only" checked={withEvidence === o.v} onChange={() => setWithEvidence(o.v)} />
-                      <span className="block font-semibold text-ink">{o.label}</span>
+                      <span>{o.label}</span>
                     </label>
                   ))}
                 </div>

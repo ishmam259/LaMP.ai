@@ -53,7 +53,7 @@ export default function TodayPage() {
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
       <header className="flex items-center justify-between gap-3 lg:col-span-12">
-        <h1 className="display text-[2rem] leading-none font-bold text-ink lg:text-[2.5rem]">Today</h1>
+        <h1 className="display text-[2rem] leading-tight font-semibold text-ink lg:text-[2.5rem]">Today</h1>
         {asOf && <Stamp className="text-[0.8125rem]">{dayDate(asOf)}</Stamp>}
       </header>
 
@@ -231,7 +231,7 @@ export default function TodayPage() {
           <li>
             <button type="button" onClick={startGuide} className="flex min-h-13 w-full items-center gap-3 px-5 py-2 text-left text-ink hover:bg-muted">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-cash-tint text-cash"><Compass className="size-[18px]" aria-hidden /></span>
-              <span className="min-w-0 flex-1 font-semibold">Show me around</span>
+              <span className="min-w-0 flex-1 font-semibold">Quick tour</span>
               <ChevronRight className="size-5 shrink-0 text-ink-2" aria-hidden />
             </button>
           </li>
