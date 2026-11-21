@@ -122,7 +122,7 @@ This is an Operate product: scanning, consistency and big touch targets come bef
 - Pill-shaped buttons; the primary one is LaMP green with a green glow under it.
 - Card titles are small, tracked, uppercase labels. Page titles use the condensed display face.
 - Tabular numbers everywhere money appears, so amounts line up like a price list.
-- Plain English only. No finance, AI or developer words (see CLAUDE.md).
+- Plain English (or plain Bangla when chosen). No finance, AI or developer words (see CLAUDE.md).
 
 ## Colors
 

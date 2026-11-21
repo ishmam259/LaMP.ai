@@ -30,7 +30,7 @@ LaMP is an AI finance officer for neighborhood pharmacies. It turns photographed
 - Inputs are photos of paper supplier invoices and handwritten sales-book pages, which the owner reviews and corrects before saving.
 - Actions (return claims, supplier extension requests, loan applications, order trims) are proposed by the owner or the copilot and only run after the owner approves.
 - Lenders see data only within per-lender consent.
-- Currency: Bangladeshi taka (BDT). Language: English only.
+- Currency: Bangladeshi taka (BDT). Language: English, with a Bangla option in the app.
 
 ## Capabilities and Constraints
 
@@ -38,7 +38,7 @@ LaMP is an AI finance officer for neighborhood pharmacies. It turns photographed
 - Screens: home, capture and review, accounts, cash (forecast and supplier-dues calendar), expiry, orders, funding plan, credit passport and consent, actions inbox, copilot chat; lender inbox and passport view; live audit log.
 - All money math is deterministic backend code; the AI (OpenAI `gpt-6-luna`) only reads documents and chats.
 - No patient medicine data is stored; patient dues are amounts only.
-- No blockchain. English only.
+- No blockchain. English by default; Bangla as an option.
 - Lenders, payouts and supplier replies are simulated in the current version.
 - Deadline for the competition submission: 20 Oct 2026.
 

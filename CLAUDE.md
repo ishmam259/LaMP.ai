@@ -25,10 +25,10 @@ LaMP is a solo entry by @ishmam259 for **Ostad Presents YUNet AIgnite Buildathon
 - All money math lives in `backend/app/engines/` as deterministic Python. The LLM never computes money.
 - The chat's tools are read-only plus `propose_action`. Never give it a tool that approves, executes, transfers money or contacts anyone.
 - Engines use `settings.as_of_date` from the pharmacy, never the real clock.
-- Tests never call the OpenAI API (`LLM_MODE=replay`). The shared demo runs live (`LLM_MODE=live`, key set in Render only): recorded inputs are served free, and new calls have no daily limit (`LLM_DAILY_BUDGET_USD=0`).
+- Tests never call the OpenAI API (`LLM_MODE=replay`). The shared demo runs live (`LLM_MODE=live`, key set in Render only): recorded inputs are served free, and new calls stop at USD 1 a day (`LLM_DAILY_BUDGET_USD=1.00`; the OpenAI credit is USD 10 in total).
 - Keep OpenAI spend tiny: no loops that call the API; resize images to ≤ 1,600 px.
 - The golden numbers in `docs/PLAN.md` section 6 must be reproduced exactly.
 - Customer cards (`/me/<code>`) show amounts only. Never store or show medicine names linked to a customer, or a customer's real name.
 - Plain English everywhere in the UI, chat answers, captions and deck: no AI, finance or developer jargon (no "model", "replay", "passport", "audit", "funding", "capture", "gross profit", "overheads", "shortfall", setting names). The owner's pages are Today, Cash, Scan, Stock, Plan, Customers, Approvals, Credit record, Wallet, Rules and History.
-- English only in the app, docs and UI. No blockchain.
+- English by default in the app, docs and UI; the app also has a Bangla option (`frontend/src/lib/strings.ts`, add every new UI string to both tables). With Bangla chosen, the chat answers in Bangla (`backend/app/agents/prompts/bangla_v1.md`), with amounts still written as "BDT 8,100". The deck and any demo video stay English. No blockchain.
 - Check current library docs (OpenAI SDK, PydanticAI, Next.js, AI SDK) before using an API name you aren't sure of.
