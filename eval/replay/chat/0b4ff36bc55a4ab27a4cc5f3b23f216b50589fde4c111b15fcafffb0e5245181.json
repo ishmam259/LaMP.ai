@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "propose_action",
+        "args": "{\"kind\":\"trim_order\",\"amount\":10800,\"order_id\":\"o-1\",\"reason\":\"Montelukast 30 বাক্সের বদলে 12 বাক্স নিলে অর্ডার BDT 10,800 কমবে।\"}",
+        "tool_call_id": "call_JZYvJ7SYrJl8Qo58TkV3BhzJ",
+        "tool_kind": null,
+        "id": "fc_0ad6ea5d1d2fb01c006b005ac0626c87d0822c293e54c539de",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 3237,
+      "cache_write_tokens": 991,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2243,
+      "output_tokens": 64,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:35:46.356748Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:35:43Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0ad6ea5d1d2fb01c006b005abf9b1087d0b42a8b8219b47e68",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

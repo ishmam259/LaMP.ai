@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "এখনকার হিসাবে, কোনো পরিবর্তন না করলে 26 Oct Supplier A-এর BDT 60,000 অর্ডারের জন্য BDT 19,000 কম পড়বে।\n\nঅর্ডার ছোট করলে BDT 10,800 সাশ্রয় হবে। তারপরও BDT 8,200 জোগাড় করতে হবে। Supplier A-কে 20 দিন বেশি সময় চাইলে খরচ নেই, তবে রাজি হবেন কি না নিশ্চিত নয়। না হলে mobile-wallet loan-এর খরচ BDT 181.97।\n\nছোট অর্ডার, Supplier A-কে বেশি সময় চাওয়া, আর দরকার হলে loan—এই তিনটি ধাপ Approvals-এ আপনার অনুমতির অপেক্ষায় আছে।",
+        "id": "msg_0be0c679c4757c49006b005aed3d6087d0a2f836076c2d06d1",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 3547,
+      "cache_write_tokens": 97,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 3447,
+      "output_tokens": 151,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:32.033000Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:36:28Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0be0c679c4757c49006b005aec4f0087d0ba3d1c6d412d9f74",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

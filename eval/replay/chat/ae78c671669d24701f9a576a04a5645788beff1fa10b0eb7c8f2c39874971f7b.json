@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "propose_action",
+        "args": "{\"kind\":\"extension_request\",\"amount\":8200,\"reason\":\"Supplier A-এর কাছে BDT 8,200-এর জন্য 20 দিন বেশি সময় চাই।\"}",
+        "tool_call_id": "call_5wLSyxaxUuKOt6GNNK9Lhl35",
+        "tool_kind": null,
+        "id": "fc_091339f625060f53006b005ac3620887d080ea3ca99ee5af41",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 3346,
+      "cache_write_tokens": 109,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 3234,
+      "output_tokens": 47,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:35:49.123061Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:35:46Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_091339f625060f53006b005ac2a07887d09c207208406612e3",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

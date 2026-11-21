@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "আপনার মোট 41টি বিলের মধ্যে 38টি সময়মতো দিয়েছেন—এটা ভালো রেকর্ড। তবে 3টি বিল দেরিতে দেওয়া হয়েছে, তাই ব্যাংক পুরো অর্ডারের টাকা দিচ্ছে না। তাদের হিসাবে ফেরত দিতে না পারার সম্ভাবনা 3%, আর তারা অর্ডারের 75.2% পর্যন্ত দিতে চেয়েছে। আরও বিল সময়মতো দিলে এই ভাগ বাড়তে পারে।",
+        "id": "msg_06d55c52b6adb8af006b005aff634c87d09ccd75dd4c5afba7",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2415,
+      "cache_write_tokens": 0,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2412,
+      "output_tokens": 96,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:49.599120Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:36:46Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_06d55c52b6adb8af006b005afe9d6487d0b1019c12f7f2e351",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

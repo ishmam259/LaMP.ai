@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "এই মাসে বিক্রি হয়েছে BDT 412,500। বিক্রি করা পণ্যে লাভ BDT 49,500; ভাড়া, বেতন ও বিল BDT 36,000। সব মিটিয়ে হাতে থাকছে BDT 13,500।\n\nদোকানের স্টকে আছে BDT 210,000, যা 17.4 দিনের বিক্রির সমান। কাস্টমারদের কাছে পাওনা BDT 38,000। আগামী 60 দিনের মধ্যে মেয়াদ শেষ হবে এমন স্টক BDT 18,400।",
+        "id": "msg_0aabb990ee106629006b005adc579087d097351b3e76487775",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2534,
+      "cache_write_tokens": 0,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2531,
+      "output_tokens": 119,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:14.724317Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:36:10Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0aabb990ee106629006b005adaacfc87d08154b5aa8c9966be",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

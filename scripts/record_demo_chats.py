@@ -1,7 +1,8 @@
-"""Record the chat's four demo questions (the suggestion chips in the chat panel) with the real model.
+"""Record the chat's four demo questions (the suggestion chips in the chat panel), in English and Bangla, with the real model.
 
     python scripts/record_demo_chats.py            # replay: check every demo question has a recording
-    python scripts/record_demo_chats.py --record   # call OpenAI and save the answers (about $0.01)
+    python scripts/record_demo_chats.py --record   # call OpenAI and save the answers (about $0.02)
+    python scripts/record_demo_chats.py --record --lang bn   # only the Bangla questions
 
 Run --record after a chat prompt change (recordings are keyed by prompt version). Each question
 is asked on the seed pharmacy with its demo captures, both on a fresh seed and in demo order
@@ -21,17 +22,26 @@ from app.config import settings  # noqa: E402
 from app.db.session import get_db  # noqa: E402
 from app.main import app  # noqa: E402
 
-QUESTIONS = [  # frontend/src/components/chat-panel.tsx SUGGESTIONS
-    "How did we do this month?",
-    "Can I pay Supplier A's order next week?",
-    "What is expiring?",
-    "Why did the bank offer 75%?",
-]
+QUESTIONS = {  # frontend/src/components/chat-panel.tsx SUGGESTIONS, in each language
+    "en": [
+        "How did we do this month?",
+        "Can I pay Supplier A's order next week?",
+        "What is expiring?",
+        "Why did the bank offer 75%?",
+    ],
+    "bn": [
+        "এই মাস কেমন গেল?",
+        "আগামী সপ্তাহে কি Supplier A-এর অর্ডারের টাকা দিতে পারব?",
+        "কোন ওষুধের মেয়াদ শেষ হচ্ছে?",
+        "ব্যাংক কেন 75% দিতে চাইল?",
+    ],
+}
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--record", action="store_true", help="call OpenAI and save the answers")
+    ap.add_argument("--lang", choices=sorted(QUESTIONS), help="only this language (default: both)")
     a = ap.parse_args()
     settings.llm_mode = "record" if a.record else "replay"
     app.dependency_overrides[get_db] = redteam._get_db
@@ -39,17 +49,20 @@ def main() -> None:
 
     print(f"Prompt {chat.PROMPT_VERSION}, mode {settings.llm_mode}")
     missing = 0
-    for label, fresh_each in (("fresh seed", True), ("demo order", False)):
-        owner = None
-        for q in QUESTIONS:
-            if fresh_each or owner is None:
-                owner, _ = redteam.fresh()
-            r = redteam.ask(owner, q)
-            recorded = chat.NOT_RECORDED[:40] not in r["text"]
-            missing += not recorded
-            t = r["trace"] or {}
-            badge = f"{t.get('traced')}/{t.get('total')} traced" + (" BLOCKED" if t.get("blocked") else "") if t else "no figures"
-            print(f"  [{label}] {'ok ' if recorded else 'MISSING'} {q}  ({badge}; tools {r['calls']})")
+    for lang, questions in QUESTIONS.items():
+        if a.lang and lang != a.lang:
+            continue
+        for label, fresh_each in (("fresh seed", True), ("demo order", False)):
+            owner = None
+            for q in questions:
+                if fresh_each or owner is None:
+                    owner, _ = redteam.fresh()
+                r = redteam.ask(owner, q, lang)
+                recorded = chat.NOT_RECORDED[:40] not in r["text"] and chat.NOT_RECORDED_BN[:30] not in r["text"]
+                missing += not recorded
+                t = r["trace"] or {}
+                badge = f"{t.get('traced')}/{t.get('total')} traced" + (" BLOCKED" if t.get("blocked") else "") if t else "no figures"
+                print(f"  [{lang} {label}] {'ok ' if recorded else 'MISSING'} {q}  ({badge}; tools {r['calls']})")
     app.dependency_overrides.pop(get_db, None)
     sys.exit(1 if missing else 0)
 

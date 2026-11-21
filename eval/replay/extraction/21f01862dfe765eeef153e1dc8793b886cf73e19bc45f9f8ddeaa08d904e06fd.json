@@ -1,0 +1,51 @@
+{
+  "key": "21f01862dfe765eeef153e1dc8793b886cf73e19bc45f9f8ddeaa08d904e06fd",
+  "model": "gpt-6-luna",
+  "prompt_version": "extraction_v1",
+  "output": {
+    "supplier_name": "Supplier K",
+    "invoice_no": "K-77412",
+    "invoice_date": "2026-10-16",
+    "due_date": "2026-11-30",
+    "total": 16560.0,
+    "lines": [
+      {
+        "product": "Omeprazole 20 mg, box of 50",
+        "strength": null,
+        "pack": null,
+        "batch_no": "OM2611",
+        "expiry_date": "2028-05-31",
+        "qty": 12,
+        "unit_cost": 480.0,
+        "line_total": 5760.0
+      },
+      {
+        "product": "Amoxicillin 500 mg, box of 50",
+        "strength": null,
+        "pack": null,
+        "batch_no": "AX2609",
+        "expiry_date": "2027-09-30",
+        "qty": 8,
+        "unit_cost": 600.0,
+        "line_total": 4800.0
+      },
+      {
+        "product": "Oral saline, box of 25",
+        "strength": null,
+        "pack": null,
+        "batch_no": "OR2606",
+        "expiry_date": "2027-06-30",
+        "qty": 20,
+        "unit_cost": 300.0,
+        "line_total": 6000.0
+      }
+    ],
+    "uncertain_fields": [],
+    "instruction_like_text": []
+  },
+  "usage": {
+    "input_tokens": 2797,
+    "output_tokens": 398,
+    "usd": 0.000479
+  }
+}

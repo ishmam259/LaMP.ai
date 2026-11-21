@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "content": "আগামী 60 দিনের মধ্যে মেয়াদ শেষ হবে:\n\n- Vitamin B complex, box of 30 — 25 Oct; 8 বাক্স, স্টক worth BDT 1,200।\n- Oral saline, box of 25 — 28 Oct; 6 বাক্স, স্টক worth BDT 1,800।\n- Metformin 500 mg, box of 100 — 5 Nov; 13 বাক্স, স্টক worth BDT 2,600।\n- Amoxicillin 500 mg, box of 50 — 10 Nov; 6 বাক্স, স্টক worth BDT 3,600।\n- Cetirizine 10 mg, box of 100 — 3 Dec; 22 বাক্স, স্টক worth BDT 4,400।\n- Omeprazole 20 mg, box of 50 — 10 Dec; 10 বাক্স, স্টক worth BDT 4,800।\n\nমোট স্টক worth BDT 18,400। Supplier B ও Supplier C মিলে BDT 9,200-এর স্টক ফেরত নেবে। ফেরত দেওয়ার ধাপটি Approvals-এ সাজেস্ট করতে পারি।",
+        "id": "msg_0622af3d4eb23cda006b005acf7c5c87d0a18f7f4a1dd6157f",
+        "provider_name": "openai",
+        "provider_details": {
+          "phase": "final_answer"
+        },
+        "citations": null,
+        "part_kind": "text"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2593,
+      "cache_write_tokens": 414,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2176,
+      "output_tokens": 252,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:02.601475Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:35:59Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0622af3d4eb23cda006b005acef08c87d0b0a13096a464bffe",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

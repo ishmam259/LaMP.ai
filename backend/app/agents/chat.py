@@ -50,6 +50,10 @@ class ChatSettings(BaseSettings):
 CHAT_MODEL = ChatSettings().openai_chat_model
 PROMPT_VERSION = ChatSettings().chat_prompt_version
 PROMPT = (Path(__file__).parent / "prompts" / f"{PROMPT_VERSION}.md").read_text(encoding="utf-8")
+# Added to the instructions when the owner has chosen Bangla (the chat request's "lang": "bn").
+# Its first line is the marker that puts a Bangla conversation under its own replay keys.
+BANGLA = (Path(__file__).parent / "prompts" / "bangla_v1.md").read_text(encoding="utf-8")
+BANGLA_MARK = "[lang:bn]"
 USAGE_LIMITS = UsageLimits(tool_calls_limit=MAX_TOOL_CALLS + 1, request_limit=MAX_TOOL_CALLS + 3)  # + share_plan
 
 
@@ -59,6 +63,14 @@ def record_spend(input_tokens: int, output_tokens: int) -> float:
 
 
 # --- Replay keys ----------------------------------------------------------------------
+
+def language(messages: list[ModelMessage]) -> str:
+    """"bn" when this run's instructions ask for Bangla, else "en"."""
+    for msg in reversed(messages):
+        if isinstance(msg, ModelRequest) and msg.instructions:
+            return "bn" if BANGLA_MARK in msg.instructions else "en"
+    return "en"
+
 
 def conversation_key(messages: list[ModelMessage]) -> str:
     """sha256 of the model, prompt version, the latest user message, and this turn's tool
@@ -81,7 +93,10 @@ def conversation_key(messages: list[ModelMessage]) -> str:
                 turn.append(["return", part.tool_name, content])
             elif isinstance(part, RetryPromptPart):
                 turn.append(["retry", part.tool_name, part.model_response()])
-    raw = json.dumps([CHAT_MODEL, PROMPT_VERSION, users[-1:], turn], sort_keys=True, default=str)
+    parts = [CHAT_MODEL, PROMPT_VERSION, users[-1:], turn]
+    if language(messages) == "bn":  # English keys stay as they were recorded
+        parts.append("bn")
+    raw = json.dumps(parts, sort_keys=True, default=str)
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
@@ -249,6 +264,8 @@ def _openai_model():
 NOT_RECORDED = ("I can't answer that one yet. Pick one of the questions below about your cash, stock "
                 "or loans.")
 
+NOT_RECORDED_BN = "এই প্রশ্নের উত্তর এখনো দিতে পারছি না। নিচের নগদ, স্টক বা ঋণের প্রশ্নগুলো থেকে একটি বেছে নিন।"
+
 # Tests set this to answer unrecorded questions with the offline script instead.
 OFFLINE_SCRIPT = False
 
@@ -260,7 +277,7 @@ async def _replay(messages: list[ModelMessage], info: AgentInfo) -> AsyncIterato
             async for chunk in _script(messages, info):
                 yield chunk
         else:
-            for chunk in re.findall(r"\S+\s*", NOT_RECORDED):
+            for chunk in re.findall(r"\S+\s*", NOT_RECORDED_BN if language(messages) == "bn" else NOT_RECORDED):
                 yield chunk
         return
     for chunk in _stream(saved):
@@ -319,11 +336,13 @@ agent = Agent(
 
 # --- Money-figure guard (win plan CORE-03) ----------------------------------------------
 
+SAFE_REPLY_BN = ("উত্তরের একটি টাকার অঙ্ক LaMP-এর নিজের হিসাবের সাথে মেলেনি, তাই উত্তরটি দেখানো হলো না। "
+                 "আবার জিজ্ঞাসা করুন, অথবা পরিকল্পনা ও নগদ পাতায় হিসাব দেখুন।")
 SAFE_REPLY = ("I held that answer back because one of its money figures didn't match LaMP's own numbers. "
               "Please ask again, or check the figures on the Plan and Cash pages.")
 
 
-async def guard_stream(events: AsyncIterator, db) -> AsyncIterator:
+async def guard_stream(events: AsyncIterator, db, lang: str = "en") -> AsyncIterator:
     """Hold the answer's text until the run ends, then check every money figure in it against
     this turn's tool outputs (engines.fidelity.trace). A traced answer is sent with a
     `data-trace` badge part; an untraced one is replaced by SAFE_REPLY, logged and reported
@@ -344,7 +363,7 @@ async def guard_stream(events: AsyncIterator, db) -> AsyncIterator:
             return [*held, badge]
         fidelity.report_blocked(result, db)
         db.commit()
-        return [TextStartChunk(id="guard"), TextDeltaChunk(id="guard", delta=SAFE_REPLY), TextEndChunk(id="guard"), badge]
+        return [TextStartChunk(id="guard"), TextDeltaChunk(id="guard", delta=SAFE_REPLY_BN if lang == "bn" else SAFE_REPLY), TextEndChunk(id="guard"), badge]
 
     async for ev in events:
         kind = getattr(ev, "type", "")

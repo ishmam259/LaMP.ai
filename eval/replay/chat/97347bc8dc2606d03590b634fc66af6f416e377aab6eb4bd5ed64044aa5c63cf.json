@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "propose_action",
+        "args": "{\"kind\":\"loan_application\",\"amount\":8200.0,\"reason\":\"Supplier A বেশি সময় না দিলে BDT 8,200-এর mobile-wallet loan-এর জন্য আবেদন সাজেস্ট করুন\"}",
+        "tool_call_id": "call_c6bdc6d996214805803010b7adbab31e",
+        "tool_kind": null,
+        "id": "fc_02d2e1af446272da006b005aea43cc87d08ae83047a3832639",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 3450,
+      "cache_write_tokens": 96,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 3351,
+      "output_tokens": 52,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:28.019667Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:36:25Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_02d2e1af446272da006b005ae96a2887d09a3e3c76331e8649",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

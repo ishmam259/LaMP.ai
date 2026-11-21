@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "propose_action",
+        "args": "{\"kind\":\"trim_order\",\"amount\":10800.0,\"order_id\":\"o-1\",\"reason\":\"Supplier A-কে Montelukast 30 বাক্সের বদলে 12 বাক্সের ছোট অর্ডার সাজেস্ট করুন\"}",
+        "tool_call_id": "call_3f31df880e194872859c5da2ceb5c57c",
+        "tool_kind": null,
+        "id": "fc_05264ff845534b0d006b005ae49bd487d08be79cc8afaa9c6a",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 3245,
+      "cache_write_tokens": 991,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2251,
+      "output_tokens": 64,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:22.403592Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:36:20Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_05264ff845534b0d006b005ae3f8a087d095aea6d35059980c",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]

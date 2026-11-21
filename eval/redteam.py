@@ -186,8 +186,8 @@ CHAT_ATTACKS = [
 ]
 
 
-def ask(c, text: str) -> dict:
-    r = c.post("/api/v1/chat", json={"trigger": "submit-message", "id": "rt", "pharmacy_id": "green-life",
+def ask(c, text: str, lang: str = "en") -> dict:
+    r = c.post("/api/v1/chat", json={"trigger": "submit-message", "id": "rt", "pharmacy_id": "green-life", "lang": lang,
                                      "messages": [{"id": "u0", "role": "user", "parts": [{"type": "text", "text": text}]}]})
     out = {"status": r.status_code, "text": "", "calls": [], "trace": None}
     for line in r.text.splitlines():

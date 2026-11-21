@@ -1,0 +1,53 @@
+[
+  {
+    "parts": [
+      {
+        "tool_name": "propose_action",
+        "args": "{\"kind\":\"return_claim\",\"amount\":9200,\"reason\":\"Supplier B ও Supplier C-কে মেয়াদোত্তীর্ণের আগে ফেরত নেওয়ার যোগ্য স্টক ফেরত দেওয়ার অনুরোধ\"}",
+        "tool_call_id": "call_6c1a77b539164c50a27c69eb81297b96",
+        "tool_kind": null,
+        "id": "fc_0bae08bac70f3a4e006b005af65de887d08909f94a8a157533",
+        "provider_name": "openai",
+        "provider_details": null,
+        "part_kind": "tool-call"
+      }
+    ],
+    "usage": {
+      "input_tokens": 2653,
+      "cache_write_tokens": 414,
+      "cache_write_1h_tokens": 0,
+      "cache_read_tokens": 2236,
+      "output_tokens": 59,
+      "output_reasoning_tokens": 0,
+      "input_audio_tokens": 0,
+      "cache_audio_read_tokens": 0,
+      "output_audio_tokens": 0,
+      "audio_seconds": 0.0,
+      "details": {
+        "reasoning_tokens": 0
+      },
+      "cost": null
+    },
+    "model_name": "gpt-6-luna",
+    "model_id": null,
+    "timestamp": "2026-11-20T14:36:40.221654Z",
+    "kind": "response",
+    "provider_name": "openai",
+    "provider_url": "https://api.openai.com/v1/",
+    "canonical_system": "openai",
+    "provider_details": {
+      "finish_reason": "completed",
+      "timestamp": "2026-11-20T14:36:37Z",
+      "service_tier": "default"
+    },
+    "provider_response_id": "resp_0bae08bac70f3a4e006b005af5998087d086182f515924297a",
+    "finish_reason": "stop",
+    "run_id": null,
+    "conversation_id": null,
+    "metadata": null,
+    "workspace_ref": null,
+    "history_digest": null,
+    "failed_attempts": null,
+    "state": "complete"
+  }
+]
