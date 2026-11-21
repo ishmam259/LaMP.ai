@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePharmacy } from "@/lib/api";
+import { useStrings, type StringKey } from "@/lib/strings";
 
 /**
  * A short first-visit guide. It opens by itself only once per browser, on the first visit to
@@ -21,38 +22,15 @@ export function startGuide() {
   window.dispatchEvent(new Event(GUIDE_EVENT));
 }
 
-type Step = { key?: string; title: string; text: string };
+type Step = { key?: string; title: StringKey; text: StringKey };
 
-const steps = (shop: string): Step[] => [
-  {
-    title: "Welcome to LaMP",
-    text: `You're looking at ${shop}, a sample shop. Here's a quick look around: it takes under a minute.`,
-  },
-  {
-    key: "today",
-    title: "Your day at a glance",
-    text: "Start here each morning: how much cash you'll have, what's due, and anything that needs you.",
-  },
-  {
-    key: "scan",
-    title: "Scan a bill",
-    text: "Snap a supplier bill or a page of your sales book. LaMP turns it into records, and you check them before they're saved.",
-  },
-  {
-    key: "approvals",
-    title: "You approve every step",
-    text: "LaMP suggests steps, like asking a supplier for more days. Nothing happens until you approve it here.",
-  },
-  {
-    key: "ask",
-    title: "Ask LaMP",
-    text: "Ask about your cash, stock or bills in plain words. It answers from your own shop's figures.",
-  },
-  {
-    key: "customers",
-    title: "Customers who buy on credit",
-    text: "Each family gets their own card that shows only what they owe, with a weekly plan to pay it back.",
-  },
+const STEPS: Step[] = [
+  { title: "GUIDE_1_T", text: "GUIDE_1_X" },
+  { key: "today", title: "GUIDE_2_T", text: "GUIDE_2_X" },
+  { key: "scan", title: "GUIDE_3_T", text: "GUIDE_3_X" },
+  { key: "approvals", title: "GUIDE_4_T", text: "GUIDE_4_X" },
+  { key: "ask", title: "GUIDE_5_T", text: "GUIDE_5_X" },
+  { key: "customers", title: "GUIDE_6_T", text: "GUIDE_6_X" },
 ];
 
 function seen(): boolean {
@@ -96,7 +74,11 @@ export function Guide() {
   const next = useRef<HTMLButtonElement>(null);
 
   const shop = pharmacy ? `${pharmacy.name}, ${pharmacy.city}` : "a sample pharmacy";
-  const list = useMemo(() => steps(shop), [shop]);
+  const { t } = useStrings();
+  const list = useMemo(
+    () => STEPS.map((s) => ({ key: s.key, title: t(s.title), text: t(s.text, { shop }) })),
+    [shop, t]
+  );
   const current = step === null ? null : list[step];
 
   const place = (p: { top: number; left: number }) =>
@@ -216,12 +198,12 @@ export function Guide() {
       >
         <div className="flex items-start justify-between gap-3">
           <p className="text-xs font-semibold tracking-wide text-ink-2 uppercase">
-            Step {step + 1} of {list.length}
+            {t("GUIDE_STEP", { a: step + 1, b: list.length })}
           </p>
           <button
             type="button"
             onClick={close}
-            aria-label="Close the guide"
+            aria-label={t("GUIDE_CLOSE")}
             className="-mt-1.5 -mr-1.5 inline-flex size-8 items-center justify-center rounded-[var(--radius)] text-ink-2 hover:bg-muted hover:text-ink"
           >
             <X className="size-4" aria-hidden />
@@ -236,16 +218,16 @@ export function Guide() {
         <div className="mt-4 flex items-center gap-2">
           {step === 0 ? (
             <Button variant="ghost" size="sm" onClick={close}>
-              Skip
+              {t("GUIDE_SKIP")}
             </Button>
           ) : (
             <Button variant="ghost" size="sm" onClick={() => setStep(step - 1)}>
-              Back
+              {t("GUIDE_BACK")}
             </Button>
           )}
           <span className="flex-1" />
           <Button ref={next} size="sm" onClick={() => (last ? close() : setStep(step + 1))}>
-            {last ? "Start using LaMP" : step === 0 ? "Show me" : "Next"}
+            {last ? t("GUIDE_DONE") : step === 0 ? t("GUIDE_SHOW") : t("GUIDE_NEXT")}
           </Button>
         </div>
       </div>

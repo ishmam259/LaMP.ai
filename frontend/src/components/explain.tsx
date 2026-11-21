@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Calculator } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { bdt } from "@/lib/format";
+import { useStrings } from "@/lib/strings";
 import type { ExplainRow } from "@/lib/types";
 
 const SIGN: Record<ExplainRow["op"], string> = {
@@ -20,6 +21,7 @@ const SIGN: Record<ExplainRow["op"], string> = {
  */
 export function Explain({ rows, title, onBoard = false }: { rows?: ExplainRow[]; title: string; onBoard?: boolean }) {
   const [open, setOpen] = useState(false);
+  const { t } = useStrings();
   if (!rows || rows.length < 2) return null;
   return (
     <>
@@ -30,13 +32,13 @@ export function Explain({ rows, title, onBoard = false }: { rows?: ExplainRow[];
           onBoard ? "mt-3 border border-rule px-3 py-1.5" : "px-2 py-0.5"
         }`}
       >
-        <Calculator className="size-4" aria-hidden /> How?
+        <Calculator className="size-4" aria-hidden /> {t("HOW")}
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="data-[side=right]:w-full data-[side=right]:sm:max-w-md">
           <SheetHeader className="border-b border-rule">
             <SheetTitle className="text-lg">{title}</SheetTitle>
-            <SheetDescription className="sr-only">How this figure is worked out, step by step.</SheetDescription>
+            <SheetDescription className="sr-only">{t("HOW_DESC")}</SheetDescription>
           </SheetHeader>
           <ol className="num px-4">
             {rows.map((r, i) => (

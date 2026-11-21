@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { Explain } from "@/components/explain";
 import { proposeAction, useAccount, useActions, useCatalogue, useForecast, useFundingPlan } from "@/lib/api";
-import { bdt, dayDate, stampDate } from "@/lib/format";
+import { bdt, dayDate, shortDate } from "@/lib/format";
+import { useStrings } from "@/lib/strings";
 import type { ActionKind, CatalogueOut } from "@/lib/types";
 import { waitingOn } from "@/lib/waiting";
 
@@ -22,6 +23,7 @@ export default function FundingPage() {
   const { data: catalogue } = useCatalogue();
   const { data: account } = useAccount();
   const [busy, setBusy] = useState(false);
+  const { t } = useStrings();
 
   // Every figure below comes from the API: the plan, its options, and the untrimmed forecast shortfall.
   const options = plan?.options ?? [];
@@ -53,9 +55,9 @@ export default function FundingPage() {
           ...(s.action_kind === "loan_application" ? { lender_id: "wallet-lender", product_key: "wallet_loan", fallback: true } : {}),
         });
       }
-      toast.success("Plan added to Approvals.");
+      toast.success(t("PLAN_ADDED"));
     } catch {
-      toast.error("Couldn't add the plan. Try again.");
+      toast.error(t("PLAN_ADD_ERROR"));
     } finally {
       setBusy(false);
     }
@@ -63,38 +65,38 @@ export default function FundingPage() {
 
   return (
     <div>
-      <PageTitle title="Plan" />
+      <PageTitle title={t("NAV_PLAN")} />
       {error && <LoadError what="your plan" />}
       {!plan && !error && <Skel className="h-96" />}
       {plan && (
         <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
           <section aria-labelledby="need-head" className="station-board lg:col-span-12">
-            <p className="sb-label mb-3">What you need</p>
+            <p className="sb-label mb-3">{t("PLAN_NEED")}</p>
             <h2 id="need-head" className="sb-head">
-              <span className="num">
-                <span className="display-accent">{bdt(plan.need.amount)}</span> to cover
+              <span>
+                <span className="num display-accent whitespace-nowrap">{bdt(plan.need.amount)}</span> {t("PLAN_TO_COVER")}
               </span>
-              <span className="sb-time">by {dayDate(plan.need.needed_by)}</span>
+              <span className="sb-time">{t("PLAN_BY", { date: dayDate(plan.need.needed_by) })}</span>
             </h2>
-            <Explain rows={plan.need.explain} title={`${bdt(plan.need.amount)} to cover`} onBoard />
+            <Explain rows={plan.need.explain} title={`${bdt(plan.need.amount)} ${t("PLAN_TO_COVER")}`} onBoard />
           </section>
           <div className="lg:col-span-12">
-            <Carton tone="ink" title="Recommended plan" aside={primaryOption ? `Costs ${bdt(plan.plan.total_cost_bdt)} if ${primaryOption.provider} agrees` : `Costs ${bdt(plan.plan.total_cost_bdt)}`}>
-              <ol className="space-y-3 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
+            <Carton tone="ink" title={t("PLAN_RECOMMENDED")} aside={primaryOption ? t("PLAN_COSTS_IF", { amount: bdt(plan.plan.total_cost_bdt), who: primaryOption.provider }) : t("PLAN_COSTS", { amount: bdt(plan.plan.total_cost_bdt) })}>
+              <ol className="space-y-2.5 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
                 {plan.plan.steps.map((s, i) => (
                   <li key={s.label} className="flex gap-3">
-                    <span className="num flex size-8 shrink-0 items-center justify-center rounded-full bg-muted font-bold text-ink">{i + 1}</span>
+                    <span className="num flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-bold text-ink">{i + 1}</span>
                     <div className="min-w-0">
                       <p className="font-semibold text-ink">{s.label}</p>
-                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                      <div className="mt-0.5 flex flex-wrap items-center gap-2">
                         <Stamp tone={waitingFor(s.action_kind) ? "warn" : undefined}>
                           {s.action_kind === "loan_application" && waiting.loan
-                            ? "Applied, waiting for the lender"
+                            ? t("PLAN_APPLIED")
                             : s.action_kind === "extension_request" && waiting.extension
-                              ? "Asked, waiting for the supplier"
+                              ? t("PLAN_ASKED")
                               : s.fallback_for
-                                ? `If needed ${stampDate(s.when)}`
-                                : `Now ${stampDate(s.when)}`}
+                                ? t("PLAN_IF_NEEDED", { date: shortDate(s.when) })
+                                : t("PLAN_NOW")}
                         </Stamp>
                         <span className="num text-sm text-ink-2">{bdt(s.amount)}</span>
                       </div>
@@ -105,17 +107,17 @@ export default function FundingPage() {
               {untrimmed != null && untrimmed > plan.need.amount && (
                 <dl className="mt-4 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 border-t border-rule pt-3 text-ink">
                   <dt className="whitespace-nowrap">
-                    Borrow all <span className="num">{bdt(untrimmed)}</span>
+                    {t("PLAN_BORROW_ALL")} <span className="num">{bdt(untrimmed)}</span>
                   </dt>
                   <dd className="num text-right">{bdt(plan.naive_cost_bdt)}</dd>
-                  <dt className="font-semibold">This plan</dt>
+                  <dt className="font-semibold">{t("PLAN_THIS")}</dt>
                   <dd className="num text-right font-bold">
                     {bdt(plan.plan.total_cost_bdt)}
                     {hasFallback && fallback && fallback.cost_bdt !== plan.plan.total_cost_bdt && (
                       <>
                         <span className="hidden sm:inline"> · </span>
                         <span className="block text-sm font-normal whitespace-nowrap text-ink-2 sm:inline sm:text-base sm:font-bold sm:text-ink">
-                          {bdt(fallback.cost_bdt!)} with the loan
+                          {t("PLAN_WITH_LOAN", { amount: bdt(fallback.cost_bdt!) })}
                         </span>
                       </>
                     )}
@@ -123,25 +125,29 @@ export default function FundingPage() {
                 </dl>
               )}
               <Button size="lg" className="mt-4 w-full sm:w-auto" disabled={busy || !!alreadyProposed} onClick={proposePlan}>
-                {inActions ? "Plan is waiting in Approvals" : waitingStep ? "Waiting for an answer" : "Add this plan to Approvals"}
+                {inActions ? t("PLAN_IN_APPROVALS") : waitingStep ? t("PLAN_WAITING") : t("PLAN_ADD")}
               </Button>
               {inActions && (
                 <Link href="/actions" className="mt-2 inline-flex items-center gap-1 font-semibold text-cash hover:underline sm:ml-3">
-                  Go to Approvals <ArrowRight className="size-4" aria-hidden />
+                  {t("PLAN_GO_APPROVALS")} <ArrowRight className="size-4" aria-hidden />
                 </Link>
               )}
             </Carton>
           </div>
 
-          <div className="lg:col-span-12">
-            <Carton tone="ink" title="All options" aside="Cheapest first" bodyClassName="p-0">
+          <details className="group lg:col-span-12">
+            <summary className="flex h-12 cursor-pointer list-none items-center justify-center gap-1.5 rounded-full border border-rule bg-board font-semibold text-cash hover:bg-cash-tint [&::-webkit-details-marker]:hidden">
+              <span className="group-open:hidden">{t("PLAN_SEE_ALL")}</span>
+              <span className="hidden group-open:inline">{t("PLAN_HIDE_ALL")}</span>
+            </summary>
+            <Carton tone="ink" title={t("PLAN_ALL")} aside={t("PLAN_CHEAPEST")} bodyClassName="p-0" className="mt-4">
               <ul className="divide-y divide-rule lg:grid lg:grid-cols-2 lg:divide-y-0">
                 {plan.options.map((o) => (
                   <li key={o.key} className={`p-4 lg:border-b lg:border-rule ${o.eligible ? "" : "opacity-75"}`}>
                     <div className="flex items-start gap-3">
                       <span
                         className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${o.eligible ? "bg-stock-tint text-stock" : "bg-muted text-ink-2"}`}
-                        aria-label={o.eligible ? "Available" : "Not available"}
+                        aria-label={o.eligible ? t("PLAN_AVAILABLE") : t("PLAN_NOT_AVAILABLE")}
                       >
                         {o.eligible ? <Check className="size-4" aria-hidden /> : <X className="size-4" aria-hidden />}
                       </span>
@@ -149,13 +155,13 @@ export default function FundingPage() {
                         <p className="font-semibold text-ink">{o.label}</p>
                         <p className="text-sm text-ink-2">
                           {o.provider} · {o.speed}
-                          {o.certainty === "uncertain" ? " · not guaranteed" : ""}
+                          {o.certainty === "uncertain" ? ` · ${t("PLAN_NOT_SURE")}` : ""}
                         </p>
                         {!o.eligible && <p className="mt-1 text-sm text-ink">{o.reason}</p>}
                       </div>
                       <div className="text-right">
-                        <p className="num font-bold text-ink">{o.cost_bdt === null ? "—" : o.cost_bdt === 0 ? "Free" : bdt(o.cost_bdt)}</p>
-                        {o.apr_pct !== null && <p className="num text-xs text-ink-2">{pct(o.apr_pct)}% a year</p>}
+                        <p className="num font-bold text-ink">{o.cost_bdt === null ? "—" : o.cost_bdt === 0 ? t("PLAN_FREE") : bdt(o.cost_bdt)}</p>
+                        {o.apr_pct !== null && <p className="num text-xs text-ink-2">{t("PLAN_A_YEAR", { pct: pct(o.apr_pct) })}</p>}
                       </div>
                     </div>
                   </li>
@@ -163,7 +169,7 @@ export default function FundingPage() {
               </ul>
             </Carton>
             {catalogue && <Catalogue c={catalogue} />}
-          </div>
+          </details>
         </div>
       )}
     </div>
@@ -172,11 +178,12 @@ export default function FundingPage() {
 
 /** Sourced Bangladeshi financing products matched to the need (CORE-14). */
 function Catalogue({ c }: { c: CatalogueOut }) {
+  const { t } = useStrings();
   return (
     <Carton
       tone="ink"
-      title="Other loans you could get"
-      aside={`${c.matched} found, ${c.eligible} you qualify for`}
+      title={t("PLAN_OTHER_LOANS")}
+      aside={t("PLAN_FOUND", { n: c.matched, m: c.eligible })}
       className="mt-4"
       bodyClassName="p-0"
     >
@@ -186,24 +193,24 @@ function Catalogue({ c }: { c: CatalogueOut }) {
             <div className="flex items-start gap-3">
               <span
                 className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${o.eligible ? "bg-stock-tint text-stock" : "bg-muted text-ink-2"}`}
-                aria-label={o.eligible ? "You qualify" : "You don't qualify"}
+                aria-label={o.eligible ? t("PLAN_QUALIFY") : t("PLAN_NOT_QUALIFY")}
               >
                 {o.eligible ? <Check className="size-4" aria-hidden /> : <X className="size-4" aria-hidden />}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-ink">{o.label}</p>
                 <p className="text-sm text-ink-2">
-                  {o.provider_type} · {o.speed_days === 0 ? "same day" : `about ${o.speed_days} day${o.speed_days === 1 ? "" : "s"}`}
+                  {o.provider_type} · {o.speed_days === 0 ? t("PLAN_SAME_DAY") : t("PLAN_ABOUT_DAYS", { n: o.speed_days })}
                 </p>
                 {!o.eligible && o.ineligible_reason && <p className="mt-1 text-sm font-semibold text-ink">{o.ineligible_reason}</p>}
-                {o.to_confirm.length > 0 && <p className="mt-1 text-sm text-ink-2">You&apos;ll need: {o.to_confirm.join(", ")}.</p>}
+                {o.to_confirm.length > 0 && <p className="mt-1 text-sm text-ink-2">{t("PLAN_NEED_DOCS", { list: o.to_confirm.join(", ") })}</p>}
                 <a href={o.source} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-cash hover:underline">
-                  Source <ExternalLink className="size-3.5" aria-hidden />
+                  {t("PLAN_SOURCE")} <ExternalLink className="size-3.5" aria-hidden />
                 </a>
               </div>
               <div className="text-right">
                 <p className="num font-bold text-ink">{o.cost_of_gap_bdt == null ? "—" : bdt(o.cost_of_gap_bdt)}</p>
-                {o.apr_pct != null && <p className="num text-xs text-ink-2">{pct(o.apr_pct)}% a year</p>}
+                {o.apr_pct != null && <p className="num text-xs text-ink-2">{t("PLAN_A_YEAR", { pct: pct(o.apr_pct) })}</p>}
               </div>
             </div>
           </li>

@@ -8,6 +8,7 @@ import { Explain } from "@/components/explain";
 import { lenderDecide, useApplications, useLenders, useShelfLifeCredit } from "@/lib/api";
 import { bdt, num, shortDate } from "@/lib/format";
 import type { ShelfLifeCreditOut } from "@/lib/types";
+import { useStrings } from "@/lib/strings";
 
 export default function LenderPage() {
   const { data: lenders } = useLenders();
@@ -154,6 +155,7 @@ function ShelfLifeCard() {
 function ShelfLifeBody({ s }: { s: ShelfLifeCreditOut }) {
   const fewer = s.batches.reduce((n, b) => n + (b.qty_ordered - b.sellable_qty), 0);
   const cut = s.batches.filter((b) => b.unsellable_value > 0);
+  const { t } = useStrings();
   return (
     <>
       <dl className="num grid grid-cols-3 divide-x divide-rule">
@@ -174,19 +176,22 @@ function ShelfLifeBody({ s }: { s: ShelfLifeCreditOut }) {
       <p className="mt-3 text-ink">
         {s.not_financed > 0 ? (
           <>
-            A usual lender would lend {bdt(s.counterfactual_purpose_blind)}. {bdt(s.not_financed)} of this order
-            won&apos;t sell before it expires, so LaMP lends at most {bdt(s.financeable)}
-            {fewer > 0 && <>, and the owner orders {fewer} fewer boxes</>}.
+            {t(fewer > 0 ? "LEND_SENTENCE_FEWER" : "LEND_SENTENCE", {
+              usual: bdt(s.counterfactual_purpose_blind),
+              cut: bdt(s.not_financed),
+              most: bdt(s.financeable),
+              n: fewer,
+            })}
           </>
         ) : (
-          <>{s.reason} LaMP lends only for stock that sells before it expires.</>
+          <>{s.reason} {t("LEND_ONLY")}</>
         )}
       </p>
       {cut.length > 0 && (
         <ul className="mt-2 space-y-1 text-sm text-ink-2">
           {cut.map((b) => (
             <li key={b.product}>
-              {b.product}: {b.sellable_qty} of {b.qty_ordered} boxes sell in time; {bdt(b.unsellable_value)} not lent.
+              {b.product}: {t("LEND_BATCH", { a: b.sellable_qty, b: b.qty_ordered, amount: bdt(b.unsellable_value) })}
             </li>
           ))}
         </ul>

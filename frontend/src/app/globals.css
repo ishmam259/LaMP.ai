@@ -15,8 +15,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-barlow);
-  --font-heading: var(--font-display-face);
+  --font-sans: var(--font-barlow), var(--font-bangla);
+  --font-heading: var(--font-display-face), var(--font-bangla);
 
   --color-shelf: var(--shelf);
   --color-board: var(--board);
@@ -41,8 +41,8 @@
   --color-rail-2: var(--rail-2);
   --color-signal: var(--signal);
   --color-signal-ink: var(--signal-ink);
-  --font-board: var(--font-display-face);
-  --font-display: var(--font-display-face);
+  --font-board: var(--font-display-face), var(--font-bangla);
+  --font-display: var(--font-display-face), var(--font-bangla);
 
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -308,7 +308,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
-    font-family: var(--font-display-face), var(--font-barlow), sans-serif;
+    font-family: var(--font-display-face), var(--font-barlow), var(--font-bangla), sans-serif;
     font-weight: 700;
     font-size: 2.375rem;
     line-height: 1.05;
@@ -317,9 +317,12 @@
   .station-board .sb-head > :first-child {
     white-space: nowrap;
   }
+  :lang(bn) .station-board .sb-head > :first-child {
+    white-space: normal;
+  }
   .station-board .sb-time {
     align-self: flex-start;
-    font-family: var(--font-barlow), system-ui, sans-serif;
+    font-family: var(--font-barlow), var(--font-bangla), system-ui, sans-serif;
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -382,7 +385,12 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 0.125rem 0.75rem;
-    padding: 1.125rem 1.25rem 0;
+    padding: 1rem 1rem 0;
+  }
+  @media (min-width: 640px) {
+    .carton-head {
+      padding: 1.125rem 1.25rem 0;
+    }
   }
   /* The title keeps its line; a long aside drops below it instead of squeezing it. */
   .carton-head > :first-child {
@@ -410,7 +418,7 @@
 
   /* Display face for page titles and the numbers that matter. */
   .display {
-    font-family: var(--font-display-face), var(--font-barlow), sans-serif;
+    font-family: var(--font-display-face), var(--font-barlow), var(--font-bangla), sans-serif;
     letter-spacing: -0.01em;
   }
   .display-accent {
@@ -431,4 +439,11 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Bangla letters are taller than Latin ones and don't use capitals: no forced uppercase or wide tracking. */
+:lang(bn) .uppercase,
+:lang(bn) .stamp {
+  text-transform: none;
+  letter-spacing: 0;
 }

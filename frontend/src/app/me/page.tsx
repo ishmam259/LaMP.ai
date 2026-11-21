@@ -2,20 +2,22 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useStrings } from "@/lib/strings";
 
 /** A customer types the code from their slip to open their card. */
 export default function CustomerHome() {
   const router = useRouter();
   const [code, setCode] = useState("");
+  const { t } = useStrings();
   const open = (c: string) => c.trim() && router.push(`/me/${encodeURIComponent(c.trim().toUpperCase())}`);
 
   return (
     <div>
-      <h1 className="display text-[2rem] leading-tight font-semibold text-ink">
-        Check what you <span className="display-accent">owe</span> your pharmacy
+      <h1 className="display text-[1.75rem] leading-tight font-semibold text-ink sm:text-[2rem]">
+        {t("ME_TITLE_1")} <span className="display-accent">{t("ME_TITLE_2")}</span> {t("ME_TITLE_3")}
       </h1>
       <p className="mt-2 text-ink-2">
-        Enter the code on your slip from the pharmacy.
+        {t("ME_ENTER")}
       </p>
       <form
         className="carton mt-5 p-5"
@@ -25,7 +27,7 @@ export default function CustomerHome() {
         }}
       >
         <label htmlFor="card-code" className="font-semibold text-ink">
-          Card code
+          {t("ME_CODE")}
         </label>
         <div className="mt-2 flex gap-2">
           <input
@@ -39,7 +41,7 @@ export default function CustomerHome() {
             className="num h-11 min-w-0 flex-1 rounded-[var(--radius)] border border-rule bg-board px-3 text-lg tracking-wider text-ink uppercase"
           />
           <button type="submit" className="h-11 rounded-full bg-primary shadow-glow px-4 font-semibold text-primary-foreground">
-            Open
+            {t("ME_OPEN")}
           </button>
         </div>
       </form>

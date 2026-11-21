@@ -34,25 +34,27 @@ import { NotificationBridge } from "@/components/notifications";
 import { BuildathonSticker } from "@/components/sticker";
 import { CustomerShell, isCustomerPath } from "@/components/customer-shell";
 import { Guide, startGuide } from "@/components/guide";
+import { LocaleToggle } from "@/components/locale";
+import { useStrings, type StringKey } from "@/lib/strings";
 
 /** The spots the first-visit guide points at (components/guide.tsx). */
 const GUIDE_SPOT: Record<string, string> = { "/capture": "scan", "/actions": "approvals", "/customers": "customers" };
 
-const OWNER_NAV = [
-  { href: "/", label: "Today", icon: Sun },
-  { href: "/cash", label: "Cash", icon: Wallet },
-  { href: "/capture", label: "Scan", icon: Camera },
-  { href: "/stock", label: "Stock", icon: PackageOpen },
-  { href: "/funding", label: "Plan", icon: HandCoins },
+const OWNER_NAV: { href: string; label: StringKey; icon: typeof Sun }[] = [
+  { href: "/", label: "NAV_TODAY", icon: Sun },
+  { href: "/cash", label: "NAV_CASH", icon: Wallet },
+  { href: "/capture", label: "NAV_SCAN", icon: Camera },
+  { href: "/stock", label: "NAV_STOCK", icon: PackageOpen },
+  { href: "/funding", label: "NAV_PLAN", icon: HandCoins },
 ];
 
-const MORE_NAV = [
-  { href: "/customers", label: "Customers", icon: Users },
-  { href: "/actions", label: "Approvals", icon: Inbox },
-  { href: "/passport", label: "Credit record", icon: BadgeCheck },
-  { href: "/wallet", label: "Wallet", icon: CreditCard },
-  { href: "/rules", label: "Rules", icon: ShieldCheck },
-  { href: "/log", label: "History", icon: ScrollText },
+const MORE_NAV: { href: string; label: StringKey; icon: typeof Sun }[] = [
+  { href: "/customers", label: "NAV_CUSTOMERS", icon: Users },
+  { href: "/actions", label: "NAV_APPROVALS", icon: Inbox },
+  { href: "/passport", label: "NAV_CREDIT", icon: BadgeCheck },
+  { href: "/wallet", label: "NAV_WALLET", icon: CreditCard },
+  { href: "/rules", label: "NAV_RULES", icon: ShieldCheck },
+  { href: "/log", label: "NAV_HISTORY", icon: ScrollText },
 ];
 
 /* The desktop side menu can be narrowed to icons. The choice is remembered in this browser only;
@@ -116,6 +118,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
   const onLog = pathname.startsWith("/log");
   const collapsed = useSyncExternalStore(subscribeRail, railCollapsed, () => false);
   const shop = pharmacy ? `${pharmacy.name}, ${pharmacy.city}` : "";
+  const { t } = useStrings();
 
   return (
     <div
@@ -131,16 +134,16 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         {/* Same height as the top bar, so the two rules meet in one line. */}
         <div className={cn("flex h-16 shrink-0 items-center border-b border-rule", collapsed ? "justify-center" : "justify-between pr-3 pl-5")}>
           {!collapsed && (
-            <Link href="/" className="text-[1.875rem] leading-none" aria-label="LaMP, go to Today">
+            <Link href="/" className="text-[1.875rem] leading-none" aria-label={t("SHELL_GO_TODAY")}>
               <Wordmark onRail />
             </Link>
           )}
           <button
             type="button"
             onClick={() => setRailCollapsed(!collapsed)}
-            aria-label={collapsed ? "Expand the menu" : "Shrink the menu"}
+            aria-label={collapsed ? t("SHELL_RAIL_OPEN") : t("SHELL_RAIL_CLOSE")}
             aria-expanded={!collapsed}
-            title={collapsed ? "Expand the menu" : "Shrink the menu"}
+            title={collapsed ? t("SHELL_RAIL_OPEN") : t("SHELL_RAIL_CLOSE")}
             className="inline-flex size-10 items-center justify-center rounded-xl text-ink-2 hover:bg-muted hover:text-ink"
           >
             {collapsed ? <PanelLeftOpen className="size-5" aria-hidden /> : <PanelLeftClose className="size-5" aria-hidden />}
@@ -159,10 +162,10 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             </span>
           )}
         </div>
-        <nav aria-label="Main" className="flex min-h-0 flex-1 flex-col px-3 pb-3 short:pt-3">
+        <nav aria-label={t("NAV_MAIN")} className="flex min-h-0 flex-1 flex-col px-3 pb-3 short:pt-3">
           <div className="flex flex-col gap-0.5">
             {OWNER_NAV.map((item) => (
-              <RailLink key={item.href} {...item} collapsed={collapsed} active={isActive(pathname, item.href)} />
+              <RailLink key={item.href} {...item} label={t(item.label)} collapsed={collapsed} active={isActive(pathname, item.href)} />
             ))}
           </div>
           <div className="mx-3 my-3 h-px shrink-0 bg-rule short:my-2" aria-hidden />
@@ -171,6 +174,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               <RailLink
                 key={item.href}
                 {...item}
+                label={t(item.label)}
                 collapsed={collapsed}
                 active={isActive(pathname, item.href)}
                 badge={item.href === "/actions" ? pending : 0}
@@ -183,14 +187,14 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={startGuide}
-              title={collapsed ? "Quick tour" : undefined}
+              title={collapsed ? t("NAV_TOUR") : undefined}
               className={cn(
                 "flex h-11 items-center gap-3 rounded-xl text-[0.9375rem] font-semibold text-rail-2 hover:bg-muted hover:text-ink short:h-10",
                 collapsed ? "w-11 justify-center" : "min-w-0 flex-1 px-3"
               )}
             >
               <Compass className="size-5 shrink-0" aria-hidden />
-              <span className={collapsed ? "sr-only" : "truncate"}>Quick tour</span>
+              <span className={collapsed ? "sr-only" : "truncate"}>{t("NAV_TOUR")}</span>
             </button>
           )}
           <ThemeToggle onRail className="shrink-0 rounded-xl short:h-10" />
@@ -198,8 +202,8 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={lock}
-              aria-label="Lock"
-              title="Lock"
+              aria-label={t("SHELL_LOCK")}
+              title={t("SHELL_LOCK")}
               className="flex size-11 shrink-0 items-center justify-center rounded-xl text-rail-2 hover:bg-alert-tint hover:text-alert short:h-10"
             >
               <LockKeyhole className="size-5" aria-hidden />
@@ -212,31 +216,25 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-dvh min-w-0 flex-col">
         <header className="sticky top-0 z-30 border-b border-rule bg-rail/80 text-rail-ink backdrop-blur-md lg:hidden">
           <div className="print-strip" />
+          {/* One row on phones: name, sticker, approvals and Ask. Pause and the screen theme live on Rules and Today. */}
           <div className="flex items-center gap-1 px-4 py-2">
-            <Link href="/" className="text-[1.875rem] leading-none">
+            <Link href="/" className="text-[1.75rem] leading-none" aria-label={t("SHELL_GO_TODAY")}>
               <Wordmark onRail />
             </Link>
-            <BuildathonSticker className="ml-2 hidden h-8 sm:block" />
+            <BuildathonSticker className="ml-2 h-7 sm:h-8" />
             <span className="flex-1" />
-            {!isLender && <PauseToggle onRail />}
-            <ThemeToggle onRail />
-            <Link
-              href="/passport"
-              aria-label="Credit record"
-              aria-current={isActive(pathname, "/passport") ? "page" : undefined}
-              className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-muted hover:text-ink aria-[current=page]:bg-cash-tint aria-[current=page]:text-cash"
-            >
-              <BadgeCheck className="size-5" aria-hidden />
-            </Link>
+            {!isLender && <PauseToggle onRail onlyWhenPaused />}
+            <ThemeToggle onRail className="hidden sm:inline-flex" />
             <Link
               href="/actions"
               data-guide="approvals"
-              aria-label={`Approvals, ${pending} waiting for you`}
-              className="relative inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-muted hover:text-ink"
+              aria-label={t("SHELL_APPROVALS_WAITING", { n: pending })}
+              aria-current={isActive(pathname, "/actions") ? "page" : undefined}
+              className="relative inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-muted hover:text-ink aria-[current=page]:bg-cash-tint aria-[current=page]:text-cash"
             >
               <Inbox className="size-5" aria-hidden />
               {pending > 0 && (
-                <span className="num absolute top-1.5 right-1.5 min-w-5 rounded-full bg-alert-band px-1 text-center text-xs leading-5 font-bold text-white">
+                <span className="num absolute top-1 right-0.5 min-w-5 rounded-full bg-alert-band px-1 text-center text-xs leading-5 font-bold text-white">
                   {pending}
                 </span>
               )}
@@ -246,15 +244,11 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
                 type="button"
                 onClick={() => setChatOpen(true)}
                 data-guide="ask"
-                className="ml-1 inline-flex h-10 items-center gap-1.5 rounded-full bg-primary px-4 font-semibold text-primary-foreground shadow-glow"
+                className="ml-1 inline-flex h-10 items-center gap-1.5 rounded-full bg-primary px-3.5 font-semibold text-primary-foreground shadow-glow"
               >
-                <MessageCircle className="size-5" aria-hidden /> Ask
+                <MessageCircle className="size-5" aria-hidden /> {t("SHELL_ASK")}
               </button>
             )}
-          </div>
-          {/* Phones have no room in the row above, so the sticker gets its own line. */}
-          <div className="flex justify-center pb-2 sm:hidden">
-            <BuildathonSticker className="h-8" />
           </div>
         </header>
 
@@ -262,9 +256,10 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
         <div className="sticky top-0 z-30 hidden h-16 items-center justify-end gap-3 border-b border-rule bg-shelf/75 px-8 backdrop-blur-md lg:flex">
           <BuildathonSticker className="mr-auto h-10" />
           {isLender ? (
-            <span className="text-sm font-semibold text-ink-2">Lender portal</span>
+            <span className="text-sm font-semibold text-ink-2">{t("SHELL_LENDER_PORTAL")}</span>
           ) : (
             <>
+            <LocaleToggle />
             <PauseToggle />
             <button
               type="button"
@@ -272,20 +267,20 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
               data-guide="ask"
               className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 font-semibold text-primary-foreground shadow-glow hover:bg-[color-mix(in_srgb,var(--primary),black_12%)]"
             >
-              <MessageCircle className="size-5" aria-hidden /> Ask LaMP
+              <MessageCircle className="size-5" aria-hidden /> {t("SHELL_ASK_LAMP")}
             </button>
             </>
           )}
         </div>
 
-        <main className="mx-auto w-full max-w-[1080px] flex-1 px-4 pt-5 pb-32 lg:px-8 lg:pt-8 lg:pb-12">
+        <main className="mx-auto w-full max-w-[1080px] flex-1 px-4 pt-4 pb-28 lg:px-8 lg:pt-8 lg:pb-12">
           {!isLender && <PausedBanner />}
           {children}
         </main>
 
         {/* Phone tab bar */}
         <nav
-          aria-label="Main"
+          aria-label={t("NAV_MAIN")}
           className="fixed bottom-[calc(12px+env(safe-area-inset-bottom))] left-1/2 z-30 grid w-[calc(100%-32px)] max-w-[420px] -translate-x-1/2 grid-cols-5 rounded-2xl border border-rule bg-board/85 p-1 shadow-lift backdrop-blur-md lg:hidden"
         >
           {OWNER_NAV.map(({ href, label, icon: Icon }) => {
@@ -302,7 +297,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
                 )}
               >
                 <Icon className="size-[22px]" aria-hidden />
-                {label}
+                {t(label)}
               </Link>
             );
           })}
@@ -319,7 +314,7 @@ function OwnerShell({ children }: { children: React.ReactNode }) {
       <Sheet open={chatOpen} onOpenChange={setChatOpen}>
         <SheetContent side="right" className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-md">
           <SheetHeader className="border-b border-rule">
-            <SheetTitle className="text-lg">Ask LaMP</SheetTitle>
+            <SheetTitle className="text-lg">{t("SHELL_ASK_LAMP")}</SheetTitle>
           </SheetHeader>
           <ChatPanel />
         </SheetContent>

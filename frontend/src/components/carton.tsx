@@ -1,5 +1,8 @@
+"use client";
+
 import { CircleAlert, CircleCheck, Hand } from "lucide-react";
 import { cn } from "cn";
+import { useStrings } from "@/lib/strings";
 
 export type Tone = "alert" | "cash" | "stock" | "warn" | "ink";
 
@@ -38,7 +41,7 @@ export function Carton({
         </H>
         {aside && <div className="text-sm text-ink-2">{aside}</div>}
       </div>
-      <div className={cn("p-5 pt-3", bodyClassName)}>{children}</div>
+      <div className={cn("p-4 pt-3 sm:p-5 sm:pt-3", bodyClassName)}>{children}</div>
     </Tag>
   );
 }
@@ -60,8 +63,8 @@ export function Stamp({
 
 export function PageTitle({ title, sub }: { title: string; sub?: React.ReactNode }) {
   return (
-    <div className="mb-5 lg:mb-7">
-      <h1 className="display text-[2rem] leading-tight font-semibold text-ink lg:text-[2.5rem]">{title}</h1>
+    <div className="mb-4 lg:mb-7">
+      <h1 className="display text-[1.75rem] leading-tight sm:text-[2rem] font-semibold text-ink lg:text-[2.5rem]">{title}</h1>
       {sub && <p className="mt-1 text-ink-2">{sub}</p>}
     </div>
   );
@@ -72,9 +75,10 @@ export function Skel({ className }: { className?: string }) {
 }
 
 export function LoadError({ what }: { what: string }) {
+  const { t } = useStrings();
   return (
     <p role="alert" className="rounded-[var(--radius)] border border-alert/40 bg-alert-tint p-4 font-semibold text-alert">
-      Couldn&apos;t load {what}. Check your connection and reload the page.
+      {t("LOAD_ERROR", { what })}
     </p>
   );
 }

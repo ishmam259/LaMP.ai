@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { proposeAction, useActions, useExpiry, useOrders, useTrim } from "@/lib/api";
 import { bdt, num, stampDate } from "@/lib/format";
+import { useStrings } from "@/lib/strings";
 
 export default function StockPage() {
   const { data: expiry, error } = useExpiry();
@@ -14,6 +15,7 @@ export default function StockPage() {
   const { data: trim } = useTrim(order?.id);
   const { data: actions } = useActions();
   const [busy, setBusy] = useState<string | null>(null);
+  const { t } = useStrings();
 
   const claimPending = actions?.some((a) => a.kind === "return_claim" && (a.status === "proposed" || a.status === "executed"));
   const trimDone = actions?.some((a) => a.kind === "trim_order" && a.status === "executed");
@@ -23,9 +25,9 @@ export default function StockPage() {
     setBusy(kind);
     try {
       await proposeAction(kind, payload);
-      toast.success("Added to Approvals.");
+      toast.success(t("ADDED_TOAST"));
     } catch {
-      toast.error("Couldn't add it. Try again.");
+      toast.error(t("ADD_ERROR"));
     } finally {
       setBusy(null);
     }
@@ -33,41 +35,39 @@ export default function StockPage() {
 
   return (
     <div>
-      <PageTitle title="Stock" />
+      <PageTitle title={t("NAV_STOCK")} />
       <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
         <div className="lg:col-span-7">
-          <Carton tone="warn" title="Expiring in 60 days" aside={expiry ? `${expiry.batches.length} batches` : undefined}>
+          <Carton tone="warn" title={t("STOCK_EXPIRING")} aside={expiry ? t("STOCK_BATCHES", { n: expiry.batches.length }) : undefined}>
             {error && <LoadError what="expiring stock" />}
             {!expiry && !error && <Skel className="h-64" />}
             {expiry && (
               <>
                 <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
                   <p>
-                    <span className="num display text-[2rem] leading-tight font-bold text-ink">{bdt(expiry.at_risk_value)}</span>
-                    <span className="ml-2 text-ink-2">at risk</span>
+                    <span className="num display text-[1.75rem] leading-tight font-bold text-ink sm:text-[2rem]">{bdt(expiry.at_risk_value)}</span>
+                    <span className="ml-2 text-ink-2">{t("STOCK_AT_RISK")}</span>
                   </p>
                   <p>
-                    <span className="num display text-[1.625rem] leading-tight font-bold text-stock">{bdt(expiry.return_eligible_value)}</span>
-                    <span className="ml-2 text-ink-2">can go back</span>
+                    <span className="num display text-[1.5rem] leading-tight font-bold text-stock sm:text-[1.625rem]">{bdt(expiry.return_eligible_value)}</span>
+                    <span className="ml-2 text-ink-2">{t("STOCK_CAN_GO_BACK")}</span>
                   </p>
                 </div>
                 <ul className="mt-4 divide-y divide-rule">
                   {expiry.batches.map((b) => (
-                    <li key={b.batch_no} className="flex items-start gap-3 py-3">
+                    <li key={b.batch_no} className="flex items-start gap-3 py-2.5">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-ink">{b.product}</p>
-                        <p className="text-sm text-ink-2">
-                          {b.supplier} · {b.qty} boxes
-                        </p>
+                        <p className="text-sm text-ink-2">{t("STOCK_BOXES", { supplier: b.supplier, n: b.qty })}</p>
                         <div className="mt-1.5 flex flex-wrap gap-1.5">
-                          <Stamp tone={b.days_left <= 14 ? "alert" : "warn"}>Exp {stampDate(b.expiry_date)}</Stamp>
-                          <Stamp>Batch {b.batch_no}</Stamp>
+                          <Stamp tone={b.days_left <= 14 ? "alert" : "warn"}>{t("STOCK_EXP", { date: stampDate(b.expiry_date) })}</Stamp>
+                          <Stamp className="hidden sm:inline-flex">{t("STOCK_BATCH", { no: b.batch_no })}</Stamp>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="num text-lg font-bold text-ink">{num(b.cost_value)}</p>
                         <p className={`text-sm font-semibold ${b.return_eligible ? "text-stock" : "text-ink-2"}`}>
-                          {b.return_eligible ? "Can return" : "Sell first"}
+                          {b.return_eligible ? t("STOCK_CAN_RETURN") : t("STOCK_SELL_FIRST")}
                         </p>
                       </div>
                     </li>
@@ -84,7 +84,7 @@ export default function StockPage() {
                     })
                   }
                 >
-                  {claimPending ? "Return is waiting in Approvals" : `Return stock worth ${bdt(expiry.return_eligible_value)}`}
+                  {claimPending ? t("STOCK_RETURN_WAITING") : t("STOCK_RETURN", { amount: bdt(expiry.return_eligible_value) })}
                 </Button>
               </>
             )}
@@ -94,8 +94,8 @@ export default function StockPage() {
         <div className="lg:col-span-5">
           <Carton
             tone="ink"
-            title={order ? `${order.supplier} order` : "Next order"}
-            aside={order ? <>Due {stampDate(order.due_date)}</> : undefined}
+            title={order ? t("STOCK_ORDER", { supplier: order.supplier }) : t("STOCK_NEXT_ORDER")}
+            aside={order ? t("CASH_DUE", { date: stampDate(order.due_date) }) : undefined}
           >
             {!trim || !order ? (
               <Skel className="h-64" />
@@ -114,8 +114,8 @@ export default function StockPage() {
                         </div>
                         {cut && (
                           <p className="mt-1 text-sm text-ink">
-                            <span className="font-bold">{l.sellable_qty}</span> of {l.qty} sell before expiry ·{" "}
-                            <span className="font-bold text-warn">{bdt(l.at_risk_value)} at risk</span>
+                            {t("STOCK_SELL_BEFORE", { a: l.sellable_qty, b: l.qty })} ·{" "}
+                            <span className="font-bold text-warn">{t("STOCK_AT_RISK_AMT", { amount: bdt(l.at_risk_value) })}</span>
                           </p>
                         )}
                       </li>
@@ -123,7 +123,7 @@ export default function StockPage() {
                   })}
                 </ul>
                 <div className="num mt-2 flex justify-between border-t-2 border-ink pt-2 font-bold text-ink">
-                  <span>Order total</span>
+                  <span>{t("STOCK_ORDER_TOTAL")}</span>
                   <span>
                     {trimDone ? (
                       bdt(trim.suggested_total)
@@ -137,7 +137,7 @@ export default function StockPage() {
                 </div>
                 {trimDone ? (
                   <div className="mt-3">
-                    <Stamp approved>{trim.saving > 0 ? `Ordered less · saves ${bdt(trim.saving)}` : "Ordered less"}</Stamp>
+                    <Stamp approved>{trim.saving > 0 ? t("STOCK_ORDERED_SAVES", { amount: bdt(trim.saving) }) : t("STOCK_ORDERED_LESS")}</Stamp>
                   </div>
                 ) : (
                   <Button
@@ -153,7 +153,7 @@ export default function StockPage() {
                       })
                     }
                   >
-                    {trimPending ? "Smaller order is waiting in Approvals" : `Order less, save ${bdt(trim.saving)}`}
+                    {trimPending ? t("STOCK_TRIM_WAITING") : t("STOCK_ORDER_LESS", { amount: bdt(trim.saving) })}
                   </Button>
                 )}
               </>

@@ -1,13 +1,15 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Camera, CircleAlert, CircleCheck, ShieldAlert } from "lucide-react";
+import { Camera, CircleAlert, CircleCheck, FileUp, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Carton, PageTitle } from "@/components/carton";
+import { CameraView } from "@/components/camera";
 import { ApiError, confirmCapture, errorDetail, uploadCapture } from "@/lib/api";
 import { dayDate, num, stampDate } from "@/lib/format";
+import { useStrings } from "@/lib/strings";
 import type { CaptureOut, ExtractionLine, ExtractionResult } from "@/lib/types";
 
 type SalesDay = NonNullable<ExtractionResult["sales_page"]>["days"][number];
@@ -19,7 +21,15 @@ export default function CapturePage() {
   const [capture, setCapture] = useState<CaptureOut | null>(null);
   const [reading, setReading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [camera, setCamera] = useState(false);
+  const { t } = useStrings();
   const fileRef = useRef<HTMLInputElement>(null);
+  const shotRef = useRef<HTMLInputElement>(null);
+  // No camera in the browser: use the phone's own camera app instead.
+  const noCamera = useCallback(() => {
+    setCamera(false);
+    shotRef.current?.click();
+  }, []);
 
   async function onFile(file: File | undefined) {
     if (!file) return;
@@ -29,25 +39,36 @@ export default function CapturePage() {
       setCapture(await uploadCapture(kind, file));
     } catch (e) {
       const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
-      const fallback = isPdf ? "LaMP couldn't read that PDF. Try a photo of the page instead." : "LaMP couldn't read that photo. Try again in better light.";
+      const fallback = isPdf ? t("SCAN_PDF_ERROR") : t("SCAN_PHOTO_ERROR");
       toast.error(e instanceof ApiError && (e.status === 503 || e.status === 400) ? errorDetail(e, fallback) : fallback);
     } finally {
       setReading(false);
       if (fileRef.current) fileRef.current.value = "";
+      if (shotRef.current) shotRef.current.value = "";
     }
   }
 
   return (
     <div>
-      <PageTitle title="Scan" />
+      <PageTitle title={t("NAV_SCAN")} />
+      {camera && (
+        <CameraView
+          onPhoto={(file) => {
+            setCamera(false);
+            onFile(file);
+          }}
+          onClose={() => setCamera(false)}
+          onUnavailable={noCamera}
+        />
+      )}
 
       {!capture && (
-        <Carton tone="ink" title="What are you scanning?">
+        <Carton tone="ink" title={t("SCAN_WHAT")}>
           <div role="radiogroup" aria-label="Document type" className="grid grid-cols-2 gap-2">
             {(
               [
-                ["invoice", "Supplier invoice"],
-                ["sales_page", "Sales book page"],
+                ["invoice", t("SCAN_INVOICE")],
+                ["sales_page", t("SCAN_SALES")],
               ] as const
             ).map(([k, label]) => (
               <button
@@ -73,9 +94,23 @@ export default function CapturePage() {
             className="sr-only"
             onChange={(e) => onFile(e.target.files?.[0])}
           />
-          <Button size="lg" className="mt-4 w-full" disabled={reading} onClick={() => fileRef.current?.click()}>
+          <input
+            ref={shotRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            tabIndex={-1}
+            aria-hidden
+            className="sr-only"
+            onChange={(e) => onFile(e.target.files?.[0])}
+          />
+          <Button size="lg" className="mt-4 w-full" disabled={reading} onClick={() => setCamera(true)}>
             <Camera className="size-5" aria-hidden />
-            {reading ? "Reading…" : "Take a photo or choose a PDF"}
+            {reading ? t("SCAN_READING") : t("SCAN_TAKE")}
+          </Button>
+          <Button size="lg" variant="outline" className="mt-2 w-full" disabled={reading} onClick={() => fileRef.current?.click()}>
+            <FileUp className="size-5" aria-hidden />
+            {t("SCAN_CHOOSE")}
           </Button>
         </Carton>
       )}
@@ -90,9 +125,9 @@ export default function CapturePage() {
             try {
               await confirmCapture(capture.id, ex);
               setSaved(true);
-              toast.success("Saved to your accounts.");
+              toast.success(t("SCAN_SAVED_TOAST"));
             } catch {
-              toast.error("Couldn't save it. Check the highlighted fields and try again.");
+              toast.error(t("SCAN_SAVE_ERROR"));
             }
           }}
           onAnother={() => {
@@ -112,9 +147,9 @@ export default function CapturePage() {
             try {
               await confirmCapture(capture.id, ex);
               setSaved(true);
-              toast.success("Saved to your accounts.");
+              toast.success(t("SCAN_SAVED_TOAST"));
             } catch {
-              toast.error("Couldn't save it. Check the highlighted fields and try again.");
+              toast.error(t("SCAN_SAVE_ERROR"));
             }
           }}
           onAnother={() => {
@@ -129,14 +164,15 @@ export default function CapturePage() {
 
 function SuspiciousBanner({ capture }: { capture: CaptureOut }) {
   const suspicious = capture.extraction.suspicious_text;
+  const { t } = useStrings();
   if (suspicious.length === 0) return null;
   return (
     <div role="alert" className="flex gap-3 rounded-2xl border border-alert/40 bg-alert-tint p-4 text-ink">
       <ShieldAlert className="mt-0.5 size-5 shrink-0 text-alert" aria-hidden />
       <div>
-        <p className="font-semibold text-alert">This page had hidden instructions written in it. LaMP ignored them.</p>
+        <p className="font-semibold text-alert">{t("SCAN_HIDDEN")}</p>
         <p className="mt-1 text-sm">
-          Found: <q>{suspicious[0]}</q>
+          {t("SCAN_FOUND")} <q>{suspicious[0]}</q>
         </p>
       </div>
     </div>
@@ -174,6 +210,7 @@ function Review({
 }) {
   const inv = capture.extraction.invoice!;
   const [lines, setLines] = useState(inv.lines);
+  const { t } = useStrings();
   const conf = capture.extraction.field_confidence;
   const low = (path: string) => (conf[path] ?? 1) < 0.6;
   const linesTotal = lines.reduce((s, l) => s + l.qty * l.unit_cost, 0);
@@ -188,19 +225,17 @@ function Review({
     <div className="space-y-4">
       <SuspiciousBanner capture={capture} />
 
-      <Carton tone={saved ? "stock" : "warn"} title={saved ? "Saved" : "Check what LaMP read"} aside={`${inv.supplier_name} · ${inv.invoice_no}`}>
+      <Carton tone={saved ? "stock" : "warn"} title={saved ? t("SCAN_SAVED") : t("SCAN_CHECK")} aside={`${inv.supplier_name} · ${inv.invoice_no}`}>
         <FailedChecks capture={capture} />
         <ul className="mt-3 divide-y divide-rule">
           {lines.map((l, i) => (
-            <li key={l.batch_no} className="py-3">
+            <li key={l.batch_no} className="py-2.5">
               <p className="font-semibold text-ink">{l.product}</p>
-              <p className="text-sm text-ink-2">
-                Batch {l.batch_no} · expires {stampDate(l.expiry_date)}
-              </p>
+              <p className="text-sm text-ink-2">{t("SCAN_EXPIRES", { date: stampDate(l.expiry_date) })}</p>
               <div className="mt-2 grid grid-cols-3 items-end gap-2">
-                <NumberField label="Boxes" value={l.qty} unsure={low(`invoice.lines[${i}].qty`)} disabled={saved} onChange={(v) => setLine(i, "qty", v)} />
+                <NumberField label={t("SCAN_BOXES")} value={l.qty} unsure={low(`invoice.lines[${i}].qty`)} disabled={saved} onChange={(v) => setLine(i, "qty", v)} />
                 <NumberField
-                  label="Price per box"
+                  label={t("SCAN_PRICE")}
                   value={l.unit_cost}
                   unsure={low(`invoice.lines[${i}].unit_cost`)}
                   disabled={saved}
@@ -219,13 +254,13 @@ function Review({
         >
           {matches ? <CircleCheck className="size-5 shrink-0 text-stock" aria-hidden /> : <CircleAlert className="size-5 shrink-0 text-warn" aria-hidden />}
           <p>
-            Total <span className="num font-bold">BDT {num(linesTotal)}</span>
+            {t("SCAN_TOTAL")} <span className="num font-bold">BDT {num(linesTotal)}</span>
             {matches ? (
-              " · matches the invoice"
+              ` · ${t("SCAN_MATCHES")}`
             ) : (
               <>
                 {" "}
-                · invoice says <span className="num font-bold">BDT {num(inv.total)}</span>
+                · {t("SCAN_INVOICE_SAYS")} <span className="num font-bold">BDT {num(inv.total)}</span>
               </>
             )}
           </p>
@@ -233,15 +268,15 @@ function Review({
         {!saved ? (
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Button size="lg" disabled={!matches} onClick={() => onConfirm(lines)}>
-              Save to accounts
+              {t("SCAN_SAVE")}
             </Button>
             <Button size="lg" variant="ghost" onClick={onAnother}>
-              Scan again
+              {t("SCAN_AGAIN")}
             </Button>
           </div>
         ) : (
           <Button size="lg" variant="outline" className="mt-4" onClick={onAnother}>
-            Scan another
+            {t("SCAN_ANOTHER")}
           </Button>
         )}
       </Carton>
@@ -250,10 +285,10 @@ function Review({
 }
 
 const SALES_FIELDS = [
-  ["cash_sales", "Cash sales"],
-  ["credit_sales", "Credit sales"],
-  ["dues_collected", "Dues collected"],
-  ["expenses", "Expenses"],
+  ["cash_sales", "SCAN_CASH_SALES"],
+  ["credit_sales", "SCAN_CREDIT_SALES"],
+  ["dues_collected", "SCAN_DUES"],
+  ["expenses", "SCAN_EXPENSES"],
 ] as const;
 
 function SalesReview({
@@ -268,6 +303,7 @@ function SalesReview({
   onAnother: () => void;
 }) {
   const [days, setDays] = useState(capture.extraction.sales_page!.days);
+  const { t } = useStrings();
   const conf = capture.extraction.field_confidence;
   const low = (path: string) => (conf[path] ?? 1) < 0.6;
   const total = days.reduce((s, d) => s + d.cash_sales + d.credit_sales, 0);
@@ -280,7 +316,7 @@ function SalesReview({
   return (
     <div className="space-y-4">
       <SuspiciousBanner capture={capture} />
-      <Carton tone={saved ? "stock" : "warn"} title={saved ? "Saved" : "Check what LaMP read"} aside={`Sales book · ${days.length} days`}>
+      <Carton tone={saved ? "stock" : "warn"} title={saved ? t("SCAN_SAVED") : t("SCAN_CHECK")} aside={t("SCAN_SALES_DAYS", { n: days.length })}>
         <FailedChecks capture={capture} />
         <ul className="mt-3 divide-y divide-rule">
           {days.map((d, i) => (
@@ -290,7 +326,7 @@ function SalesReview({
                 {SALES_FIELDS.map(([field, label]) => (
                   <NumberField
                     key={field}
-                    label={label}
+                    label={t(label)}
                     value={d[field]}
                     unsure={low(`sales_page.days[${i}].${field}`)}
                     disabled={saved}
@@ -302,20 +338,20 @@ function SalesReview({
           ))}
         </ul>
         <p className="mt-2 rounded-[var(--radius)] bg-board p-3 text-sm text-ink">
-          Total sales <span className="num font-bold">BDT {num(total)}</span>
+          {t("SCAN_TOTAL_SALES")} <span className="num font-bold">BDT {num(total)}</span>
         </p>
         {!saved ? (
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Button size="lg" onClick={() => onConfirm(days)}>
-              Save to accounts
+              {t("SCAN_SAVE")}
             </Button>
             <Button size="lg" variant="ghost" onClick={onAnother}>
-              Scan again
+              {t("SCAN_AGAIN")}
             </Button>
           </div>
         ) : (
           <Button size="lg" variant="outline" className="mt-4" onClick={onAnother}>
-            Scan another
+            {t("SCAN_ANOTHER")}
           </Button>
         )}
       </Carton>
@@ -336,10 +372,11 @@ function NumberField({
   disabled: boolean;
   onChange: (v: string) => void;
 }) {
+  const { t } = useStrings();
   return (
     <label className="block text-xs font-semibold text-ink-2">
       {label}
-      {unsure && <span className="ml-1 text-warn">· check</span>}
+      {unsure && <span className="ml-1 text-warn">· {t("SCAN_CHECK_FIELD")}</span>}
       <input
         inputMode="decimal"
         value={String(value)}

@@ -6,13 +6,13 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { ArrowUp, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 import { PID } from "@/lib/api";
+import { currentLocale, useStrings } from "@/lib/strings";
 
-const SUGGESTIONS = [
-  "How did we do this month?",
-  "Can I pay Supplier A's order next week?",
-  "What is expiring?",
-  "Why did the bank offer 75%?",
-];
+// The demo questions; their answers are recorded in eval/replay/chat (scripts/record_demo_chats.py).
+const SUGGESTIONS = {
+  en: ["How did we do this month?", "Can I pay Supplier A's order next week?", "What is expiring?", "Why did the bank offer 75%?"],
+  bn: ["এই মাস কেমন গেল?", "আগামী সপ্তাহে কি Supplier A-এর অর্ডারের টাকা দিতে পারব?", "কোন ওষুধের মেয়াদ শেষ হচ্ছে?", "ব্যাংক কেন 75% দিতে চাইল?"],
+};
 
 type Trace = { traced: number; total: number; blocked: boolean };
 
@@ -25,9 +25,10 @@ export function ChatPanel() {
 
 function LiveChat() {
   const { messages, sendMessage, status, error } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/v1/chat", body: { pharmacy_id: PID } }),
+    transport: new DefaultChatTransport({ api: "/api/v1/chat", body: () => ({ pharmacy_id: PID, lang: currentLocale() }) }),
   });
   const busy = status === "submitted" || status === "streaming";
+  const { t: tr } = useStrings();
   const turns: Turn[] = messages.map((m: UIMessage) => ({
     id: m.id,
     role: m.role === "user" ? "user" : "assistant",
@@ -41,7 +42,7 @@ function LiveChat() {
     <ChatFrame
       turns={turns}
       busy={busy}
-      error={error ? "LaMP couldn't answer just now. Try again in a moment." : undefined}
+      error={error ? tr("CHAT_ERROR") : undefined}
       onSend={(text) => sendMessage({ text })}
     />
   );
@@ -61,6 +62,7 @@ function ChatFrame({
   onSend: (text: string) => void;
 }) {
   const [draft, setDraft] = useState("");
+  const { t: tr, locale } = useStrings();
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -86,6 +88,7 @@ function ChatFrame({
         {turns.map((t) => (
           <div key={t.id} className={cn("flex flex-col gap-1.5", t.role === "user" ? "items-end" : "items-start")}>
             <div
+              translate="no"
               className={cn(
                 "max-w-[92%] rounded-[var(--radius)] px-3.5 py-2.5 whitespace-pre-line",
                 t.role === "user" ? "bg-primary text-primary-foreground" : "border border-rule bg-board text-ink"
@@ -100,13 +103,13 @@ function ChatFrame({
             )}
           </div>
         ))}
-        {busy && <p className="text-sm font-semibold text-ink-2">LaMP is checking your figures…</p>}
+        {busy && <p className="text-sm font-semibold text-ink-2">{tr("CHAT_BUSY")}</p>}
         {error && <p className="text-sm font-semibold text-alert">{error}</p>}
         <div ref={endRef} />
       </div>
       <div className="border-t border-rule p-3">
         <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
-          {SUGGESTIONS.map((s) => (
+          {SUGGESTIONS[locale].map((s) => (
             <button
               key={s}
               type="button"
@@ -132,13 +135,13 @@ function ChatFrame({
             id="chat-input"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Ask about cash, stock or loans"
+            placeholder={tr("CHAT_PLACEHOLDER")}
             className="h-11 min-w-0 flex-1 rounded-[var(--radius)] border border-input bg-board px-3 text-base placeholder:text-ink-2"
           />
           <button
             type="submit"
             disabled={busy || !draft.trim()}
-            aria-label="Send"
+            aria-label={tr("CHAT_SEND")}
             className="inline-flex size-11 items-center justify-center rounded-full bg-primary shadow-glow text-primary-foreground disabled:opacity-50"
           >
             <ArrowUp className="size-5" aria-hidden />

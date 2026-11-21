@@ -9,9 +9,12 @@ import { Carton, Skel, Stamp } from "@/components/carton";
 import { ApiError, errorDetail, setPlan, useCard } from "@/lib/api";
 import { bdt, dayDate, shortDate } from "@/lib/format";
 import type { PatientCard, PlanParts } from "@/lib/types";
+import { useStrings } from "@/lib/strings";
 
-function optionLabel(parts: PlanParts, partAmount: number, total: number) {
-  return parts === 1 ? `All at once: ${bdt(total)}` : `${parts} weekly parts of ${bdt(partAmount)}`;
+function useOptionLabel() {
+  const { t } = useStrings();
+  return (parts: PlanParts, partAmount: number, total: number) =>
+    parts === 1 ? t("ME_ALL", { amount: bdt(total) }) : t("ME_PARTS", { n: parts, amount: bdt(partAmount) });
 }
 
 /** The customer's own card: what they owe, and a payment plan they choose. */
@@ -19,17 +22,18 @@ export default function CustomerCard() {
   const { code } = useParams<{ code: string }>();
   const { data: card, error } = useCard(decodeURIComponent(code));
   const [editing, setEditing] = useState(false);
+  const { t } = useStrings();
 
   if (error) {
     const missing = error instanceof ApiError && error.status === 404;
     return (
       <div className="carton p-5">
-        <h1 className="text-xl font-bold text-ink">{missing ? "We couldn't find that card" : "Couldn't load your card"}</h1>
+        <h1 className="text-xl font-bold text-ink">{missing ? t("ME_NOT_FOUND") : t("ME_LOAD_ERROR")}</h1>
         <p className="mt-2 text-ink-2">
-          {missing ? "Check the code on your slip from the pharmacy and try again." : "Check your connection and try again."}
+          {missing ? t("ME_CHECK_CODE") : t("ME_CHECK_CONN")}
         </p>
         <Link href="/me" className="mt-3 inline-block font-semibold text-cash underline underline-offset-2">
-          Enter a code
+          {t("ME_ENTER_CODE")}
         </Link>
       </div>
     );
@@ -43,16 +47,14 @@ export default function CustomerCard() {
           {card.pharmacy_name}, {card.city} · {card.label}
         </p>
         <h1 id="owe" className="mt-1 text-ink">
-          <span className="block text-lg font-semibold">You owe</span>
+          <span className="block text-lg font-semibold">{t("ME_YOU_OWE")}</span>
           <span className="num display block text-[3.25rem] leading-tight font-bold">{bdt(card.amount)}</span>
         </h1>
-        <p className="mt-1 text-ink-2">
-          Since {shortDate(card.since)}, {card.days_outstanding} days ago
-        </p>
+        <p className="mt-1 text-ink-2">{t("ME_SINCE", { date: shortDate(card.since), n: card.days_outstanding })}</p>
       </section>
 
       {card.plan && !editing ? (
-        <Carton tone="stock" title="Your plan" aside={<Stamp tone="stock">Promised</Stamp>}>
+        <Carton tone="stock" title={t("ME_YOUR_PLAN")} aside={<Stamp tone="stock">{t("ME_PROMISED")}</Stamp>}>
           <ol className="divide-y divide-rule">
             {card.plan.schedule.map((p) => (
               <li key={p.n} className="flex items-center justify-between py-2">
@@ -62,7 +64,7 @@ export default function CustomerCard() {
             ))}
           </ol>
           <button type="button" onClick={() => setEditing(true)} className="mt-3 font-semibold text-cash underline underline-offset-2">
-            Change my plan
+            {t("ME_CHANGE")}
           </button>
         </Carton>
       ) : (
@@ -76,22 +78,24 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
   const [parts, setParts] = useState<PlanParts>(card.plan?.parts ?? 4);
   const [firstOn, setFirstOn] = useState(card.plan?.first_on ?? card.as_of);
   const [busy, setBusy] = useState(false);
+  const { t } = useStrings();
+  const optionLabel = useOptionLabel();
 
   async function submit() {
     setBusy(true);
     try {
       await setPlan(code, parts, firstOn);
-      toast.success("Plan saved.");
+      toast.success(t("ME_SAVED"));
       onDone();
     } catch (e) {
-      toast.error(errorDetail(e, "Couldn't save your plan. Try again."));
+      toast.error(errorDetail(e, t("ME_SAVE_ERROR")));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <Carton tone="warn" title="Pay it back your way">
+    <Carton tone="warn" title={t("ME_YOUR_WAY")}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -99,7 +103,7 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
         }}
       >
         <fieldset>
-          <legend className="text-ink">How do you want to pay?</legend>
+          <legend className="text-ink">{t("ME_HOW")}</legend>
           <div className="mt-2 space-y-2">
             {card.options.map((o) => (
               <label
@@ -120,7 +124,7 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
           </div>
         </fieldset>
         <label htmlFor="first-on" className="mt-4 block text-ink">
-          First payment on
+          {t("ME_FIRST")}
         </label>
         <input
           id="first-on"
@@ -132,14 +136,14 @@ function PlanPicker({ card, code, onDone }: { card: PatientCard; code: string; o
           className="num mt-1 h-11 w-full rounded-[var(--radius)] border border-rule bg-board px-3 text-ink"
         />
         <p className="mt-1 text-xs text-ink-2">
-          Any day from {shortDate(card.as_of)} to {shortDate(card.latest_first_on)}.
+          {t("ME_ANY_DAY", { a: shortDate(card.as_of), b: shortDate(card.latest_first_on) })}
         </p>
         <button
           type="submit"
           disabled={busy}
           className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary shadow-glow px-4 font-semibold text-primary-foreground disabled:opacity-60"
         >
-          <CalendarCheck className="size-5" aria-hidden /> {busy ? "Saving…" : "Promise this plan"}
+          <CalendarCheck className="size-5" aria-hidden /> {busy ? t("SAVING") : t("ME_PROMISE")}
         </button>
       </form>
     </Carton>

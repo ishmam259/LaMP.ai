@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeToggle } from "@/components/theme";
 import { BuildathonSticker } from "@/components/sticker";
+import { useStrings } from "@/lib/strings";
+import { LocaleToggle } from "@/components/locale";
 
 /** Customer pages (/me, /me/<code>): the patient's own view, outside the owner's app. */
 export function isCustomerPath(pathname: string) {
@@ -11,6 +13,7 @@ export function isCustomerPath(pathname: string) {
 }
 
 export function CustomerShell({ children }: { children: React.ReactNode }) {
+  const { t } = useStrings();
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-30 border-b border-rule bg-rail/80 text-rail-ink backdrop-blur-md">
@@ -21,14 +24,15 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
           </Link>
           <BuildathonSticker className="ml-1 h-8" />
           <span className="flex-1" />
+          <LocaleToggle />
           <ThemeToggle onRail />
         </div>
       </header>
       <main className="mx-auto w-full max-w-xl flex-1 px-4 pt-6 pb-12">{children}</main>
       <footer className="mx-auto w-full max-w-xl px-4 pb-6 text-xs text-ink-2">
-        Run a pharmacy?{" "}
+        {t("ME_RUN_PHARMACY")}{" "}
         <Link href="/" className="font-semibold text-cash underline underline-offset-2">
-          Open the owner app
+          {t("ME_OWNER_APP")}
         </Link>
         .
       </footer>

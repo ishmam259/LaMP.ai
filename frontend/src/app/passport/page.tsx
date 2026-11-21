@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Carton, LoadError, PageTitle, Skel, Stamp } from "@/components/carton";
 import { grantConsent, useConsents, useLenders, usePassport, withdrawConsent } from "@/lib/api";
 import { num, shortDate } from "@/lib/format";
+import { useStrings } from "@/lib/strings";
 
 const SUMMARY = ["passport.summary"];
 const FULL = ["passport.summary", "passport.evidence"];
@@ -17,20 +18,21 @@ export default function PassportPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [withEvidence, setWithEvidence] = useState(true);
   const scopes = withEvidence ? FULL : SUMMARY;
+  const { t } = useStrings();
 
   async function toggle(lenderId: string, on: boolean) {
     setBusy(lenderId);
     try {
       if (on) {
         await grantConsent(lenderId, scopes);
-        toast.success("Shared.");
+        toast.success(t("CREDIT_SHARED"));
       } else {
         const c = consents?.find((x) => x.lender_id === lenderId);
         if (c) await withdrawConsent(c.id);
-        toast("Stopped sharing.");
+        toast(t("CREDIT_STOPPED"));
       }
     } catch {
-      toast.error("Couldn't change sharing. Try again.");
+      toast.error(t("CREDIT_ERROR"));
     } finally {
       setBusy(null);
     }
@@ -38,19 +40,19 @@ export default function PassportPage() {
 
   return (
     <div>
-      <PageTitle title="Credit record" />
+      <PageTitle title={t("NAV_CREDIT")} />
       {error && <LoadError what="your credit record" />}
       {!passport && !error && <Skel className="h-80" />}
       {passport && (
         <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
           <div className="space-y-4 lg:col-span-7">
-            <Carton tone="stock" title="Your record" aside="Last 3 months">
+            <Carton tone="stock" title={t("CREDIT_RECORD")} aside={t("CREDIT_3_MONTHS")}>
               <p className="text-ink">
-                You paid <span className="num display text-[2rem] leading-tight font-bold">{passport.paid_on_time}</span>
-                <span className="text-ink-2"> of </span>
-                <span className="num font-bold">{passport.invoices_total}</span> supplier invoices on time.
+                {t("CREDIT_PAID")} <span className="num display text-[2rem] leading-tight font-bold">{passport.paid_on_time}</span>
+                <span className="text-ink-2"> {t("CREDIT_OF")} </span>
+                <span className="num font-bold">{passport.invoices_total}</span> {t("CREDIT_ON_TIME")}
               </p>
-              <ol className="mt-3 flex flex-wrap gap-1" aria-label="Each invoice, oldest first">
+              <ol className="mt-3 flex flex-wrap gap-1" aria-label={t("CREDIT_EACH")}>
                 {passport.evidence.map((e) => (
                   <li
                     key={e.invoice_no}
@@ -63,15 +65,15 @@ export default function PassportPage() {
               </ol>
             </Carton>
 
-            <Carton tone="ink" title="What a lender would offer">
+            <Carton tone="ink" title={t("CREDIT_LENDER_OFFER")}>
               <dl className="grid grid-cols-2 divide-x divide-rule">
                 <div className="pr-4">
-                  <dt className="text-sm text-ink-2">A lender would pay</dt>
+                  <dt className="text-sm text-ink-2">{t("CREDIT_WOULD_PAY")}</dt>
                   <dd className="num display text-[2rem] leading-tight font-bold text-ink">{num(passport.advance_rate_pct, 1)}%</dd>
-                  <dd className="text-sm text-ink-2">of each order</dd>
+                  <dd className="text-sm text-ink-2">{t("CREDIT_EACH_ORDER")}</dd>
                 </div>
                 <div className="pl-4">
-                  <dt className="text-sm text-ink-2">Chance of not repaying</dt>
+                  <dt className="text-sm text-ink-2">{t("CREDIT_NOT_REPAY")}</dt>
                   <dd className="num display text-[2rem] leading-tight font-bold text-ink">{num(passport.default_probability * 100, 1)}%</dd>
                 </div>
               </dl>
@@ -79,7 +81,7 @@ export default function PassportPage() {
           </div>
 
           <div className="lg:col-span-5">
-            <Carton tone="ink" title="Who can see it">
+            <Carton tone="ink" title={t("CREDIT_WHO")}>
               <ul className="divide-y divide-rule">
                 {lenders?.map((l) => {
                   const on = !!consents?.some((c) => c.lender_id === l.id);
@@ -88,24 +90,24 @@ export default function PassportPage() {
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-ink">{l.name}</p>
                         <p className="text-sm text-ink-2">{l.products.map((p) => p.label).join(" · ")}</p>
-                        {on && <Stamp tone="stock" className="mt-1.5">Sharing</Stamp>}
+                        {on && <Stamp tone="stock" className="mt-1.5">{t("CREDIT_SHARING")}</Stamp>}
                       </div>
                       <Switch
                         checked={on}
                         disabled={busy === l.id}
                         onCheckedChange={(v: boolean) => toggle(l.id, v)}
-                        aria-label={`Share your credit record with ${l.name}`}
+                        aria-label={t("CREDIT_SHARE_WITH", { name: l.name })}
                       />
                     </li>
                   );
                 })}
               </ul>
               <fieldset className="mt-3 border-t border-rule pt-3">
-                <legend className="float-left w-full text-sm font-semibold text-ink">What a lender sees</legend>
+                <legend className="float-left w-full text-sm font-semibold text-ink">{t("CREDIT_SEES")}</legend>
                 <div className="clear-left grid grid-cols-2 gap-2 pt-2">
                   {[
-                    { v: false, label: "Summary only" },
-                    { v: true, label: "Summary and invoices" },
+                    { v: false, label: t("CREDIT_SUMMARY") },
+                    { v: true, label: t("CREDIT_FULL") },
                   ].map((o) => (
                     <label
                       key={o.label}

@@ -8,6 +8,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { BuildathonSticker } from "@/components/sticker";
 import { isCustomerPath } from "@/components/customer-shell";
 import { ApiError, LOCKED_EVENT, PID, UNLOCKED_EVENT, apiGet, errorDetail, unlock } from "@/lib/api";
+import { useStrings } from "@/lib/strings";
 
 const PIN_LENGTH = 4;
 
@@ -58,6 +59,7 @@ export function PinGate({ children }: { children: React.ReactNode }) {
 }
 
 function PinScreen() {
+  const { t } = useStrings();
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -71,10 +73,10 @@ function PinScreen() {
     } catch (e) {
       setError(
         e instanceof ApiError && e.status === 401
-          ? "That PIN isn't right. Try again."
+          ? t("PIN_WRONG")
           : e instanceof ApiError && e.status === 429
-            ? errorDetail(e, "Too many wrong PINs. Try again later.")
-            : "Couldn't reach LaMP. Try again."
+            ? errorDetail(e, t("PIN_LOCKED"))
+            : t("PIN_NO_REACH")
       );
       setPin("");
     } finally {
@@ -90,11 +92,11 @@ function PinScreen() {
           La<span className="display-accent">M</span>P
         </p>
         <p className="mt-3 text-sm text-ink-2">
-          Cash, stock and credit for your pharmacy.
+          {t("PIN_TAGLINE")}
         </p>
         <div className="carton mt-8 p-6 text-ink">
           <LockKeyhole className="mx-auto size-7 text-cash" aria-hidden />
-          <h1 className="display mt-3 text-2xl font-semibold">Enter your PIN</h1>
+          <h1 className="display mt-3 text-2xl font-semibold">{t("PIN_ENTER")}</h1>
           <form
             className="mt-5 flex justify-center"
             onSubmit={(e) => {
@@ -103,7 +105,7 @@ function PinScreen() {
             }}
           >
             <label htmlFor="owner-pin" className="sr-only">
-              Owner PIN
+              {t("PIN_LABEL")}
             </label>
             <InputOTP
               id="owner-pin"
@@ -125,14 +127,14 @@ function PinScreen() {
             </InputOTP>
           </form>
           <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm font-semibold text-alert">
-            {error ?? (busy ? <span className="text-ink-2">Checking…</span> : null)}
+            {error ?? (busy ? <span className="text-ink-2">{t("PIN_CHECKING")}</span> : null)}
           </p>
         </div>
         <Link
           href="/me"
           className="mt-4 flex items-center justify-center gap-2 rounded-full border border-rule bg-board px-5 py-3 text-sm font-semibold text-ink hover:bg-muted"
         >
-          Bought medicine on credit? Check what you owe <ArrowRight className="size-4" aria-hidden />
+          {t("PIN_CUSTOMER")} <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
     </main>
@@ -150,6 +152,7 @@ export function PinPrompt({
   onSubmit: (pin: string) => Promise<boolean | string>;
   onCancel: () => void;
 }) {
+  const { t } = useStrings();
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -161,7 +164,7 @@ export function PinPrompt({
     const ok = await onSubmit(value);
     setBusy(false);
     if (ok !== true) {
-      setError(ok === false ? "That PIN isn't right. Try again." : ok);
+      setError(ok === false ? t("PIN_WRONG") : ok);
       setPin("");
     }
   }
@@ -171,7 +174,7 @@ export function PinPrompt({
       <p className="text-sm text-ink-2">{title}</p>
       <div className="mt-4 flex justify-center">
         <InputOTP
-          aria-label="Owner PIN"
+          aria-label={t("PIN_LABEL")}
           maxLength={PIN_LENGTH}
           value={pin}
           onChange={setPin}
@@ -193,7 +196,7 @@ export function PinPrompt({
         {error}
       </p>
       <button type="button" onClick={onCancel} className="mt-2 text-sm font-semibold text-ink-2 hover:text-ink">
-        Cancel
+        {t("CANCEL")}
       </button>
     </div>
   );

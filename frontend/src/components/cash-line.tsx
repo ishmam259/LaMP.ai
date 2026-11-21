@@ -1,6 +1,7 @@
 "use client";
 
 import { shortDate } from "@/lib/format";
+import { useStrings } from "@/lib/strings";
 import type { ForecastOut } from "@/lib/types";
 
 /**
@@ -8,6 +9,7 @@ import type { ForecastOut } from "@/lib/types";
  * Each large money move is a stop; the first day you'd be short is a red stop.
  */
 export function CashLine({ forecast }: { forecast: ForecastOut }) {
+  const { t } = useStrings();
   const days = forecast.days;
   const n = days.length;
   const W = 320;
@@ -60,7 +62,7 @@ export function CashLine({ forecast }: { forecast: ForecastOut }) {
           );
         })}
         <text x={x(0)} y="64" fontSize="13" fontWeight="600" fill="var(--ink-2)" fontFamily="var(--font-barlow)">
-          Today
+          {t("TODAY_WORD")}
         </text>
         {shortIdx >= 0 && (
           <text x={x(shortIdx)} y="13" textAnchor="middle" fontSize="13" fontWeight="700" fill="var(--alert)" fontFamily="var(--font-barlow)">

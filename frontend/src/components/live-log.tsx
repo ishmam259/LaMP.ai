@@ -6,6 +6,7 @@ import { ShieldAlert } from "lucide-react";
 import { subscribeLogs, useLogVerify } from "@/lib/api";
 import { shortDate, timeOfDay } from "@/lib/format";
 import type { LogEvent } from "@/lib/types";
+import { useStrings } from "@/lib/strings";
 
 // Bookkeeping entries the owner doesn't need to read: each one repeats another entry or is LaMP's own housekeeping.
 const HIDDEN = new Set([
@@ -74,7 +75,7 @@ function sentence(e: LogEvent): string {
     case "extension_accepted":
       return `${d.supplier} agreed to more days`;
     case "capture_created":
-      return "Photo read";
+      return d.kind === "sales_page" ? "Sales book page read" : "Bill read";
     case "forecast_updated":
       return "Cash for the next 30 days worked out again";
     case "inbox_viewed":
@@ -112,7 +113,7 @@ function sentence(e: LogEvent): string {
     case "suspicious_text_flagged":
       return "Ignored hidden instructions in a photo";
     case "capture_confirmed":
-      return "Owner saved a photo to the accounts";
+      return "Owner saved a scan to the accounts";
     case "reset":
       return "Shop figures loaded";
     case "notify":
@@ -169,6 +170,7 @@ export function LiveLog({ heading = true }: { heading?: boolean }) {
   const { data: chain, mutate: recheck } = useLogVerify();
   const [live, setLive] = useState<LogEvent[]>([]);
   const listRef = useRef<HTMLOListElement>(null);
+  const { t } = useStrings();
 
   useEffect(
     () =>
@@ -195,20 +197,20 @@ export function LiveLog({ heading = true }: { heading?: boolean }) {
   }, [events.length]);
 
   return (
-    <section aria-label="History" className="flex h-full min-h-0 flex-col">
+    <section aria-label={t("NAV_HISTORY")} className="flex h-full min-h-0 flex-col">
       {heading && (
         <div className="band band-ink">
-          <span>History</span>
+          <span>{t("NAV_HISTORY")}</span>
         </div>
       )}
       {chain && !chain.intact && (
         <p role="status" className="flex items-center gap-1.5 border-b border-rule bg-alert-tint px-3 py-1.5 text-xs font-semibold text-alert">
           <ShieldAlert className="size-4 shrink-0" aria-hidden />
-          <span>Someone changed this history after it was saved</span>
+          <span>{t("LOG_CHANGED")}</span>
         </p>
       )}
       <ol ref={listRef} className="min-h-0 flex-1 overflow-y-auto text-sm" aria-live="polite">
-        {events.length === 0 && <li className="p-4 text-ink-2">Nothing yet.</li>}
+        {events.length === 0 && <li className="p-4 text-ink-2">{t("LOG_NOTHING")}</li>}
         {events.map((e) => (
           <li key={e.id} className="border-b border-rule px-3 py-2">
             <div className="flex items-center gap-2">

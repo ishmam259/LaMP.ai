@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import { Barlow, Barlow_Semi_Condensed } from "next/font/google";
+import { Barlow, Barlow_Semi_Condensed, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
 import { PinGate } from "@/components/pin-gate";
 import { ThemeProvider } from "@/components/theme";
+import { LocaleSync } from "@/components/locale";
 
 const barlow = Barlow({
   variable: "--font-barlow",
@@ -18,6 +19,13 @@ const display = Barlow_Semi_Condensed({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
   style: ["normal", "italic"],
+});
+
+// Bangla text: Barlow has no Bengali letters, so the browser takes them from here.
+const bangla = Noto_Sans_Bengali({
+  variable: "--font-bangla",
+  subsets: ["bengali"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -37,9 +45,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${barlow.variable} ${display.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${barlow.variable} ${display.variable} ${bangla.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
         <ThemeProvider>
+          <LocaleSync />
           {/* Customer cards (/me/<code>) only know their URL at request time, so they stream in here. */}
           <Suspense fallback={<div className="min-h-dvh bg-shelf" aria-busy="true" />}>
             <PinGate>
