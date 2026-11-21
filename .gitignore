@@ -52,3 +52,7 @@ video/*.wav
 # Raw demo takes (re-cut with make_aignite.py)
 video/takes/
 video/takes_features/
+video/takes_short/
+
+# rebuilt by video/assets/make_camera_feed.py
+video/assets/camera_invoice.mjpeg

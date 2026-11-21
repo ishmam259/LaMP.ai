@@ -1,10 +1,11 @@
 """Record the full feature demo against the local app at 60 fps (python video/record_features.py <out_dir> [channel]).
 
-No intro and no title card: it opens straight on Today and walks through every page. Same
-recording method as record_aignite.py (each take is played at 1/SLOW speed and retimed, so every
-60 fps frame is a real one). Needs the API on :8000 (DEV_MODE, replay) and a production build of
-the frontend on :3000. Takes: owner.mp4 (1920x1080), phone.mp4 (390x844 customer card at 2x),
-owner_more.mp4. video/make_features.py joins them into the film."""
+All on a phone screen (390x844 at 2x), with no intro and no title card: it opens straight on
+Today and walks through every page, scanning a PDF bill on the way. Same recording method as
+record_aignite.py (each take is played at 1/SLOW speed and retimed, so every 60 fps frame is a
+real one). Needs the API on :8000 (DEV_MODE, replay) and a production build of the frontend on
+:3000. Takes: owner.mp4, phone.mp4 (the customer's card), owner_more.mp4.
+video/make_features.py joins them into the film."""
 import base64, json, os, shutil, subprocess, sys, time
 import httpx
 from playwright.sync_api import sync_playwright
@@ -15,7 +16,7 @@ CHANNEL = sys.argv[2] if len(sys.argv) > 2 else "msedge"
 os.makedirs(OUT, exist_ok=True)
 APP, API = "http://localhost:3000", "http://127.0.0.1:8000/api/v1"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-INVOICE = os.path.join(ROOT, "eval", "images", "e01_invoice.jpg")
+INVOICE = os.path.join(ROOT, "video", "assets", "invoice_supplier_k.pdf")  # a digital bill, read once in record mode
 CARD = "GL-7KQM-4XPA"
 FPS = 60
 SLOW = 3  # record at a third of real speed
@@ -159,6 +160,9 @@ def type_slow(pg, loc, text, delay=160):
 
 
 
+PHONE = {"width": 390, "height": 844}  # recorded at 2x: 780x1688
+
+
 def visible(pg, loc, timeout=30000):
     loc.wait_for(state="visible", timeout=timeout)
     return loc
@@ -176,44 +180,58 @@ def try_click(pg, loc, after=1500):
     return False
 
 
+def tab(pg, label, after=2200):
+    """A page in the phone's tab bar (Today, Cash, Scan, Stock, Plan)."""
+    click(pg, pg.get_by_role("navigation", name="Main").get_by_role("link", name=label, exact=True).locator("visible=true").first, after)
+
+
+def more(pg, label, after=2200):
+    """A page from the "More" list at the end of Today."""
+    tab(pg, "Today", 1500)
+    click(pg, pg.get_by_role("navigation", name="More").get_by_role("link", name=label, exact=True), after)
+
+
+def page_scroll(pg, dy, read=2000):
+    scroll(pg, dy); hold(pg, read)
+
+
 def owner(b):
-    t = Take(b, "owner", {"width": 1920, "height": 1080}); pg = t.pg
+    t = Take(b, "owner", PHONE, scale=2, mobile=True); pg = t.pg
     try:
         pg.goto(APP + "/", wait_until="load")
         visible(pg, pg.get_by_text("Short BDT").first)
-        pg.mouse.move(1100, 650); hold(pg, 600)
+        pg.mouse.move(195, 560); hold(pg, 600)
         t.mark("today")
         hold(pg, 3000); shot(pg, "f01_today")
-        scroll(pg, 420); hold(pg, 2200); scroll(pg, -420); hold(pg, 600)
+        page_scroll(pg, 560, 2200); page_scroll(pg, 560, 2000); scroll(pg, -1120); hold(pg, 500)
 
         t.mark("cash")
-        nav(pg, "Cash", 2500); shot(pg, "f02_cash")
-        scroll(pg, 520); hold(pg, 2500); scroll(pg, -520); hold(pg, 500)
+        tab(pg, "Cash", 2500); shot(pg, "f02_cash")
+        page_scroll(pg, 600, 2200); page_scroll(pg, 700, 2200); scroll(pg, -1300); hold(pg, 400)
 
         t.mark("scan")
-        nav(pg, "Scan", 1500)
+        tab(pg, "Scan", 1500)
         with pg.expect_file_chooser() as fc:
-            click(pg, pg.get_by_role("button", name="Take a photo or choose a PDF"), 0)
+            click(pg, pg.get_by_role("button", name="Choose a photo or PDF"), 0)
         fc.value.set_files(INVOICE)
         visible(pg, pg.get_by_role("button", name="Save to accounts"), 60000)
         hold(pg, 2500); shot(pg, "f03_scan")
-        scroll(pg, 450); hold(pg, 2500)
+        page_scroll(pg, 450, 2200)
         if try_click(pg, pg.get_by_role("button", name="Save to accounts"), 2500):
             t.mark("scan_saved")
-        scroll(pg, -450); hold(pg, 400)
 
         t.mark("stock")
-        nav(pg, "Stock", 3000); shot(pg, "f04_stock")
-        scroll(pg, 400); hold(pg, 2500); scroll(pg, -400); hold(pg, 400)
+        tab(pg, "Stock", 3000); shot(pg, "f04_stock")
+        page_scroll(pg, 600, 2200); page_scroll(pg, 600, 2200); scroll(pg, -1200); hold(pg, 400)
 
         t.mark("plan")
-        nav(pg, "Plan", 3000); shot(pg, "f05_plan")
+        tab(pg, "Plan", 3000); shot(pg, "f05_plan")
         if try_click(pg, pg.get_by_role("button", name="How?"), 3500):
             pg.keyboard.press("Escape"); hold(pg, 800)
-        scroll(pg, 520); hold(pg, 3500); scroll(pg, 600); hold(pg, 2500); scroll(pg, -1120); hold(pg, 500)
+        page_scroll(pg, 520, 3000); page_scroll(pg, 650, 2500); page_scroll(pg, 650, 2200); scroll(pg, -1820); hold(pg, 500)
 
         t.mark("chat")
-        click(pg, pg.get_by_role("button", name="Ask LaMP"), 1200)
+        click(pg, pg.get_by_role("button", name="Ask", exact=True).locator("visible=true").first, 1200)
         click(pg, pg.get_by_role("button", name="Can I pay Supplier A's order next week?"), 600)
         busy = pg.get_by_text("LaMP is checking your figures")
         try:
@@ -225,24 +243,25 @@ def owner(b):
         pg.keyboard.press("Escape"); hold(pg, 1000)
 
         t.mark("credit")
-        nav(pg, "Credit record", 2500); shot(pg, "f07_credit")
+        click(pg, pg.get_by_role("link", name="Credit record").locator("visible=true").first, 2500); shot(pg, "f07_credit")
         try_click(pg, pg.get_by_role("switch", name="Share your credit record with Wallet Lender"), 1500)
         try_click(pg, pg.get_by_text("Summary and invoices", exact=True), 1800)
 
         t.mark("approvals")
-        nav(pg, "Approvals", 2500); shot(pg, "f08_approvals")
+        # its name carries the waiting count, so not an exact match
+        click(pg, pg.get_by_role("link", name="Approvals").locator("visible=true").first, 2500); shot(pg, "f08_approvals")
         for _ in range(4):
             card = pg.locator("li").filter(has=pg.get_by_role("button", name="Approve", exact=True))
             if card.count() == 0 or not try_click(pg, card.first.get_by_role("button", name="Approve", exact=True), 2800):
                 break
-        scroll(pg, 400); hold(pg, 3000); shot(pg, "f09_approved"); scroll(pg, -400); hold(pg, 400)
+        page_scroll(pg, 500, 3000); shot(pg, "f09_approved")
         t.mark("end")
     finally:
         t.finish()
 
 
 def phone(b):
-    t = Take(b, "phone", {"width": 390, "height": 844}, scale=2, mobile=True); pg = t.pg
+    t = Take(b, "phone", PHONE, scale=2, mobile=True); pg = t.pg
     try:
         pg.goto(APP + "/me", wait_until="load")
         visible(pg, pg.get_by_label("Card code"))
@@ -265,27 +284,29 @@ def phone(b):
 
 
 def owner_more(b):
-    t = Take(b, "owner_more", {"width": 1920, "height": 1080}); pg = t.pg
+    t = Take(b, "owner_more", PHONE, scale=2, mobile=True); pg = t.pg
     try:
-        pg.goto(APP + "/customers", wait_until="load")
-        visible(pg, pg.get_by_text("Owed to you"))
-        pg.mouse.move(1100, 700); hold(pg, 800)
+        pg.goto(APP + "/", wait_until="load")
+        visible(pg, pg.get_by_text("Short BDT").first)
+        pg.mouse.move(195, 560); hold(pg, 500)
         t.mark("customers")
-        move_to(pg, pg.get_by_text("4 parts from").first, 2500) if pg.get_by_text("4 parts from").count() else hold(pg, 2500); shot(pg, "f10_customers")
+        more(pg, "Customers", 2500); shot(pg, "f10_customers")
+        if pg.get_by_text("4 parts from").count():
+            move_to(pg, pg.get_by_text("4 parts from").first, 2500)
         try_click(pg, pg.get_by_role("button", name="Copy card link").first, 1800)
 
         t.mark("wallet")
-        nav(pg, "Wallet", 3000); shot(pg, "f11_wallet")
-        scroll(pg, 300); hold(pg, 2000); scroll(pg, -300); hold(pg, 400)
+        more(pg, "Wallet", 3000); shot(pg, "f11_wallet")
+        page_scroll(pg, 600, 2200); page_scroll(pg, 600, 2000)
 
         t.mark("rules")
-        nav(pg, "Rules", 2500); shot(pg, "f12_rules")
+        more(pg, "Rules", 2500); shot(pg, "f12_rules")
         pause = pg.locator("main").get_by_role("button", name="Pause LaMP")  # same label while paused
         if try_click(pg, pause, 3000):
             try_click(pg, pause, 2000)  # resume
 
         t.mark("history")
-        nav(pg, "History", 3500); shot(pg, "f13_history")
+        more(pg, "History", 3500); shot(pg, "f13_history")
 
         t.mark("lender")
         pg.goto(APP + "/lender", wait_until="load"); hold(pg, 3000); shot(pg, "f14_lender")
@@ -296,9 +317,15 @@ def owner_more(b):
         t.finish()
 
 
-httpx.post(f"{API}/dev/reset?with_demo_captures=true", timeout=60).raise_for_status()
-with sync_playwright() as p:
-    b = p.chromium.launch(channel=CHANNEL, args=["--force-color-profile=srgb"])
-    for take in (owner, phone, owner_more):
-        take(b)
-    b.close()
+def record(takes, args=()):
+    """Reset the demo, then record each take in one browser (args: extra browser flags)."""
+    httpx.post(f"{API}/dev/reset?with_demo_captures=true", timeout=60).raise_for_status()
+    with sync_playwright() as p:
+        b = p.chromium.launch(channel=CHANNEL, args=["--force-color-profile=srgb", *args])
+        for take in takes:
+            take(b)
+        b.close()
+
+
+if __name__ == "__main__":
+    record((owner, phone, owner_more))

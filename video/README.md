@@ -31,8 +31,16 @@ The published film carries a voiceover read from `VOICEOVER.md` in one take.
    `LINES` in `make_voiced.py` holds where each line is spoken in the recording. Re-measure them for a new recording with `ffmpeg -i video/takes/voice_clean.wav -af silencedetect=noise=-32dB:d=0.35 -f null -`.
 
 ## Feature demo (no intro)
-A silent walk through every page with no title or end card: Today, Cash, Scan, Stock, Plan, Ask LaMP, Credit record, Approvals, the customer's card on a phone, Customers, Wallet, Rules, History and the lender's page. Same setup as above (API in replay mode, production build on port 3000), then:
+A silent walk through every page, all on a phone screen (390x844 at 2x), with no title or end card: Today, Cash, Scan (it reads a PDF bill from Supplier K, `video/assets/invoice_supplier_k.pdf`), Stock, Plan, Ask LaMP, Credit record, Approvals, the customer's card, Customers, Wallet, Rules, History and the lender's page. The PDF's answer is already recorded in `eval/replay/`, so replay mode reads it for free; `python video/assets/make_invoice_pdf.py` makes the PDF again. Same setup as above (API in replay mode, production build on port 3000), then:
 ```bash
 python video/record_features.py video/takes_features
 python video/make_features.py video/takes_features video/LaMP-features-demo.mp4
 ```
+
+## Short demo
+`LaMP-demo-2min.mp4` (2:20, 1920x1080 at 60 fps, English captions, no title or end card) shows only the main features on a phone: Today, Cash, Scan (the in-app camera takes a photo of the printed bill, shown large beside the phone while LaMP reads it), Stock, Plan, Ask LaMP, Approvals, Customers and the customer's card. The app plays inside a drawn phone on the right, with a status bar (time, signal, Wi-Fi, battery), a camera cut-out, side buttons and a home bar; the page name and a caption are on the left. Same setup as above (API in replay mode, production build on port 3000), then:
+```bash
+python video/record_short.py video/takes_short
+python video/make_short.py video/takes_short video/LaMP-demo-2min.mp4
+```
+Captions live in `CAPTIONS` in `make_short.py`, timed from the scene marks the recorder writes. The camera is the browser's fake camera playing `assets/camera_invoice.mjpeg` (made by `assets/make_camera_feed.py`); the photo it takes is sent as the same bill's PDF, whose reading is already recorded, so recording costs nothing.
