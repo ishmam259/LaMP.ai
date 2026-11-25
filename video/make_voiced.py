@@ -8,7 +8,7 @@ import json, os, subprocess, sys
 from PIL import Image, ImageDraw, ImageFont
 
 REC, VOICE, OUT = (os.path.abspath(a) for a in sys.argv[1:4])
-LIVE_URL = sys.argv[4] if len(sys.argv) > 4 else "lamp-ai-web.onrender.com"
+LIVE_URL = sys.argv[4] if len(sys.argv) > 4 else "lamp-ai-web-8sls.onrender.com"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 STICKER = os.path.join(ROOT, "frontend", "public", "aignite-sticker.png")
 WORK = os.path.join(REC, "cut_voiced"); os.makedirs(WORK, exist_ok=True)
@@ -185,7 +185,7 @@ CARDS = {
     "end": [
         ("black", 96, "white", "Try it live"),
         ("semi", 60, SIGNAL, LIVE_URL),
-        ("reg", 40, "white", "Owner PIN 2468  ·  Customer card GL-7KQM-4XPA"),
+        ("reg", 40, "white", "Customer card GL-7KQM-4XPA"),
         ("reg", 34, MINT, "LaMP reads and suggests. People approve. It never moves money."),
     ],
 }

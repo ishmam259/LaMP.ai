@@ -8,8 +8,16 @@ the scene marks the recorder writes, so a new take keeps them in step. Needs ffm
 import json, os, subprocess, sys
 from PIL import Image, ImageDraw, ImageFont
 
-REC, OUT = os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2])
-WORK = os.path.join(REC, "cut"); os.makedirs(WORK, exist_ok=True)
+REC = WORK = None
+
+
+def init(rec):
+    """Point the cutter at a takes folder; its working files go to <rec>/cut."""
+    global REC, WORK
+    REC = os.path.abspath(rec)
+    WORK = os.path.join(REC, "cut"); os.makedirs(WORK, exist_ok=True)
+
+
 W, H, FPS = 1920, 1080, 60
 FADE = 0.4      # seconds of crossfade between the two takes
 TAIL = 1.5      # seconds the last frame holds before the film ends
@@ -39,7 +47,7 @@ CAPTIONS = {
         ("scan_read", 3, "Scan", "The lines match the photo. The owner checks them, then saves the bill."),
         ("stock", 0, "Stock", "Medicine about to expire, and the boxes on order that won't sell in time."),
         ("plan", 0, "Plan", "The cheapest way through, step by step: order fewer slow boxes, then ask Supplier A for more days."),
-        ("plan_cost", 0, "Plan", "Borrowing it all would cost BDT 421.64. This plan costs BDT 0, or BDT 181.97 if the supplier says no."),
+        ("plan_cost", 0, "Plan", "Borrowing it all would cost about BDT 400. This plan costs nothing, or under BDT 200 if the supplier says no."),
         ("chat", 0, "Ask LaMP", "Ask in plain words. LaMP answers from the shop's own figures."),
         ("chat_answer", 3, "Ask LaMP", "It can suggest steps, but it never approves, pays or contacts anyone."),
         ("approvals", 0, "Approvals", "Nothing happens until the owner says yes."),
@@ -189,12 +197,12 @@ def caption(name, title, text, pic=False):
     return os.path.basename(path)
 
 
-def segment(take, tail=0.0):
-    """Trim a take from its first scene to its end mark, put it on the phone and caption it."""
+def segment(take, tail=0.0, lead=0.0, captions=True, out=None):
+    """Trim a take from lead seconds before its first scene to its end mark, put it on the phone and caption it."""
     at = {m["scene"]: m["t"] for m in json.load(open(os.path.join(REC, f"scenes_{take}.json")))}
-    start, end = at[FIRST[take]], at["end"]
+    start, end = at[FIRST[take]] - lead, at["end"]
     total = end - start + tail
-    cues = [(at[s] + off - start, title, text, s in WITH_PHOTO) for s, off, title, text in CAPTIONS[take]]
+    cues = [(at[s] + off - start, title, text, s in WITH_PHOTO) for s, off, title, text in CAPTIONS[take]] if captions else []
     inputs = ["-loop", "1", "-framerate", str(FPS), "-i", background(),
               "-ss", f"{start}", "-to", f"{end}", "-i", os.path.join(REC, f"{take}.mp4"),
               "-loop", "1", "-framerate", str(FPS), "-i", chrome()]
@@ -210,16 +218,18 @@ def segment(take, tail=0.0):
         inputs += ["-loop", "1", "-framerate", str(FPS), "-i", caption(f"{take}_{i}", title, text, pic)]
         graph.append(f"[{last}][{i + 3}:v]overlay=0:0:enable='between(t,{t0:.3f},{t1 - 0.001:.3f})'[c{i + 1}]")
         last = f"c{i + 1}"
-    out = f"seg_{take}.mp4"
+    out = out or f"seg_{take}.mp4"
     run(["ffmpeg", "-y", *inputs, "-filter_complex", ";".join(graph) + f";[{last}]format=yuv420p[v]",
          "-map", "[v]", "-t", f"{total:.3f}", "-r", str(FPS), "-c:v", "libx264", "-crf", "18", "-preset", "medium",
          "-an", out])
     return out
 
 
-a, b = segment("owner"), segment("phone", TAIL)
-run(["ffmpeg", "-y", "-i", a, "-i", b, "-filter_complex",
-     f"[0:v][1:v]xfade=transition=fade:duration={FADE}:offset={length(os.path.join(WORK, a)) - FADE:.3f}[v]",
-     "-map", "[v]", "-r", str(FPS), "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
-     "-movflags", "+faststart", OUT])
-print(f"{OUT}: {length(OUT):.1f} s")
+if __name__ == "__main__":
+    init(sys.argv[1]); OUT = os.path.abspath(sys.argv[2])
+    a, b = segment("owner"), segment("phone", TAIL)
+    run(["ffmpeg", "-y", "-i", a, "-i", b, "-filter_complex",
+         f"[0:v][1:v]xfade=transition=fade:duration={FADE}:offset={length(os.path.join(WORK, a)) - FADE:.3f}[v]",
+         "-map", "[v]", "-r", str(FPS), "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
+         "-movflags", "+faststart", OUT])
+    print(f"{OUT}: {length(OUT):.1f} s")

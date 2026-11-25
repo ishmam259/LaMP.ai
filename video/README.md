@@ -13,7 +13,7 @@
    ```
 4. Cut the film (needs ffmpeg and Pillow; the last argument is the link shown on the end card):
    ```bash
-   python video/make_aignite.py video/takes video/LaMP-AIgnite-demo.mp4 lamp-ai-web.onrender.com
+   python video/make_aignite.py video/takes video/LaMP-AIgnite-demo.mp4 lamp-ai-web-8sls.onrender.com
    ```
 
 Captions live in `CAPTIONS` in `make_aignite.py`, timed from the scene marks the recorder writes, so a new take keeps them in step. Sections meet with a half-second crossfade. To change only the end-card link, run step 4 again; no re-recording needed. This makes the silent cut.
@@ -26,7 +26,7 @@ The published film carries a voiceover read from `VOICEOVER.md` in one take.
    ```
 2. Cut the film to the voice. Each scene changes in the pause before its line, plays faster if it's longer than the line, and holds its last frame if it's shorter. The captions are the spoken words.
    ```bash
-   python video/make_voiced.py video/takes video/takes/voice_clean.wav video/LaMP-AIgnite-demo.mp4 lamp-ai-web.onrender.com
+   python video/make_voiced.py video/takes video/takes/voice_clean.wav video/LaMP-AIgnite-demo.mp4 lamp-ai-web-8sls.onrender.com
    ```
    `LINES` in `make_voiced.py` holds where each line is spoken in the recording. Re-measure them for a new recording with `ffmpeg -i video/takes/voice_clean.wav -af silencedetect=noise=-32dB:d=0.35 -f null -`.
 

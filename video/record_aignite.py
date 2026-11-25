@@ -26,7 +26,7 @@ SLOW = 3  # record at a third of real speed
 # __glide and __scroll animate on requestAnimationFrame, so every 60 fps frame moves a little.
 CURSOR = r"""
 (() => {
-  try { localStorage.setItem('lamp:notify-asked', '1'); } catch {}  // no desktop-alerts prompt on screen
+  try { localStorage.setItem('lamp:notify-asked', '1'); localStorage.setItem('lamp-guide-seen', '1'); } catch {}  // no alerts prompt or welcome tour on screen
   // The page's own CSS animations and transitions at the recording speed (window.__RATE).
   const rate = window.__RATE || 1;
   if (rate !== 1) {
@@ -178,7 +178,7 @@ def owner(b):
         t.mark("capture")
         nav(pg, "Scan", 1500)
         with pg.expect_file_chooser() as fc:
-            click(pg, pg.get_by_role("button", name="Take or choose a photo"), 0)
+            click(pg, pg.get_by_role("button", name="Choose a photo or PDF"), 0)
         fc.value.set_files(INVOICE)
         pg.get_by_role("button", name="Save to accounts").wait_for(timeout=60000)
         hold(pg, 2500); shot(pg, "o2_capture")
