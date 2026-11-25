@@ -90,7 +90,7 @@ next.js, react, typescript, tailwind-css, python, fastapi, postgresql, openai, p
 
 **"Try it out" links**
 
-1. The live site from Render, for example `https://lamp-ai-web.onrender.com`. Check the real address after deploying.
+1. The live site from Render: `https://lamp-ai-web-8sls.onrender.com`.
 2. Add the GitHub repo only if you make it public. Judges can't open a private repo.
 
 **Image gallery** (upload in this order; all 1920 × 1280, 3:2)

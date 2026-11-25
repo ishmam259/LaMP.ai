@@ -5,7 +5,7 @@
 ## Deliverables
 | Item | Status | Where |
 |---|---|---|
-| Live web app (mandatory) | Live: https://lamp-ai-web.onrender.com | Render Blueprint from `render.yaml` (steps below) |
+| Live web app (mandatory) | Live: https://lamp-ai-web-8sls.onrender.com | Render Blueprint from `render.yaml` (steps below) |
 | Deck, max 5 slides (mandatory) | Ready | `deck/LaMP-AIgnite.pdf` (rebuild if the live link changes) |
 | Demo video in English (optional) | Recorded: 1:56, 1080p at 60 fps, English voiceover and captions | `video/LaMP-AIgnite-demo.mp4` (not in git): upload to YouTube, unlisted is fine. How to re-cut: `video/README.md` |
 | GitHub repo (optional) | Ready, private | https://github.com/ishmam259/LaMP.ai (organizers may ask for access) |
@@ -19,7 +19,7 @@ Done: official sticker on every page (PIN screen, owner header, customer header)
 4. Open the `lamp-ai-web` URL in a private window: it opens straight into Today, and `/me` with card `GL-7KQM-4XPA` opens the customer card.
 5. If the web URL isn't `https://lamp-ai-web.onrender.com`, rebuild the deck: `cd deck && LIVE_URL=<url> node build-deck-aignite.js`, then export the PDF again.
 
-Free plans: each service sleeps after 15 minutes without visitors, and the first visit after that takes about a minute. Open the link yourself a minute before you expect judges. The free database expires 30 days after it is created (Render then gives 14 days to upgrade before deleting it), so a database made now lasts through judging. Render allows one free database per account.
+Free plans: each service sleeps after 15 minutes without visitors, and the first visit after that takes about a minute. An UptimeRobot monitor ("LaMP live") opens `https://lamp-ai-web-8sls.onrender.com/api/v1/health` every 5 minutes, which goes through the website to the API and keeps both awake. Still open the link yourself before you expect judges. The free database expires 30 days after it is created (Render then gives 14 days to upgrade before deleting it), so a database made now lasts through judging. Render allows one free database per account.
 
 OpenAI: new photos and new chat questions use your key, up to USD 1 a day (`LLM_DAILY_BUDGET_USD=1.00`). Demo photos and the suggested questions stay free.
 

@@ -56,3 +56,11 @@ video/takes_short/
 
 # rebuilt by video/assets/make_camera_feed.py
 video/assets/camera_invoice.mjpeg
+
+# Private pitch prep, not for the public repo
+prep/
+
+# Local exports and raw takes, not for the repo
+/*.mp4
+/*.pdf
+video/takes_*/
