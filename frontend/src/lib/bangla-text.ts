@@ -3,7 +3,8 @@
  * history, cash items, wallet checks and dates. `components/bangla-dom.tsx` runs every
  * text on screen through `toBangla` while Bangla is chosen. Text with no rule stays as it is
  * (names of suppliers, lenders, customers and medicines are meant to stay in English).
- * Amounts keep "BDT" and English digits, the same as everywhere else in the app.
+ * Numbers are shown in Bangla digits too, and "BDT 19,000" becomes "৳১৯,০০০" (see `bnNumbers`). This
+ * is only what the screen shows; the server and the chat keep "BDT" and English digits.
  */
 
 const MONTHS: Record<string, string> = {
@@ -237,11 +238,24 @@ function tr(s: string): string {
   return s;
 }
 
+const BN_DIGITS = "০১২৩৪৫৬৭৮৯";
+const bnDigits = (s: string) => s.replace(/[0-9]/g, (d) => BN_DIGITS[Number(d)]);
+/**
+ * Numbers in Bangla digits, and "BDT 19,000" as "৳১৯,০০০". Codes keep English digits: anything
+ * joined to a letter or a hyphen (GL-7KQM-4XPA, D-20931, 4G), customer numbers ("Customer 003")
+ * and medicine strengths ("500 mg"), which stay as printed on the box.
+ */
+export function bnNumbers(text: string): string {
+  return text
+    .replace(/(?<![A-Za-z])BDT (?=\d)/g, "৳")
+    .replace(/(?<![A-Za-z0-9-]|Customer )\d[\d,]*(?:\.\d+)?(?![\d,.]*(?:[A-Za-z]|-[A-Za-z0-9]|\s?(?:mg|mcg|ml|g)\b))/g, bnDigits);
+}
+
 /** The Bangla for one piece of screen text; spaces around it are kept. */
 export function toBangla(text: string): string {
   const core = text.trim();
-  if (!core || !/[A-Za-z]{2}/.test(core)) return text;
-  const out = dates(tr(core));
+  if (!core) return text;
+  const out = bnNumbers(/[A-Za-z]{2}/.test(core) ? dates(tr(core)) : core);
   if (out === core) return text;
   const lead = text.slice(0, text.indexOf(core));
   return lead + out + text.slice(lead.length + core.length);

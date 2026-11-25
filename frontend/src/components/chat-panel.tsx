@@ -6,6 +6,7 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { ArrowUp, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 import { PID } from "@/lib/api";
+import { bnNumbers } from "@/lib/bangla-text";
 import { currentLocale, useStrings } from "@/lib/strings";
 
 // The demo questions; their answers are recorded in eval/replay/chat (scripts/record_demo_chats.py).
@@ -94,7 +95,7 @@ function ChatFrame({
                 t.role === "user" ? "bg-primary text-primary-foreground" : "border border-rule bg-board text-ink"
               )}
             >
-              {t.text}
+              {locale === "bn" && t.role !== "user" ? bnNumbers(t.text) : t.text}
             </div>
             {t.trace && t.trace.blocked && (
               <p className="flex items-center gap-1.5 text-xs font-semibold text-alert">
